@@ -217,7 +217,7 @@ class Module(object):
                                    self.default_version),
                                    "0>&2"])[0].strip().split(":")[1].strip()
         except IndexError, e:
-            print "Impossible de récupérer la description de %s : %s" % \
+            print "Unable to get description of %s : %s" % \
                                                             (self.name, e)
         return self.description
 
@@ -229,7 +229,7 @@ class Module(object):
             except IOError :
                 self.helpMessage = string.join(cmd.launch("help", ["%s/%s" % (self.name, self.default_version)]))
         if not self.helpMessage :
-            self.helpMessage = "Pas d'aide pour %s" % self.name
+            self.helpMessage = "No help for %s" % self.name
         return self.helpMessage
 
     def addVersion(self, version, default=False):
@@ -366,7 +366,6 @@ class MoGui(QMainWindow):
                 self.mods[mod.name].select(False)
                 action = "Deselection"
                 self.history.append("%s du module %s (version %s)" % (action, mod.name, mod.default_version) )
-                #i.setCheckState(Qt.Unchecked)
 
     def setModules(self, elmt):
         self.mods = elmt
