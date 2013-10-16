@@ -371,37 +371,27 @@ class MoGui(QMainWindow):
     def setModules(self, elmt):
         self.mods = elmt
         self.modulesModel.clear()
-        l=list(elmt.keys())
+        # Get module lista and sort it
+        l = list(elmt.keys())
         l.sort()
+        # Create a line in the model with modulename, versions and desc
         for e in l:
             name = QStandardItem(elmt[e].name)
             name.setToolTip(elmt[e].name)
             name.setData(elmt[e], Qt.UserRole)
             name.setEditable(False)
 
-            #name.setCheckable(True)
-            #version = QStandardItem(elmt[e].default_version)
-            # Multi-version mode
-            version = QStandardItem(len(elmt[e].versions))
-            version.setRowCount(len(elmt[e].versions))
-            for v in elmt[e].versions:
-                version.appendRow(QStandardItem(v))
+            version = QStandardItem()
             version.setData(elmt[e], Qt.UserRole)
             version.setEditable(True)
-            print "DBG: versions"
-            for i in range(0,version.rowCount()):
-                child = version.child(i)
-                if child :
-                    print child.text()
 
             desc = QStandardItem(elmt[e].description)
             desc.setData(elmt[e], Qt.UserRole)
             desc.setEditable(False)
 
             line = [ name, version, desc ]
-            #for elt in line:
-            #    self.modulesModel.appendRow(elt)
             self.modulesModel.appendRow(line)
+
             if elmt[e].selected :
                 selection = self.list.selectionModel().selection()
                 selection.select(self.modulesModel.indexFromItem(name),
@@ -462,24 +452,14 @@ class VersionCombo(QItemDelegate):
 
     def createEditor(self, parent, option, index):
         combo = QComboBox(parent)
-        version = index.model().takeItem(index.row(), 1)
-        print "*** DELEGATE: %d %d" % (index.column(), index.row())
-        for i in range(0,version.rowCount()):
-            child = version.child(i)
-            if child :
-                combo.addItem(child.text(), version.data())
-        #combo.setModel(index.model())
+        module = index.data(Qt.UserRole).toPyObject()
+        for v in module.versions:
+            combo.addItem(v, module)
         self.connect(combo, SIGNAL("currentIndexChanged(int)"), self, SLOT("currentIndexChanged()"))
+        combo.setStyleSheet("QComboBox { background-color: #FFFFFF; }");
         return combo
 
-    def setEditorData(self, editor, index):
-        editor.blockSignals(True)
-        print "*** Editor DELEGATE: %d %d" % (index.column(), index.row())
-        #editor.setCurrentIndex(int(index.model().data(index)))
-        editor.blockSignals(False)
-
     def setModelData(self, editor, model, index):
-        print "*** Model DELEGATE: %d %d" % (index.column(), index.row())
         model.setData(index, editor.itemData(editor.currentIndex()))
 
     @pyqtSlot()
