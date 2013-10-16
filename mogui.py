@@ -54,6 +54,14 @@ if not os.environ.has_key('MODULEPATH'):
 if not os.environ.has_key('LOADEDMODULES'):
     os.environ['LOADEDMODULES'] = '';
 
+ICON = "images/accessories-dictionary.png"
+RESET_ICON = "images/reload.png"
+SAVE_ICON = "images/gtk-save.png"
+TERM_ICON = "images/terminal.png"
+HELP_ICON = "images/help.png"
+QUIT_ICON = "images/gtk-quit.png"
+XTERM = "/usr/bin/xterm"
+
 class Modulecmd(object):
     def __init__(self, shell="python",
                        modulecmd_path='/opt/Modules/default/bin/modulecmd'):
@@ -243,38 +251,37 @@ class MoGui(QMainWindow):
         super(MoGui, self).__init__()
         self.mods = modules
         self.setWindowTitle("MoGui")
-        self.setWindowIcon(QIcon(
-            "/usr/share/icons/gnome/32x32/apps/accessories-dictionary.png"))
+        self.setWindowIcon(QIcon(ICON))
         self.createObjects()
-        self.consolecmd = '/usr/bin/xterm'
+        self.consolecmd = XTERM
         self.readSettings()
 
     def createObjects(self):
 
         # Set Actions
         actionReset = QAction("&Reset", self)
-        actionReset.setIcon(QIcon("/usr/share/icons/gnome/32x32/actions/reload.png"))
+        actionReset.setIcon(QIcon(RESET_ICON))
         actionReset.setShortcut("Ctrl-R")
         self.connect(actionReset, SIGNAL("triggered()"), self.reset)
 
         actionSave = QAction("&Sauver", self)
-        actionSave.setIcon(QIcon("/usr/share/icons/gnome/32x32/actions/gtk-save.png"))
+        actionSave.setIcon(QIcon(SAVE_ICON))
         actionSave.setShortcut("Ctrl-S")
         self.connect(actionSave, SIGNAL("triggered()"), self.save)
 
         actionTerm = QAction("&Terminal", self)
-        actionTerm.setIcon(QIcon("/usr/share/icons/gnome/32x32/apps/terminal.png"))
+        actionTerm.setIcon(QIcon(TERM_ICON))
         actionTerm.setShortcut("Ctrl-T")
         self.connect(actionTerm, SIGNAL("triggered()"), self.terminal)
 
         actionHelp = QAction("&Aide", self)
-        actionHelp.setIcon(QIcon("/usr/share/icons/gnome/32x32/actions/help.png"))
+        actionHelp.setIcon(QIcon(HELP_ICON))
         actionHelp.setShortcut("F1")
         self.connect(actionHelp, SIGNAL("triggered()"), self.help)
 
         #self.toolbar.addWidget(QSpacerItem(0,0))
         actionQuit = QAction("&Quitter", self)
-        actionQuit.setIcon(QIcon("/usr/share/icons/gnome/32x32/actions/gtk-quit.png"))
+        actionQuit.setIcon(QIcon(QUIT_ICON))
         actionQuit.setShortcut("Ctrl-Q")
         self.connect(actionQuit, SIGNAL("triggered()"), self.close)
 
