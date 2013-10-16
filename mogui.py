@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Pychoix: Replace xchoix
+# MoGui: Gui frontend for module
 # Author: A. Cedeyn
 #
 
@@ -233,11 +233,11 @@ class Module(object):
         if default:
             self.default_version = version
 
-class ChoixGui(QMainWindow):
+class MoGui(QMainWindow):
     def __init__(self, modules=None):
-        super(ChoixGui, self).__init__()
+        super(MoGui, self).__init__()
         self.mods = modules
-        self.setWindowTitle("Pychoix")
+        self.setWindowTitle("MoGui")
         self.setWindowIcon(QIcon(
             "/usr/share/icons/gnome/32x32/apps/accessories-dictionary.png"))
         self.createObjects()
@@ -435,20 +435,20 @@ class ChoixGui(QMainWindow):
         print "TODO"
 
     def writeSettings(self):
-        settings = QSettings("PyChoix", "gui")
+        settings = QSettings("MoGui", "gui")
         settings.beginGroup("toolbar")
         settings.setValue("geometry", self.toolbar.geometry())
         settings.endGroup()
 
     def readSettings(self):
-        settings = QSettings("PyChoix", "gui")
+        settings = QSettings("MoGui", "gui")
         settings.beginGroup("toolbar")
         self.toolbar.setGeometry(settings.value("geometry", self.toolbar.geometry()).toRect())
         settings.endGroup()
 
     def close(self):
         self.writeSettings()
-        super(ChoixGui, self).close()
+        super(MoGui, self).close()
 
 class VersionCombo(QItemDelegate):
     """Class to correctly edit the version fields"""
@@ -525,11 +525,11 @@ if __name__ == "__main__":
     # Init in Qt gui mode
     app = QApplication(sys.argv)
     app.setOrganizationName("cea")
-    app.setApplicationName("PyChoix")
+    app.setApplicationName("MoGui")
     app.setOrganizationDomain("cea.fr")
 
     print cea_module
-    gui = ChoixGui(cea_module.mods)
+    gui = MoGui(cea_module.mods)
     gui.setModules(cea_module.mods)
     gui.show()
 
