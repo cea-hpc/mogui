@@ -55,10 +55,11 @@ if not os.environ.has_key('LOADEDMODULES'):
     os.environ['LOADEDMODULES'] = '';
 
 class Modulecmd(object):
-    def __init__(self, shell="python"):
+    def __init__(self, shell="python",
+                       modulecmd_path='/opt/Modules/default/bin/modulecmd'):
         self.shell = shell
         self.mods = {}
-        self.modulecmd = '/opt/Modules/default/bin/modulecmd'
+        self.modulecmd = modulecmd_path
         self.helppath = '/opt/Modules/%s/description'
         self.savepath = '%s%s%s%s%s' % (os.environ['HOME'], os.sep,
                                   ".mogui", os.sep, "modules")
@@ -113,7 +114,7 @@ class Modulecmd(object):
                 if modname in self.mods.keys():
                     self.mods[modname].addVersion(version, default)
                 else:
-                    self.mods[modname] = Module(modname, version, default=default, description=desc)
+                    self.mods[modname] = Module(modname, version, default=default, description=desc, modulecmd_path=self.modulecmd)
         return self.mods
 
     def test(self):
@@ -173,8 +174,13 @@ class Module(object):
         selected : is the module selected for the user
         description: the module description
     """
-    def __init__(self, name, version, selected=False, default=False,
-                                                    description=None):
+    def __init__(self, name,
+                       version,
+                       selected=False,
+                       default=False,
+                       description=None,
+                       modulecmd_path='/opt/Modules/default/bin/modulecmd'):
+
         super(Module, self).__init__()
         self.name = name
         self.versions = []
@@ -186,6 +192,7 @@ class Module(object):
         self.description = description
         self.addVersion(version, default)
         self.helpMessage = None
+        self.modulecmd = modulecmd_path
         self.desc()
 
     def select(self, isselected=True):
@@ -198,7 +205,7 @@ class Module(object):
         self.__str__()
 
     def desc(self):
-        cmd = Modulecmd()
+        cmd = Modulecmd(modulecmd_path=self.modulecmd)
         try :
             self.description = \
                        cmd.launch("whatis",
@@ -212,7 +219,7 @@ class Module(object):
         return self.description
 
     def help(self):
-        cmd = Modulecmd()
+        cmd = Modulecmd(modulecmd_path=self.modulecmd)
         if not self.helpMessage :
             try :
                 self.helpMessage = string.join(open(cmd.helppath % self.name).readlines())
@@ -477,7 +484,7 @@ class VersionCombo(QItemDelegate):
         self.commitData.emit(self.sender())
 
 if __name__ == "__main__":
-    cea_module = Modulecmd()
+    cea_module = Modulecmd(modulecmd_path='/opt/Modules/bin/modulecmd.tcl')
     if len(sys.argv) > 1 :
         print string.join(cea_module.launch(sys.argv[1], sys.argv[2:]))
         sys.exit(0)
