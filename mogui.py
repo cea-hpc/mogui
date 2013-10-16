@@ -11,11 +11,6 @@
 import os, sys, string
 from subprocess import Popen, STDOUT, PIPE
 
-# Gui Tkinter
-import Tkinter
-from Tkconstants import *
-from Tix import *
-
 # Gui PyQt
 from PyQt4.QtCore import (
                         Qt,
@@ -481,30 +476,6 @@ class VersionCombo(QItemDelegate):
     def currentIndexChanged(self):
         self.commitData.emit(self.sender())
 
-class ChoixFrame(Tkinter.Frame):
-    def __init__(self, tk):
-        super(ChoixFrame, self).__init__(self,tk, relief=RIDGE, borderwidth=2)
-        self.pack(fill=BOTH,expand=1)
-        self.label=Tkinter.Label(self, text="PyChoix")
-        self.label.pack(fill=X, expand=1)
-        self.button = Tkinter.Button(self,text="Exit",command=tk.destroy)
-        self.button.pack(side=BOTTOM)
-        self.menu = Tkinter.Menu(self,title="Fichier")
-        self.menu.add_separator()
-        #self.exit = Tkinter.Menu(self,title="Quitter")
-        #self.menu.add_cascade(self.exit)
-        self.list = Listbox(self )
-        self.list.pack(fill=X, expand=1)
-
-    def setText(self, text):
-        self.label.__setitem__("text", text)
-
-    def setModules(self, elmt):
-        index = 0
-        for e in elmt:
-            self.list.insert(index, e)
-            index = index +1
-
 if __name__ == "__main__":
     cea_module = Modulecmd()
     if len(sys.argv) > 1 :
@@ -513,14 +484,6 @@ if __name__ == "__main__":
     cea_module.modules()
     cea_module.load()
     cea_module.test()
-
-    # Init in tk gui mode
-    #tk = Tkinter.Tk()
-    #tk.title("PyChoix")
-    #f = ChoixFrame(tk)
-    #f.setText("PyChoix: Extended")
-    #f.setModules(cea_module.mods)
-    #tk.mainloop()
 
     # Init in Qt gui mode
     app = QApplication(sys.argv)
