@@ -102,10 +102,13 @@ class Modulecmd(object):
 
         for l in lines:
             ## Ignore empty lines and line statring with a path
-            if ( l != "\n") and not (l.startswith('/')) :
+            if ( l != "\n") and not (l.startswith('/')) and not (l.startswith('--')):
                 mod = l.split(None)[0]
                 modname = mod.rsplit('/', 1)[0]
-                version = mod.rsplit('/', 1)[1].split('(')[0]
+                try :
+                    version = mod.rsplit('/', 1)[1].split('(')[0]
+                except IndexError:
+                    version = 'default'
                 try :
                     default = mod.rsplit('/', 1)[1].split('(')[1].rstrip(")")
                 except IndexError:
