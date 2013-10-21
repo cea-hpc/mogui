@@ -11,28 +11,35 @@ from PyQt4.QtCore import (
                         QSettings,
                         QSize,
                         pyqtSlot,
+                        pyqtSignal,
                         )
 from PyQt4.QtGui import (
                         QAbstractItemView,
                         QAction,
                         QComboBox,
+                        QDialog,
                         QMainWindow,
                         QMessageBox,
+                        QHBoxLayout,
                         QIcon,
                         QItemSelectionModel,
                         QItemDelegate,
                         QLabel,
+                        QListView,
+                        QPushButton,
                         QVBoxLayout,
+                        QScrollArea,
                         QTreeView,
                         QFrame,
                         QStandardItemModel,
                         QStandardItem,
-                        QTextEdit)
+                        QTextEdit,
+                        QWidget)
 
 # To launch commands
 from subprocess import Popen
 # Save and restore modules
-from lib.module import Modulecmd
+from lib.module import (Modulecmd, Module)
 
 ICON = "images/accessories-dictionary.png"
 RESET_ICON = "images/reload.png"
@@ -84,7 +91,6 @@ class MoGui(QMainWindow):
 
         # Set ToolBar
         self.toolbar = self.addToolBar("&Barre d'outils")
-        #self.toolbar.setIconSize(QSize(16,16))
         self.toolbar.setIconSize(QSize(32,32))
         self.toolbar.show()
         self.toolbar.addAction(actionReset)
@@ -93,13 +99,11 @@ class MoGui(QMainWindow):
         self.toolbar.addAction(actionHelp)
         self.toolbar.addSeparator()
         self.toolbar.addAction(actionQuit)
-        #self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.toolbar.setFloatable(False)
 
         # Set Menu
         self.menubar = self.menuBar()
-        #self.menubar.show()
         self.menubar.hide()
         menufile = self.menubar.addMenu("&Fichier")
         menufile.addAction(actionReset)
@@ -112,18 +116,14 @@ class MoGui(QMainWindow):
 
         # Main frame
         self.mainframe = QFrame(self)
+        # Main layout
+        self.layout = QHBoxLayout(self.mainframe)
+        self.setCentralWidget(self.mainframe)
+
 
         # Modules list (with label)
         self.modulelabel = QLabel("Liste des produits disponibles:")
-        self.modulesModel = QStandardItemModel()
-        self.list = QTreeView()
-        self.modulesCombo = VersionCombo(self.list)
-        self.list.setItemDelegateForColumn(1, self.modulesCombo)
-        self.list.setModel(self.modulesModel)
-        self.list.setSortingEnabled(True)
-        self.list.setSelectionMode(QAbstractItemView.MultiSelection)
-        self.list.setMinimumSize(QSize(800,600))
-        self.list.setUniformRowHeights(True)
+        self.modulechoice = ModuleChoice()
 
         # Info about current Module
         self.infolabel = QLabel("Information :")
@@ -135,89 +135,97 @@ class MoGui(QMainWindow):
         self.history = QTextEdit()
         self.history.setReadOnly(True)
 
-        self.layout = QVBoxLayout(self.mainframe)
-        self.layout.addWidget(self.modulelabel)
-        self.layout.addWidget(self.list)
-        self.layout.addWidget(self.infolabel)
-        self.layout.addWidget(self.info)
-        self.layout.addWidget(self.historylabel)
-        self.layout.addWidget(self.history)
-        self.setCentralWidget(self.mainframe)
+        # Module list frame
+        self.moduleslayout = QVBoxLayout()
+        self.moduleslayout.addWidget(self.modulelabel)
+        self.moduleslayout.addWidget(self.modulechoice)
+        self.moduleslayout.addWidget(self.infolabel)
+        self.moduleslayout.addWidget(self.info)
+        self.moduleslayout.addWidget(self.historylabel)
+        self.moduleslayout.addWidget(self.history)
 
-        self.connect(self.list.selectionModel(),
-                     SIGNAL("selectionChanged(QItemSelection,QItemSelection)"),
-                     self.selectModule)
+        self.layout.addLayout(self.moduleslayout)
+
+        # Module choice frame
+        self.choiceLabel = QLabel("Liste des produits choisis:")
+        self.choiceModel = QStandardItemModel()
+        self.choiceList = QListView()
+        self.choiceList.setModel(self.choiceModel)
+        self.choiceList.setIconSize(QSize(256,256))
+        self.choiceList.setUniformItemSizes(True)
+        self.choiceList.setViewMode(QListView.IconMode)
+        self.choiceList.setAcceptDrops(True)
+        self.choicelayout = QVBoxLayout()
+
+        self.choicelayout.addWidget(self.choiceLabel)
+        self.choicelayout.addWidget(self.choiceList)
+
+        self.layout.addLayout(self.choicelayout)
+
+        #Test
+        self.connect(self.choiceList, SIGNAL("dropEvent()"), self.dropModule)
+        self.connect(actionHelp, SIGNAL("triggered()"), self.modulechoice.expert)
+
+    def setModules(self, modules):
+        self.mods = modules
+        # Set the module list to the modulechoice widget
+        self.modulechoice.set(modules, slot=self.add)
+
+    def dropModule(self, event):
+        module_gui = event.mimeData()
+        self.addToList(module_gui)
+
+    def add(self):
+        """
+        Add the specified module/version to the choice list
+        We retrieve version and name from the signal sender
+        which should be a ModuleGui object where we can fetch
+        the module and version name from the both attribute QLabel
+         * name
+         * version
+        """
+        module_gui = self.sender()
+        self.addToList(module_gui)
+
+    def addToList(self, module_gui):
+        modulename = "%s" % module_gui.name.text()
+        moduleversion = "%s" % (module_gui.version.text())
+        module = "%s/%s" % (modulename, moduleversion)
+        chosen = self.choiceModel.findItems(modulename,
+                                            flags = Qt.MatchContains) 
+        name = QStandardItem(module)
+        name.setToolTip(module)
+        name.setEditable(False)
+        name.setIcon(QIcon("images/module.png"))
 
 
-    def selectModule(self, selected, deselected):
-        #mod = self.list.selectedIndexes()[0].data(Qt.UserRole).toPyObject()
-        #mod = self.list.currentIndex().data(Qt.UserRole).toPyObject()
-        for i in selected.indexes():
-            mod = i.data(Qt.UserRole).toPyObject()
-            if not mod.selected :
-                self.mods[mod.name].select(True)
-                action = "Selection"
-                self.info.setText(mod.help())
-                self.history.append("%s du module %s (version %s)" %
-                                     (action, mod.name, mod.default_version) )
-                #i.setCheckState(Qt.Checked)
+        if len(chosen) != 0:
+            # Replace the module version if it exists in the choice list
+            row = chosen[0].index().row()
+            print "Removing module at %d" % row
+            self.choiceModel.setItem(row, name)
+            # Should be a popup
+            print "%s already added !!" % module
+        else:
+            # Add only the module if it doesn't exist in the choice list
+            print "Try to add %s" % module
+            self.choiceModel.appendRow(name)
 
-        for i in deselected.indexes():
-            mod = i.data(Qt.UserRole).toPyObject()
-            if mod.selected :
-                self.mods[mod.name].select(False)
-                action = "Deselection"
-                self.history.append("%s du module %s (version %s)" %
-                                     (action, mod.name, mod.default_version) )
-
-    def setModules(self, elmt):
-        self.mods = elmt
-        self.modulesModel.clear()
-        # Get module lista and sort it
-        l = list(elmt.keys())
-        l.sort()
-        # Create a line in the model with modulename, versions and desc
-        for e in l:
-            name = QStandardItem(elmt[e].name)
-            name.setToolTip(elmt[e].name)
-            name.setData(elmt[e], Qt.UserRole)
-            name.setEditable(False)
-
-            version = QStandardItem()
-            version.setData(elmt[e], Qt.UserRole)
-            version.setEditable(True)
-
-            desc = QStandardItem(elmt[e].description)
-            desc.setData(elmt[e], Qt.UserRole)
-            desc.setEditable(False)
-
-            line = [ name, version, desc ]
-            self.modulesModel.appendRow(line)
-
-            if elmt[e].selected :
-                selection = self.list.selectionModel().selection()
-                selection.select(self.modulesModel.indexFromItem(name),
-                                 self.modulesModel.indexFromItem(desc))
-                self.list.selectionModel().select(
-                    selection,
-                    QItemSelectionModel.SelectCurrent)
-        self.modulesModel.setHorizontalHeaderLabels(["Modules",
-                                                     "Version",
-                                                     "Description"])
-        self.list.resizeColumnToContents(0)
-        self.list.resizeColumnToContents(1)
-        self.list.resizeColumnToContents(2)
-        for row in range(0, self.modulesModel.rowCount()):
-            self.list.openPersistentEditor(self.modulesModel.index(row,1))
+        mod = module_gui.data
+        self.history.append("%s selected" % module)
+        self.info.setText(mod.help())
+        name.setToolTip(mod.help())
+        mod.select(True)
+        mod.setVersion(moduleversion)
 
 
     def save(self):
         msg = ""
         for mod in self.mods.values():
             if mod.selected:
-                msg += "%s/%s\n" % (mod.name, mod.default_version)
-        QMessageBox.information(self, u"Sauvegarde des modules",
-                                      "Liste des modules à sauver :\n%s" % msg
+                msg += "%s/%s\n" % (mod.name, mod.current_version)
+        QMessageBox.information(self, "Sauvegarde des modules",
+                                      "Modules to save :\n%s" % msg
                                )
         cea_module = Modulecmd(modulecmd_path = self.modulecmd)
         cea_module.save(self.mods)
@@ -226,7 +234,10 @@ class MoGui(QMainWindow):
         cea_module = Modulecmd(modulecmd_path = self.modulecmd)
         cea_module.modules()
         cea_module.load()
+        ## To remove (only for test)
+        cea_module.test()
         self.setModules(cea_module.mods)
+        self.choiceModel.clear()
 
     def terminal(self):
         print "TODO"
@@ -252,64 +263,98 @@ class MoGui(QMainWindow):
         self.writeSettings()
         super(MoGui, self).close()
 
-class VersionCombo(QItemDelegate):
-    """Class to correctly edit the version fields"""
-    def __init__(self, parent):
-        super(QItemDelegate,self).__init__(parent)
+class ModuleGui(QWidget):
+    """Represents 2 objects of a module: a name and a version"""
+    def __init__(self, name, version, data, slot=None, parent=None):
+        super(ModuleGui, self).__init__(parent)
+        layout = QHBoxLayout(self)
+        self.setObjectName("ModuleGui");
+        self.setContentsMargins(0,0,0,0)
+        self.data = data
+        self.name = QLabel(name)
+        self.version = QLabel(version)
+        self.button = QPushButton("+")
+        layout.addWidget(self.name)
+        layout.addSpacing(40)
+        layout.addWidget(self.version)
+        layout.addSpacing(40)
+        layout.addWidget(self.button)
+        self.setLayout(layout)
 
-    def createEditor(self, parent, option, index):
-        combo = QComboBox(parent)
-        module = index.data(Qt.UserRole).toPyObject()
-        for v in module.versions:
-            combo.addItem(v, module)
-        combo.setStyleSheet("""
-                            QComboBox {
-                                background-color: #FFFFFF;
-                                show-decoration-selected: 1;
-                                border: 1px solid gray ;
-                                border-radius: 3px;
-                                padding: 1px 18px 1px 3px;
-                                max-height: 12px;
-                            }
+        self.connect(self.button, SIGNAL("clicked()"),
+                     self.selected)
 
-                            QComboBox:selected {
-                                background: #418bd4;
-                                color: #FFFFFF;
-                            }
+        if slot != None :
+            self.connect(self, SIGNAL("selected()"), slot)
+            self.connect(self, SIGNAL("clicked()"), slot)
 
-                            QComboBox:on {
-                                /*padding-left: 20px;*/
-                            }
 
-                            QComboBox::drop-down {
-                                subcontrol-origin: padding;
-                                subcontrol-position: bottom right;
-                                width: 0px;
-                                right: 0px;
+    def selected(self):
+        self.emit(SIGNAL("selected()"))
 
-                                border-left-width: 1px;
-                                border-left-color: darkgray;
-                                /* just a single line */
-                                border-left-style: solid;
-                                /*same radius as the QComboBox*/
-                                border-top-right-radius: 3px;
-                                border-bottom-right-radius: 3px;
-                            }
+    def mouseReleaseEvent(self, event):  
+        self.emit(SIGNAL('clicked()'))
 
-                            QComboBox QAbstractItemView {
-                                background-color: #EEF5F5;
-                                border-radius: 3px;
-                                opacity: 200;
-                            }
-                            """);
+class ModuleChoice(QWidget):
+    """List available modules"""
+    def __init__(self, parent=None):
+        super(ModuleChoice, self).__init__(parent)
+ 
+        self.layout=QVBoxLayout(self)
+        self.layout.setContentsMargins(0,0,0,0)
+ 
+        self.scroll=QScrollArea()
+        self.layout.addWidget(self.scroll)
+ 
+        w=QWidget(self)        
+        self.vbox=QVBoxLayout(w)
+        self.scroll.setWidget(w)
 
-        self.connect(combo, SIGNAL("currentIndexChanged(int)"),
-                     self, SLOT("currentIndexChanged()"))
-        return combo
+        self.setStyleSheet("""
+            QPushButton {
+                background-color: #FFFFFF;
+                border: 1px solid #6c6c6c;
+                border-radius: 10px;
+            }
+            QPushButton::hover {
+                background: qlineargradient(x1: 0, y1: 0, x2: 0,
+                                            y2: 1,
+                                            stop: 0 #e7effd,
+                                            stop: 1 #cbdaf1);
+                border-radius: 10px;
+            }
+            * {
+                font-weight: bold;
+                background-color: #FFFFFF;
+                border-radius: 10px;
+            }
+            """)
 
-    def setModelData(self, editor, model, index):
-        model.setData(index, editor.itemData(editor.currentIndex()))
+    def set(self, modules, slot=None):
+        # Create a line in the model with modulename, versions and desc
+        l = list(modules.keys())
+        l.sort()
+        w=QWidget(self)        
+        self.vbox=QVBoxLayout(w)
+        for m in l:
+            for v in modules[m].versions:
+                line = ModuleGui(modules[m].name, v, modules[m], slot=slot)
+                self.vbox.addWidget(line)
+        self.scroll.setWidget(w)
 
-    @pyqtSlot()
-    def currentIndexChanged(self):
-        self.commitData.emit(self.sender())
+    def expert(self, expert=True):
+        if expert :
+            print "Mode expert: hiding unuseful modules"
+        else:
+            print "Mode expert deactivated: showing all modules"
+        for i in range(0, self.vbox.count()):
+            line = self.vbox.itemAt(i).widget()
+            module = line.data
+            print "Module to hide : %s/%s module default: %s" % (
+                                              line.name.text(),
+                                              line.version.text(),
+                                              module.default_version)
+            if expert and (line.version.text() != module.default_version) :
+                line.hide()
+            else:
+                line.show()

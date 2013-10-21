@@ -63,11 +63,13 @@ class Modulecmd(object):
         """
         Create fake module list
         """
-        self.mods["test1"] = Module("test1", "v1", default="default",
-                                        description="test module 1")
-        self.mods["test1"].addVersion("v2")
-        self.mods["test2"] = Module("test2", "v1", default="default",
-                                        description="test module 2")
+        for i in range(1,10):
+            name = "test%d" % i
+            self.mods[name] = Module(name, "v1", default="default",
+                                            description="test module %d v1" % i)
+        for i in range(2,5):
+            self.mods["test1"].addVersion("v%d" % i)
+            self.mods["test5"].addVersion("v%d" % i)
 
     def save(self, modulelist):
         """
@@ -176,3 +178,7 @@ class Module(object):
         #print "Module: %s - added version : %s" % (self.name, version)
         if default:
             self.default_version = version
+
+    def setVersion(self, version):
+        if version in self.versions:
+            self.current_version = version
