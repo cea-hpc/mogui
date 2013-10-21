@@ -144,13 +144,10 @@ class MoGui(QMainWindow):
         self.layout.addWidget(self.history)
         self.setCentralWidget(self.mainframe)
 
-        #self.connect(self.list, SIGNAL("itemSelectionChanged()"), self.selectModule)
-        #self.connect(self.list, SIGNAL("entered(QModelIndex)"), self.selectModule)
-        #self.connect(self.list, SIGNAL("clicked(QModelIndex)"), self.selectModule)
-        self.connect(self.list.selectionModel(), SIGNAL("selectionChanged(QItemSelection,QItemSelection)"), self.selectModule)
+        self.connect(self.list.selectionModel(),
+                     SIGNAL("selectionChanged(QItemSelection,QItemSelection)"),
+                     self.selectModule)
 
-        # Working but without selection
-        #self.connect(self.list, SIGNAL("pressed(QModelIndex)"), self.selectModule)
 
     def selectModule(self, selected, deselected):
         #mod = self.list.selectedIndexes()[0].data(Qt.UserRole).toPyObject()
@@ -161,7 +158,8 @@ class MoGui(QMainWindow):
                 self.mods[mod.name].select(True)
                 action = "Selection"
                 self.info.setText(mod.help())
-                self.history.append("%s du module %s (version %s)" % (action, mod.name, mod.default_version) )
+                self.history.append("%s du module %s (version %s)" %
+                                     (action, mod.name, mod.default_version) )
                 #i.setCheckState(Qt.Checked)
 
         for i in deselected.indexes():
@@ -169,7 +167,8 @@ class MoGui(QMainWindow):
             if mod.selected :
                 self.mods[mod.name].select(False)
                 action = "Deselection"
-                self.history.append("%s du module %s (version %s)" % (action, mod.name, mod.default_version) )
+                self.history.append("%s du module %s (version %s)" %
+                                     (action, mod.name, mod.default_version) )
 
     def setModules(self, elmt):
         self.mods = elmt
@@ -202,7 +201,9 @@ class MoGui(QMainWindow):
                 self.list.selectionModel().select(
                     selection,
                     QItemSelectionModel.SelectCurrent)
-        self.modulesModel.setHorizontalHeaderLabels(["Modules", "Version", "Description"])
+        self.modulesModel.setHorizontalHeaderLabels(["Modules",
+                                                     "Version",
+                                                     "Description"])
         self.list.resizeColumnToContents(0)
         self.list.resizeColumnToContents(1)
         self.list.resizeColumnToContents(2)
@@ -215,7 +216,9 @@ class MoGui(QMainWindow):
         for mod in self.mods.values():
             if mod.selected:
                 msg += "%s/%s\n" % (mod.name, mod.default_version)
-        QMessageBox.information(self, u"Sauvegarde des modules", "Liste des modules à sauver :\n%s" % msg)
+        QMessageBox.information(self, u"Sauvegarde des modules",
+                                      "Liste des modules à sauver :\n%s" % msg
+                               )
         cea_module = Modulecmd(modulecmd_path = self.modulecmd)
         cea_module.save(self.mods)
 
@@ -241,7 +244,8 @@ class MoGui(QMainWindow):
     def readSettings(self):
         settings = QSettings("MoGui", "gui")
         settings.beginGroup("toolbar")
-        self.toolbar.setGeometry(settings.value("geometry", self.toolbar.geometry()).toRect())
+        self.toolbar.setGeometry(settings.value("geometry",
+                                 self.toolbar.geometry()).toRect())
         settings.endGroup()
 
     def close(self):
@@ -258,8 +262,49 @@ class VersionCombo(QItemDelegate):
         module = index.data(Qt.UserRole).toPyObject()
         for v in module.versions:
             combo.addItem(v, module)
-        self.connect(combo, SIGNAL("currentIndexChanged(int)"), self, SLOT("currentIndexChanged()"))
-        combo.setStyleSheet("QComboBox { background-color: #FFFFFF; }");
+        combo.setStyleSheet("""
+                            QComboBox {
+                                background-color: #FFFFFF;
+                                show-decoration-selected: 1;
+                                border: 1px solid gray ;
+                                border-radius: 3px;
+                                padding: 1px 18px 1px 3px;
+                                max-height: 12px;
+                            }
+
+                            QComboBox:selected {
+                                background: #418bd4;
+                                color: #FFFFFF;
+                            }
+
+                            QComboBox:on {
+                                /*padding-left: 20px;*/
+                            }
+
+                            QComboBox::drop-down {
+                                subcontrol-origin: padding;
+                                subcontrol-position: bottom right;
+                                width: 0px;
+                                right: 0px;
+
+                                border-left-width: 1px;
+                                border-left-color: darkgray;
+                                /* just a single line */
+                                border-left-style: solid;
+                                /*same radius as the QComboBox*/
+                                border-top-right-radius: 3px;
+                                border-bottom-right-radius: 3px;
+                            }
+
+                            QComboBox QAbstractItemView {
+                                background-color: #EEF5F5;
+                                border-radius: 3px;
+                                opacity: 200;
+                            }
+                            """);
+
+        self.connect(combo, SIGNAL("currentIndexChanged(int)"),
+                     self, SLOT("currentIndexChanged()"))
         return combo
 
     def setModelData(self, editor, model, index):
