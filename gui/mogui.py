@@ -172,10 +172,13 @@ class MoGui(QMainWindow):
         self.mods = modules
         # Set the module list to the modulelist widget
         self.modulelist.set(modules, slot=self.add)
+        for m in self.mods.keys():
+            if self.mods[m].selected:
+                self.__addToChoice(self.mods[m])
 
     def dropModule(self, event):
         module_gui = event.mimeData()
-        self.addToList(module_gui)
+        self._addToList(module_gui)
 
     def add(self):
         """
@@ -187,16 +190,31 @@ class MoGui(QMainWindow):
          * version
         """
         module_gui = self.sender()
-        self.addToList(module_gui)
+        self._addToChoice(module_gui)
 
-    def addToList(self, module_gui):
-        modulename = "%s" % module_gui.name.text()
+    def _addToChoice(self, module_gui):
         moduleversion = "%s" % (module_gui.version.text())
-        module = "%s/%s" % (modulename, moduleversion)
-        chosen = self.choiceModel.findItems(modulename,
-                                            flags = Qt.MatchContains) 
-        name = QStandardItem(module)
-        name.setToolTip(module)
+        module = module_gui.data
+        module.select(moduleversion)
+        self.__addToChoice(module)
+
+    def __addToChoice(self, module):
+        module_str = "%s" % module
+        model = self.choiceModel
+        try:
+            chosen = model.findItems(module.name, flags = Qt.MatchContains)
+        except TypeError:
+            # If FindItems is not supported create a list from the model
+            chosen = []
+            for index in range(0, model.rowCount()):
+                # The itemData[0] is the text field of the item
+                chosen_itemData = model.itemData(model.index(index,0))
+                chosen_modulename = chosen_itemData[0].toString()
+                if chosen_modulename.startsWith(module.name):
+                    chosen.append(model.item(index))
+
+        name = QStandardItem(module_str)
+        name.setToolTip(module_str)
         name.setEditable(False)
         name.setIcon(self.defaultIcon)
 
@@ -204,21 +222,17 @@ class MoGui(QMainWindow):
         if len(chosen) != 0:
             # Replace the module version if it exists in the choice list
             row = chosen[0].index().row()
-            print "Removing module at %d" % row
-            self.choiceModel.setItem(row, name)
+            model.setItem(row, name)
             # Should be a popup
-            print "%s already added !!" % module
+            print "%s already added !!" % module_str
         else:
             # Add only the module if it doesn't exist in the choice list
-            print "Try to add %s" % module
-            self.choiceModel.appendRow(name)
+            print "Try to add %s" % module_str
+            model.appendRow(name)
 
-        mod = module_gui.data
-        self.history.append("%s selected" % module)
-        self.info.setText(mod.help())
-        name.setToolTip(mod.help())
-        mod.select(True)
-        mod.setVersion(moduleversion)
+        self.history.append("%s selected" % module_str)
+        self.info.setText(module.help())
+        name.setToolTip(module.help())
 
 
     def save(self):
