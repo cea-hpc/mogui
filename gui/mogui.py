@@ -155,7 +155,7 @@ class MoGui(QMainWindow):
         self.choiceList.setModel(self.choiceModel)
         self.choiceList.setIconSize(QSize(256,256))
         self.choiceList.setUniformItemSizes(True)
-        self.choiceList.setViewMode(QListView.IconMode)
+        #self.choiceList.setViewMode(QListView.IconMode)
         self.choiceList.setAcceptDrops(True)
         self.choicelayout = QVBoxLayout()
 
@@ -284,8 +284,7 @@ class ModuleGui(QWidget):
     def __init__(self, name, version, data, slot=None, parent=None):
         super(ModuleGui, self).__init__(parent)
         layout = QHBoxLayout(self)
-        self.setObjectName("ModuleGui");
-        self.setContentsMargins(0,0,0,0)
+        layout.setContentsMargins(0,0,0,0)
         self.data = data
         self.name = QLabel(name)
         self.version = QLabel(version)
@@ -307,6 +306,9 @@ class ModuleGui(QWidget):
 
     def selected(self):
         self.emit(SIGNAL("selected()"))
+        # Deactivate when the module is selected
+        # (must enable the other versions)
+        #self.button.setEnabled(False)
 
     def mouseReleaseEvent(self, event):  
         self.emit(SIGNAL('clicked()'))
