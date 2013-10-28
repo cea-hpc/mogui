@@ -15,7 +15,7 @@ class Modulecmd(object):
         self.modulecmd = modulecmd_path
         self.helppath = '/opt/Modules/%s/description'
         self.savepath = '%s%s%s%s%s' % (os.environ['HOME'], os.sep,
-                                  ".mogui", os.sep, "modules")
+                                  ".config/MoGui", os.sep, "modules")
 
     def launch(self, command, arguments=[]):
         output = []
