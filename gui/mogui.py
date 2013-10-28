@@ -252,8 +252,8 @@ class MoGui(QMainWindow):
         cea_module.load()
         ## To remove (only for test)
         cea_module.test()
-        self.setModules(cea_module.mods)
         self.choiceModel.clear()
+        self.setModules(cea_module.mods)
 
     def terminal(self):
         print "TODO"
