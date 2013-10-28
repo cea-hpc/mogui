@@ -78,7 +78,7 @@ class Modulecmd(object):
         msg = ""
         for mod in modulelist.values():
             if mod.selected:
-                msg += "%s/%s\n" % (mod.name, mod.default_version)
+                msg += "%s\n" % mod
         try:
             file = open(self.savepath, "w")
             file.write(msg)
@@ -143,7 +143,7 @@ class Module(object):
         self.selected = isselected
 
     def __str__(self):
-        return "%s/%s %s" % (self.name, string.join(self.versions, "/"), self.selected)
+        return "%s/%s" % (self.name, self.current_version)
 
     def __repr__(self):
         self.__str__()

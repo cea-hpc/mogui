@@ -223,7 +223,7 @@ class MoGui(QMainWindow):
         msg = ""
         for mod in self.mods.values():
             if mod.selected:
-                msg += "%s/%s\n" % (mod.name, mod.current_version)
+                msg += "%s\n" % mod
         QMessageBox.information(self, "Sauvegarde des modules",
                                       "Modules to save :\n%s" % msg
                                )
