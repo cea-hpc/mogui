@@ -171,7 +171,7 @@ class MoGui(QMainWindow):
     def setModules(self, modules):
         self.mods = modules
         # Set the module list to the modulelist widget
-        self.modulelist.set(modules, slot=self.add)
+        self.modulelist.set(modules, slot=self.__addToChoice)
         for m in self.mods.keys():
             if self.mods[m].selected:
                 self.__addToChoice(self.mods[m])
@@ -313,52 +313,58 @@ class ModuleGui(QWidget):
     def mouseReleaseEvent(self, event):  
         self.emit(SIGNAL('clicked()'))
 
-class ModuleChoice(QWidget):
+class ModuleChoice(QTreeView):
     """List available modules"""
     def __init__(self, parent=None):
         super(ModuleChoice, self).__init__(parent)
  
-        self.layout=QVBoxLayout(self)
-        self.layout.setContentsMargins(0,0,0,0)
+        self.model=QStandardItemModel()
  
-        self.scroll=QScrollArea()
-        self.layout.addWidget(self.scroll)
- 
-        w=QWidget(self)        
-        self.vbox=QVBoxLayout(w)
-        self.scroll.setWidget(w)
-
-        self.setStyleSheet("""
-            QPushButton {
-                background-color: #FFFFFF;
-                border: 1px solid #6c6c6c;
-                border-radius: 10px;
-            }
-            QPushButton::hover {
-                background: qlineargradient(x1: 0, y1: 0, x2: 0,
-                                            y2: 1,
-                                            stop: 0 #e7effd,
-                                            stop: 1 #cbdaf1);
-                border-radius: 10px;
-            }
-            * {
-                font-weight: bold;
-                background-color: #FFFFFF;
-                border-radius: 10px;
-            }
-            """)
+#        self.setStyleSheet("""
+#            *::hover {
+#                background: qlineargradient(x1: 0, y1: 0, x2: 0,
+#                                            y2: 1,
+#                                            stop: 0 #e7effd,
+#                                            stop: 1 #cbdaf1);
+#                border-radius: 10px;
+#            }
+#            * {
+#                font-weight: bold;
+#                background-color: #FFFFFF;
+#                border-radius: 10px;
+#            }
+#            """)
+        self.setModel(self.model)
+        self.setAnimated(True)
+        self.setHeaderHidden(True)
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.slot = None
 
     def set(self, modules, slot=None):
         # Create a line in the model with modulename, versions and desc
+        self.slot = slot
         l = list(modules.keys())
         l.sort()
-        w=QWidget(self)        
-        self.vbox=QVBoxLayout(w)
         for m in l:
+            header = QStandardItem("%s" % modules[m].name)
+            header.setIcon(QIcon(DEFL_ICON))
+            header.setEditable(False)
+            header.module = modules[m]
+            header.version = modules[m].default_version
+            mods = []
             for v in modules[m].versions:
-                line = ModuleGui(modules[m].name, v, modules[m], slot=slot)
-                self.vbox.addWidget(line)
-        self.scroll.setWidget(w)
+                #line = ModuleGui(modules[m].name, v, modules[m], slot=slot)
+                mod = QStandardItem("%s/%s" % (modules[m].name, v))
+                mod.setToolTip("%s/%s" % (modules[m], v))
+                mod.setEditable(False)
+                mod.module = modules[m]
+                mod.version = v
+                mods.append(mod)
+            header.appendRows(mods)
+            self.model.appendRow(header)
+            self.connect(self, SIGNAL("collapsed(QModelIndex)"), self.enableSubtree)
+            self.connect(self, SIGNAL("expanded(QModelIndex)"), self.disableSubtree)
 
     def expert(self, expert=True):
         if expert :
@@ -366,7 +372,7 @@ class ModuleChoice(QWidget):
         else:
             print "Mode expert deactivated: showing all modules"
         for i in range(0, self.vbox.count()):
-            line = self.vbox.itemAt(i).widget()
+            line = self.model.itemAt(i).widget()
             module = line.data
             print "Module to hide : %s/%s module default: %s" % (
                                               line.name.text(),
@@ -376,3 +382,32 @@ class ModuleChoice(QWidget):
                 line.hide()
             else:
                 line.show()
+
+    def currentChanged(self, current, previous):
+        """Manage selection
+           * Only the root item if collapsed
+           * Only one child if expanded
+        """
+        selection = self.selectionModel()
+        item = self.model.item(current.parent().row())
+        item.setSelectable(False)
+        selection.select(item.index(), QItemSelectionModel.Deselect)
+        # Only select on element on the subtree
+        for i in range(0, item.rowCount()):
+            child = item.child(i)
+            if child.index() != current:
+                selection.select(child.index(), QItemSelectionModel.Deselect)
+        module = item.child(current.row()).module
+        version = item.child(current.row()).version
+        module.select(version)
+        self.slot(module)
+
+    def enableSubtree(self, index):
+        """Enable root item"""
+        item = self.model.item(index.row())
+        item.setSelectable(True)
+
+    def disableSubtree(self, index):
+        """Disable root item"""
+        item = self.model.item(index.row())
+        item.setSelectable(False)
