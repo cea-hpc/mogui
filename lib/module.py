@@ -94,6 +94,8 @@ class Modulecmd(object):
         try:
             file = open(destpath, "r")
             for line in file.readlines():
+                if line.strip().startswith("#") or '/' not in line:
+                    continue
                 (modname, version) = line.rsplit('/', 1)
                 if self.mods[modname] :
                     self.mods[modname].select()
