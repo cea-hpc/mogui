@@ -125,7 +125,7 @@ class MoGui(QMainWindow):
 
         # Modules list (with label)
         self.modulelabel = QLabel("Liste des produits disponibles:")
-        self.modulechoice = ModuleChoice()
+        self.modulelist = ModuleChoice()
 
         # Info about current Module
         self.infolabel = QLabel("Information :")
@@ -140,7 +140,7 @@ class MoGui(QMainWindow):
         # Module list frame
         self.moduleslayout = QVBoxLayout()
         self.moduleslayout.addWidget(self.modulelabel)
-        self.moduleslayout.addWidget(self.modulechoice)
+        self.moduleslayout.addWidget(self.modulelist)
         self.moduleslayout.addWidget(self.infolabel)
         self.moduleslayout.addWidget(self.info)
         self.moduleslayout.addWidget(self.historylabel)
@@ -166,12 +166,12 @@ class MoGui(QMainWindow):
 
         #Test
         self.connect(self.choiceList, SIGNAL("dropEvent()"), self.dropModule)
-        self.connect(actionHelp, SIGNAL("triggered()"), self.modulechoice.expert)
+        self.connect(actionHelp, SIGNAL("triggered()"), self.modulelist.expert)
 
     def setModules(self, modules):
         self.mods = modules
-        # Set the module list to the modulechoice widget
-        self.modulechoice.set(modules, slot=self.add)
+        # Set the module list to the modulelist widget
+        self.modulelist.set(modules, slot=self.add)
 
     def dropModule(self, event):
         module_gui = event.mimeData()
