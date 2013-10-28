@@ -98,8 +98,7 @@ class Modulecmd(object):
                     continue
                 (modname, version) = line.rsplit('/', 1)
                 if self.mods[modname] :
-                    self.mods[modname].select()
-                    self.mods[modname].current_version = version
+                    self.mods[modname].select(version)
         except IOError, e :
             print "Impossible de lire %s : %s" % (destpath, e)
 
@@ -141,8 +140,10 @@ class Module(object):
         self.modulecmd = modulecmd_path
         self.desc()
 
-    def select(self, isselected=True):
+    def select(self, version=False, isselected=True):
         self.selected = isselected
+        if version:
+            self.setVersion(version)
 
     def __str__(self):
         return "%s/%s" % (self.name, self.current_version)
