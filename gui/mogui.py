@@ -320,20 +320,6 @@ class ModuleChoice(QTreeView):
  
         self.model=QStandardItemModel()
  
-#        self.setStyleSheet("""
-#            *::hover {
-#                background: qlineargradient(x1: 0, y1: 0, x2: 0,
-#                                            y2: 1,
-#                                            stop: 0 #e7effd,
-#                                            stop: 1 #cbdaf1);
-#                border-radius: 10px;
-#            }
-#            * {
-#                font-weight: bold;
-#                background-color: #FFFFFF;
-#                border-radius: 10px;
-#            }
-#            """)
         self.setModel(self.model)
         self.setAnimated(True)
         self.setHeaderHidden(True)
