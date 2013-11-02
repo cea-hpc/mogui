@@ -171,7 +171,7 @@ class MoGui(QMainWindow):
     def setModules(self, modules):
         self.mods = modules
         # Set the module list to the modulelist widget
-        self.modulelist.set(modules, slot=self.__addToChoice)
+        self.modulelist.set(modules, add=self.__addToChoice, remove=self.__removeFromChoice)
         for m in self.mods.keys():
             if self.mods[m].selected:
                 self.__addToChoice(self.mods[m])
@@ -234,6 +234,13 @@ class MoGui(QMainWindow):
         self.info.setText(module.help())
         name.setToolTip(module.help())
 
+    def __removeFromChoice(self, module):
+        module_str = "%s" % module
+        model = self.choiceModel
+        chosen = model.findItems(module_str)
+        if len(chosen):
+            model.removeRow(chosen[0].index().row())
+            self.history.append("%s deselected" % module_str)
 
     def save(self):
         msg = ""
@@ -325,11 +332,13 @@ class ModuleChoice(QTreeView):
         self.setHeaderHidden(True)
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.setSelectionMode(QAbstractItemView.MultiSelection)
-        self.slot = None
+        self.add = None
+        self.remove = None
 
-    def set(self, modules, slot=None):
+    def set(self, modules, add=None, remove=None):
         # Create a line in the model with modulename, versions and desc
-        self.slot = slot
+        self.add = add
+        self.remove = remove
         l = list(modules.keys())
         l.sort()
         for m in l:
@@ -369,29 +378,61 @@ class ModuleChoice(QTreeView):
             else:
                 line.show()
 
-    def currentChanged(self, current, previous):
-        """Manage selection
+    def selectionChanged(self, selected, deselected):
+        """
+           Manage selection
            * Only the root item if collapsed
            * Only one child if expanded
         """
         selection = self.selectionModel()
-        item = self.model.item(current.parent().row())
-        item.setSelectable(False)
-        selection.select(item.index(), QItemSelectionModel.Deselect)
-        # Only select on element on the subtree
-        for i in range(0, item.rowCount()):
-            child = item.child(i)
-            if child.index() != current:
-                selection.select(child.index(), QItemSelectionModel.Deselect)
-        module = item.child(current.row()).module
-        version = item.child(current.row()).version
-        module.select(version)
-        self.slot(module)
+        root = self.model.invisibleRootItem()
+        for index in selected.indexes():
+            parent = index.parent()
+            moduleGroup = self.model.item(parent.row())
+            # We selected a version of a module
+            if moduleGroup:
+                moduleGroup.setSelectable(False)
+                selection.select(moduleGroup.index(),
+                                 QItemSelectionModel.Deselect)
+                # Only select on element on the subtree
+                for i in range(0, moduleGroup.rowCount()):
+                    child = moduleGroup.child(i)
+                    if child.index() != index:
+                        selection.select(child.index(),
+                                         QItemSelectionModel.Deselect)
+                version = moduleGroup.child(index.row()).version
+                moduleGroup.module.select(version)
+            else:
+                moduleGroup = self.model.item(index.row())
+                moduleGroup.module.select()
+            module = moduleGroup.module
+            print "Selected %s" % module
+            self.add(module)
+        for index in deselected.indexes():
+            parent = index.parent()
+            moduleGroup = self.model.item(parent.row())
+            # We selected a version of a module
+            if not moduleGroup:
+                moduleGroup = self.model.item(index.row())
+            module = moduleGroup.module
+            moduleGroup.module.deselect()
+            print "Deselected %s" % module
+            self.remove(module)
 
     def enableSubtree(self, index):
         """Enable root item"""
         item = self.model.item(index.row())
         item.setSelectable(True)
+        selection = self.selectionModel()
+        moduleGroup = self.model.item(index.row())
+        # Select root item if at least one subitem is selected
+        for i in range(0, moduleGroup.rowCount()):
+            child = moduleGroup.child(i)
+            selected = selection.isSelected(child.index())
+            if selected:
+                break
+        if selected:
+            selection.select(index, QItemSelectionModel.Select)
 
     def disableSubtree(self, index):
         """Disable root item"""

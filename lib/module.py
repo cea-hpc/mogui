@@ -145,6 +145,9 @@ class Module(object):
         if version:
             self.setVersion(version)
 
+    def deselect(self):
+        self.select(False, False)
+
     def __str__(self):
         return "%s/%s" % (self.name, self.current_version)
 
