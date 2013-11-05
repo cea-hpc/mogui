@@ -169,12 +169,18 @@ class MoGui(QMainWindow):
         self.connect(actionHelp, SIGNAL("triggered()"), self.modulelist.expert)
 
     def setModules(self, modules):
-        self.mods = modules
+        self.mods = modules.mods
         # Set the module list to the modulelist widget
-        self.modulelist.set(modules, add=self.__addToChoice, remove=self.__removeFromChoice)
-        for m in self.mods.keys():
-            if self.mods[m].selected:
-                self.__addToChoice(self.mods[m])
+        self.modulelist.set(self.mods, add=self.__addToChoice, remove=self.__removeFromChoice)
+        # Add selected modules in the choiceList
+        for m in modules.selected():
+            self.__addToChoice(m)
+            # Selected modules in the modulelist
+            self.modulelist.select(m)
+        # Hack to select all moduleGroup
+        self.modulelist.expandAll()
+        self.modulelist.collapseAll()
+        ##
 
     def dropModule(self, event):
         module_gui = event.mimeData()
@@ -224,10 +230,10 @@ class MoGui(QMainWindow):
             row = chosen[0].index().row()
             model.setItem(row, name)
             # Should be a popup
-            print "%s already added !!" % module_str
+            self.history.append("%s already added !!" % module_str)
         else:
             # Add only the module if it doesn't exist in the choice list
-            print "Try to add %s" % module_str
+            self.history.append("Try to add %s" % module_str)
             model.appendRow(name)
 
         self.history.append("%s selected" % module_str)
@@ -250,17 +256,17 @@ class MoGui(QMainWindow):
         QMessageBox.information(self, "Sauvegarde des modules",
                                       "Modules to save :\n%s" % msg
                                )
-        cea_module = Modulecmd(modulecmd_path = self.modulecmd)
-        cea_module.save(self.mods)
+        modules = Modulecmd(modulecmd_path = self.modulecmd)
+        modules.save(self.mods)
 
     def reset(self):
-        cea_module = Modulecmd(modulecmd_path = self.modulecmd)
-        cea_module.modules()
-        cea_module.load()
+        modules = Modulecmd(modulecmd_path = self.modulecmd)
+        modules.modules()
+        modules.load()
         ## To remove (only for test)
-        cea_module.test()
+        modules.test()
         self.choiceModel.clear()
-        self.setModules(cea_module.mods)
+        self.setModules(modules)
 
     def terminal(self):
         print "TODO"
@@ -286,39 +292,20 @@ class MoGui(QMainWindow):
         self.writeSettings()
         super(MoGui, self).close()
 
-class ModuleGui(QWidget):
-    """Represents 2 objects of a module: a name and a version"""
-    def __init__(self, name, version, data, slot=None, parent=None):
-        super(ModuleGui, self).__init__(parent)
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0,0,0,0)
-        self.data = data
-        self.name = QLabel(name)
-        self.version = QLabel(version)
-        self.button = QPushButton("+")
-        layout.addWidget(self.name)
-        layout.addSpacing(40)
-        layout.addWidget(self.version)
-        layout.addSpacing(40)
-        layout.addWidget(self.button)
-        self.setLayout(layout)
-
-        self.connect(self.button, SIGNAL("clicked()"),
-                     self.selected)
-
-        if slot != None :
-            self.connect(self, SIGNAL("selected()"), slot)
-            self.connect(self, SIGNAL("clicked()"), slot)
-
-
-    def selected(self):
-        self.emit(SIGNAL("selected()"))
-        # Deactivate when the module is selected
-        # (must enable the other versions)
-        #self.button.setEnabled(False)
-
-    def mouseReleaseEvent(self, event):  
-        self.emit(SIGNAL('clicked()'))
+class ModuleGui(QStandardItem):
+    """Represents a module: a name and a version"""
+    def __init__(self, module, version=None):
+        if version :
+            super(ModuleGui, self).__init__("%s/%s" % (module.name, version))
+        else:
+            super(ModuleGui, self).__init__(module.name)
+        self.setIcon(QIcon(DEFL_ICON))
+        self.setEditable(False)
+        self.module = module
+        if version:
+            self.version = version
+        else:
+            self.version = module.default_version
 
 class ModuleChoice(QTreeView):
     """List available modules"""
@@ -334,6 +321,7 @@ class ModuleChoice(QTreeView):
         self.setSelectionMode(QAbstractItemView.MultiSelection)
         self.add = None
         self.remove = None
+        self._expert = False
 
     def set(self, modules, add=None, remove=None):
         # Create a line in the model with modulename, versions and desc
@@ -342,41 +330,40 @@ class ModuleChoice(QTreeView):
         l = list(modules.keys())
         l.sort()
         for m in l:
-            header = QStandardItem("%s" % modules[m].name)
-            header.setIcon(QIcon(DEFL_ICON))
-            header.setEditable(False)
-            header.module = modules[m]
-            header.version = modules[m].default_version
+            header = ModuleGui(modules[m])
             mods = []
             for v in modules[m].versions:
-                #line = ModuleGui(modules[m].name, v, modules[m], slot=slot)
-                mod = QStandardItem("%s/%s" % (modules[m].name, v))
-                mod.setToolTip("%s/%s" % (modules[m], v))
-                mod.setEditable(False)
-                mod.module = modules[m]
-                mod.version = v
+                mod = ModuleGui(modules[m], v)
                 mods.append(mod)
             header.appendRows(mods)
             self.model.appendRow(header)
             self.connect(self, SIGNAL("collapsed(QModelIndex)"), self.enableSubtree)
             self.connect(self, SIGNAL("expanded(QModelIndex)"), self.disableSubtree)
 
-    def expert(self, expert=True):
-        if expert :
-            print "Mode expert: hiding unuseful modules"
+    def expert(self):
+        self._expert = not self._expert
+        if self._expert:
+            self.expandAll()
         else:
-            print "Mode expert deactivated: showing all modules"
-        for i in range(0, self.vbox.count()):
-            line = self.model.itemAt(i).widget()
-            module = line.data
-            print "Module to hide : %s/%s module default: %s" % (
-                                              line.name.text(),
-                                              line.version.text(),
-                                              module.default_version)
-            if expert and (line.version.text() != module.default_version) :
-                line.hide()
-            else:
-                line.show()
+            self.collapseAll()
+
+    def select(self, module):
+        """ Select a module in the list """
+        root = self.model.invisibleRootItem()
+        selection = self.selectionModel()
+        for h in range(0, root.rowCount()):
+            header = root.child(h)
+            for i in range(0, header.rowCount()):
+                child = header.child(i)
+                if child.module.name == module.name and \
+                       child.version == module.current_version :
+                    selection.select(child.index(), QItemSelectionModel.Select)
+                    self.select_module(child.index())
+
+    def collapseAll(self):
+        root = self.model.invisibleRootItem()
+        for i in range(0, root.rowCount()):
+            self.collapse(root.child(i).index())
 
     def selectionChanged(self, selected, deselected):
         """
@@ -391,10 +378,7 @@ class ModuleChoice(QTreeView):
             moduleGroup = self.model.item(parent.row())
             # We selected a version of a module
             if moduleGroup:
-                moduleGroup.setSelectable(False)
-                selection.select(moduleGroup.index(),
-                                 QItemSelectionModel.Deselect)
-                # Only select on element on the subtree
+                # Only select one element in the subtree
                 for i in range(0, moduleGroup.rowCount()):
                     child = moduleGroup.child(i)
                     if child.index() != index:
@@ -411,30 +395,50 @@ class ModuleChoice(QTreeView):
         for index in deselected.indexes():
             parent = index.parent()
             moduleGroup = self.model.item(parent.row())
-            # We selected a version of a module
+            # We selected module header
             if not moduleGroup:
                 moduleGroup = self.model.item(index.row())
+                # We deselect all its childs
+                for i in range(0, moduleGroup.rowCount()):
+                    child = moduleGroup.child(i)
+                    selection.select(child.index(), QItemSelectionModel.Deselect)
             module = moduleGroup.module
             moduleGroup.module.deselect()
             print "Deselected %s" % module
             self.remove(module)
+        self.update()
 
     def enableSubtree(self, index):
         """Enable root item"""
+        self.model.item(index.row()).setSelectable(True)
+        self.select_module(index)
+
+    def disableSubtree(self, index):
+        """Disable root item"""
+        self.model.item(index.row()).setSelectable(False)
+        self.select_version(index)
+
+    def select_version(self, index):
+        # Select subversion item of a module
         item = self.model.item(index.row())
-        item.setSelectable(True)
         selection = self.selectionModel()
-        moduleGroup = self.model.item(index.row())
+        selected = selection.isSelected(index)
+        for i in range(0, item.rowCount()):
+            child = item.child(i)
+            if child.text() == "%s" % item.module:
+                selected_child = child
+        if selected:
+            selection.select(selected_child.index(), QItemSelectionModel.Select)
+
+    def select_module(self, index):
+        # Select module item of a module version
+        item = self.model.item(index.row())
+        selection = self.selectionModel()
         # Select root item if at least one subitem is selected
-        for i in range(0, moduleGroup.rowCount()):
-            child = moduleGroup.child(i)
+        for i in range(0, item.rowCount()):
+            child = item.child(i)
             selected = selection.isSelected(child.index())
             if selected:
                 break
         if selected:
             selection.select(index, QItemSelectionModel.Select)
-
-    def disableSubtree(self, index):
-        """Disable root item"""
-        item = self.model.item(index.row())
-        item.setSelectable(False)
