@@ -17,12 +17,15 @@ class Modulecmd(object):
         self.savepath = '%s%s%s%s%s' % (os.environ['HOME'], os.sep,
                                   ".config/MoGui", os.sep, "modules")
 
-    def launch(self, command, arguments=[]):
+    def launch(self, command, arguments=[], stderr=True, stdout=False):
         output = []
         try:
             commands = Popen([self.modulecmd, self.shell, command ] + arguments,
                                              stdout=PIPE, stderr=PIPE)
-            output = commands.stderr.readlines()
+            if stderr:
+                output += commands.stderr.readlines()
+            if stdout:
+                output += (commands.stdout.readlines())
         except OSError, e:
             print "Impossible d'executer la commande %s : %s" % ([self.modulecmd,
                                             self.shell, command ] + arguments, e)

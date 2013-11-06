@@ -38,6 +38,7 @@ from PyQt4.QtGui import (
 
 # To launch commands
 from subprocess import Popen
+from tempfile import NamedTemporaryFile
 # Save and restore modules
 from lib.module import (Modulecmd, Module)
 
@@ -269,8 +270,35 @@ class MoGui(QMainWindow):
         self.setModules(modules)
 
     def terminal(self):
-        print "TODO"
-        commands = Popen([self.consolecmd])
+        """
+            Launch a self.consolecmd with preloaded modules
+        """
+        modules = Modulecmd(modulecmd_path = self.modulecmd)
+        args = []
+        for mod in self.mods.values():
+            if mod.selected:
+                args.append("%s" % mod)
+        tmpfile = NamedTemporaryFile(delete=False)
+        tmpfile.writelines(modules.launch(command="purge",
+                                                    stderr=False, stdout=True))
+        tmpfile.write("""
+from subprocess import call
+import os
+for key in os.environ.keys():
+    if key not in [ 'TMPDIR', 'LANG', 'HOME', 'USER', 'DISPLAY', 'MODULEPATH' ]:
+        del os.environ[key]
+os.environ['LOADEDMODULES']=':'
+print os.environ
+myenv=os.environ
+print "%s"
+""" % args)
+        tmpfile.writelines(modules.launch(command="load", arguments=args,
+                                                    stderr=False, stdout=True)[1:])
+        tmpfile.write("call([\"%s\"])\n" % self.consolecmd)
+        tmpfile.flush()
+        print "Launching : %s" % ["python", tmpfile.name, tmpfile]
+        commands = Popen(["python", tmpfile.name])
+        tmpfile.close()
 
     def help(self):
         print "TODO"
