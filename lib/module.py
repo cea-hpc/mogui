@@ -94,11 +94,13 @@ class Modulecmd(object):
         try:
             file = open(destpath, "r")
             for line in file.readlines():
-                if line.strip().startswith("#") or '/' not in line:
+                line = line.strip()
+                if line.startswith("#") or '/' not in line:
                     continue
                 (modname, version) = line.rsplit('/', 1)
                 if self.mods[modname] :
                     self.mods[modname].select(version)
+                    print "LOAD: select %s (should be %s)" % (self.mods[modname], version)
         except IOError, e :
             print "Impossible de lire %s : %s" % (destpath, e)
 
@@ -114,7 +116,7 @@ class Modulecmd(object):
     def selected(self):
         """Return the list of selected modules"""
         selected = []
-        for mod in self.mods:
+        for mod in self.mods.values():
             if mod.selected:
                 selected.append(mod)
         return selected
