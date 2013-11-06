@@ -23,13 +23,13 @@ if not os.environ.has_key('LOADEDMODULES'):
     os.environ['LOADEDMODULES'] = '';
 
 if __name__ == "__main__":
-    cea_module = Modulecmd(modulecmd_path='/opt/Modules/bin/modulecmd.tcl')
+    modules = Modulecmd(modulecmd_path='/opt/Modules/bin/modulecmd.tcl')
     if len(sys.argv) > 1 :
-        print string.join(cea_module.launch(sys.argv[1], sys.argv[2:]))
+        print string.join(modules.launch(sys.argv[1], sys.argv[2:]))
         sys.exit(0)
-    cea_module.modules()
-    cea_module.load()
-    cea_module.test()
+    modules.modules()
+    modules.load()
+    modules.test()
 
     # Init in Qt gui mode
     app = QApplication(sys.argv)
@@ -43,9 +43,9 @@ if __name__ == "__main__":
     except IOError:
         pass
 
-    print cea_module
-    gui = MoGui(cea_module.mods, modulecmd_path='/opt/Modules/bin/modulecmd.tcl')
-    gui.setModules(cea_module.mods)
+    print modules
+    gui = MoGui(modules.mods, modulecmd_path='/opt/Modules/bin/modulecmd.tcl')
+    gui.setModules(modules)
     gui.show()
 
     sys.exit(app.exec_())
