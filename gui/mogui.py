@@ -267,6 +267,7 @@ class MoGui(QMainWindow):
         ## To remove (only for test)
         modules.test()
         self.choiceModel.clear()
+        self.modulelist.clear()
         self.setModules(modules)
 
     def terminal(self):
