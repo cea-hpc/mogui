@@ -16,8 +16,17 @@ from gui.mogui import MoGui
 from PyQt4.QtGui import ( QApplication )
 
 if not os.environ.has_key('MODULEPATH'):
-    os.environ['MODULEPATH'] = os.popen("""sed -n 's/[  #].*$//; /./H; $ { x; s/^\\n//; s/\\n/:/g; p; }' ${MODULESHOME}/init/.modulespath""").readline()
-    print "Module path: %s" % os.environ['MODULEPATH']
+    try:
+        paths = open(os.sep.join([ os.environ['MODULESHOME'],
+                               "/init/.modulespath"])).readlines()
+        paths = [ p.strip() for p in paths if p.startswith(os.sep) ]
+        os.environ['MODULEPATH'] = ':'.join(paths)
+        print "Module path: %s" % os.environ['MODULEPATH']
+    except IOError:
+        print "No MODULESPATH found, no module will be loaded"
+    except KeyError:
+        print "No MODULESHOME found, is module correctly installed ?"
+        sys.exit(1)
 
 if not os.environ.has_key('LOADEDMODULES'):
     os.environ['LOADEDMODULES'] = '';
