@@ -471,3 +471,7 @@ class ModuleChoice(QTreeView):
                 break
         if selected:
             selection.select(index, QItemSelectionModel.Select)
+
+    def clear(self):
+        """ Clear all items """
+        self.model.clear()
