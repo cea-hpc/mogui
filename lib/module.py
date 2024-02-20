@@ -7,9 +7,11 @@
 import os, string
 from subprocess import Popen, PIPE
 
+DEFAULT_MODULE_PATH='/usr/local/Modules/libexec/modulecmd.tcl'
+
 class Modulecmd(object):
     def __init__(self, shell="python",
-                       modulecmd_path='/opt/Modules/default/bin/modulecmd'):
+                 modulecmd_path=DEFAULT_MODULE_PATH):
         self.shell = shell
         self.mods = {}
         self.modulecmd = modulecmd_path
@@ -26,9 +28,9 @@ class Modulecmd(object):
                 output += commands.stderr.readlines()
             if stdout:
                 output += (commands.stdout.readlines())
-        except OSError, e:
-            print "Impossible d'executer la commande %s : %s" % ([self.modulecmd,
-                                            self.shell, command ] + arguments, e)
+        except OSError as e:
+            print("Impossible d'executer la commande %s : %s" % ([self.modulecmd,
+                                            self.shell, command ] + arguments, e))
 
         ## commands starts from the 2nd index to skip the headers
         return output
@@ -43,6 +45,7 @@ class Modulecmd(object):
         desc = None
 
         for l in lines:
+            l = l.decode()
             ## Ignore empty lines and line statring with a path
             if ( l != "\n") and not (l.startswith('/')) and not (l.startswith('--')):
                 mod = l.split(None)[0]
@@ -85,8 +88,8 @@ class Modulecmd(object):
         try:
             file = open(self.savepath, "w")
             file.write(msg)
-        except IOError, e :
-            print "Impossible de sauvegarder %s : %s" % (self.savepath, e)
+        except IOError as e :
+            print("Impossible de sauvegarder %s : %s" % (self.savepath, e))
 
     def load(self, destpath=None):
         """
@@ -103,9 +106,9 @@ class Modulecmd(object):
                 (modname, version) = line.rsplit('/', 1)
                 if self.mods[modname] :
                     self.mods[modname].select(version)
-                    print "LOAD: select %s (should be %s)" % (self.mods[modname], version)
-        except IOError, e :
-            print "Impossible de lire %s : %s" % (destpath, e)
+                    print("LOAD: select %s (should be %s)" % (self.mods[modname], version))
+        except IOError as e :
+            print("Impossible de lire %s : %s" % (destpath, e))
 
     def __str__(self):
         ret = ""
@@ -175,26 +178,28 @@ class Module(object):
                                   ["%s/%s" %
                                    (self.name,
                                    self.default_version),
-                                   "0>&2"])[0].strip().split(":")[1].strip()
-        except IndexError, e:
-            print "Unable to get description of %s : %s" % \
-                                                            (self.name, e)
+                                   "0>&2"])[0].decode().strip().split(":")[1].strip()
+        except IndexError as e:
+            print("Unable to get description of %s : %s" % \
+                                                            (self.name, e))
         return self.description
 
     def help(self):
         cmd = Modulecmd(modulecmd_path=self.modulecmd)
         if not self.helpMessage :
             try :
-                self.helpMessage = string.join(open(cmd.helppath % self.name).readlines())
+                helpfile = open(cmd.helppath % self.name)
+                self.helpMessage = " ".join([line.decode() for line in helpfile.readlines()])
             except IOError :
-                self.helpMessage = string.join(cmd.launch("help", ["%s/%s" % (self.name, self.default_version)]))
+                raw_help_message = cmd.launch("help", ["%s/%s" % (self.name, self.default_version)])
+                self.helpMessage = " ".join([line.decode() for line in raw_help_message])
         if not self.helpMessage :
             self.helpMessage = "No help for %s" % self.name
         return self.helpMessage
 
     def addVersion(self, version, default=False):
         self.versions.append(version)
-        #print "Module: %s - added version : %s" % (self.name, version)
+        #print("Module: %s - added version : %s" % (self.name, version))
         if default:
             self.default_version = version
 

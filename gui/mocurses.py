@@ -93,67 +93,74 @@ class MocurseInfo(object):
         self.refresh()
 
 
-# Initialize curses
-stdscr = curses.initscr()
-curses.noecho()
-curses.cbreak()
-curses.curs_set(0)
-stdscr.keypad(True)
-stdscr.refresh()
+def main():
+    # Initialize curses
+    stdscr = curses.initscr()
+    curses.noecho()
+    curses.cbreak()
+    curses.curs_set(0)
+    stdscr.keypad(True)
+    stdscr.refresh()
 
-# Manage colors
-curses.start_color()
-curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
-curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
-curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_WHITE)
-curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_BLACK)
-curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_BLUE)
+    # Manage colors
+    curses.start_color()
+    curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
+    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_WHITE)
+    curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_BLUE)
 
-# Application Title
-stdscr.addstr(0, 0, "MoGui", curses.A_REVERSE)
-stdscr.chgat(0, 0, -1, curses.A_REVERSE)
-stdscr.addstr(curses.LINES - 1, 0, "Use UP and DOWN to scroll, Enter to select a module and Q to quit")
-stdscr.chgat(curses.LINES - 1, 0, -1, curses.color_pair(4))
+    # Application Title
+    stdscr.addstr(0, 0, "MoGui", curses.A_REVERSE)
+    stdscr.chgat(0, 0, -1, curses.A_REVERSE)
+    stdscr.addstr(curses.LINES - 1, 0, "Use UP and DOWN to scroll, Enter to select a module and Q to quit")
+    stdscr.chgat(curses.LINES - 1, 0, -1, curses.color_pair(4))
 
-# Create the module list
-stdscr.addstr(1, 0, "Module list")
-stdscr.chgat(1, 0, -1, curses.color_pair(2))
-moduleslist = MocurseList(0, 2, curses.COLS / 2 - 1, curses.LINES / 2 - 1)
-for mod in range(0, 99):
-    moduleslist.add(mod)
-moduleslist.select()
-moduleslist.refresh()
+    # Create the module list
+    stdscr.addstr(1, 0, "Module list")
+    stdscr.chgat(1, 0, -1, curses.color_pair(2))
+    half_cols = int(curses.COLS / 2)
+    half_lines = int(curses.LINES / 2)
+    moduleslist = MocurseList(0, 2, half_cols - 1, half_lines - 1)
+    # FIXME: For testing purpose: create 100 modules
+    for mod in range(0, 99):
+        moduleslist.add(mod)
+    ###
+    moduleslist.select()
+    moduleslist.refresh()
 
-# Create the module choice
-stdscr.addstr(1, curses.COLS / 2, "Chosen modules")
-stdscr.chgat(1, curses.COLS / 2, -1, curses.color_pair(4))
-moduleschoice = MocurseList(curses.COLS / 2, 2, curses.COLS - 1,
-                                                curses.LINES / 2 - 1)
-moduleschoice.refresh()
+    # Create the module choice
+    stdscr.addstr(1, half_cols, "Chosen modules")
+    stdscr.chgat(1, half_cols, -1, curses.color_pair(4))
+    moduleschoice = MocurseList(half_cols, 2, curses.COLS - 1,
+                                              half_lines - 1)
+    moduleschoice.refresh()
 
-# Create the info box
-modulesinfos = MocurseInfo(0, curses.LINES / 2, curses.COLS - 1, curses.LINES - 2)
-modulesinfos.refresh()
+    # Create the info box
+    modulesinfos = MocurseInfo(0, half_lines, curses.COLS - 1, curses.LINES - 2)
+    modulesinfos.refresh()
 
-stdscr.refresh()
-# Main loop
-while True:
-    c = stdscr.getch()
-    if c == ord('q'):
-        break  # Exit the while loop
-    elif c == curses.KEY_HOME:
-        x = y = 0
-    elif c == curses.KEY_DOWN:
-        modulesinfos.add(moduleslist.down())
-    elif c == curses.KEY_UP:
-        modulesinfos.add(moduleslist.up())
-    elif c == ord('\n'):
-        moduleschoice.add("module %s" % moduleslist.index)
-        moduleschoice.refresh()
+    stdscr.refresh()
+    # Main loop
+    while True:
+        c = stdscr.getch()
+        if c == ord('q'):
+            break  # Exit the while loop
+        elif c == curses.KEY_HOME:
+            x = y = 0
+        elif c == curses.KEY_DOWN:
+            modulesinfos.add(moduleslist.down())
+        elif c == curses.KEY_UP:
+            modulesinfos.add(moduleslist.up())
+        elif c == ord('\n'):
+            moduleschoice.add("module %s" % moduleslist.index)
+            moduleschoice.refresh()
 
-# Reset to default
-curses.nocbreak()
-stdscr.keypad(False)
-curses.echo()
-curses.endwin()
+    # Reset to default
+    curses.nocbreak()
+    stdscr.keypad(False)
+    curses.echo()
+    curses.endwin()
 
+if __name__ == '__main__':
+    main()

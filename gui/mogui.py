@@ -4,43 +4,49 @@
 # Author: A. Cedeyn
 #
 # Gui PyQt
-from PyQt4.QtCore import (
-                        Qt,
-                        SIGNAL,
-                        SLOT,
+from PyQt5.QtCore import (
+                        #SIGNAL,
+                        #SLOT,
+                        QItemSelectionModel,
                         QSettings,
                         QSize,
+                        Qt,
                         pyqtSlot,
                         pyqtSignal,
                         )
-from PyQt4.QtGui import (
+SIGNAL = pyqtSignal
+
+from PyQt5.QtGui import (
+                        QActionEvent,
+                        QIcon,
+                        QStandardItem,
+                        QStandardItemModel,
+                        )
+
+from PyQt5.QtWidgets import (
                         QAbstractItemView,
                         QAction,
                         QComboBox,
                         QDialog,
-                        QMainWindow,
-                        QMessageBox,
+                        QFrame,
                         QHBoxLayout,
-                        QIcon,
-                        QItemSelectionModel,
                         QItemDelegate,
                         QLabel,
                         QListView,
+                        QMainWindow,
+                        QMessageBox,
                         QPushButton,
-                        QVBoxLayout,
                         QScrollArea,
-                        QTreeView,
-                        QFrame,
-                        QStandardItemModel,
-                        QStandardItem,
                         QTextEdit,
+                        QTreeView,
+                        QVBoxLayout,
                         QWidget)
 
 # To launch commands
 from subprocess import Popen
 from tempfile import NamedTemporaryFile
 # Save and restore modules
-from lib.module import (Modulecmd, Module)
+from lib.module import (Modulecmd, Module, DEFAULT_MODULE_PATH)
 
 ICON = "images/accessories-dictionary.png"
 RESET_ICON = "images/reload.png"
@@ -53,7 +59,7 @@ XTERM = "/usr/bin/xterm"
 
 class MoGui(QMainWindow):
     def __init__(self, modules=None,
-                       modulecmd_path="/opt/Modules/default/bin/modulecmd"):
+                 modulecmd_path=DEFAULT_MODULE_PATH):
         super(MoGui, self).__init__()
         self.mods = modules
         self.setWindowTitle("MoGui")
@@ -70,27 +76,32 @@ class MoGui(QMainWindow):
         actionReset = QAction("&Reset", self)
         actionReset.setIcon(QIcon(RESET_ICON))
         actionReset.setShortcut("Ctrl-R")
-        self.connect(actionReset, SIGNAL("triggered()"), self.reset)
+        #self.connect(actionReset, SIGNAL("triggered()"), self.reset)
+        actionReset.triggered.connect(self.reset)
 
         actionSave = QAction("&Sauver", self)
         actionSave.setIcon(QIcon(SAVE_ICON))
         actionSave.setShortcut("Ctrl-S")
-        self.connect(actionSave, SIGNAL("triggered()"), self.save)
+        #self.connectNotify(actionSave, SIGNAL("triggered()"), self.save)
+        actionSave.triggered.connect(self.save)
 
         actionTerm = QAction("&Terminal", self)
         actionTerm.setIcon(QIcon(TERM_ICON))
         actionTerm.setShortcut("Ctrl-T")
-        self.connect(actionTerm, SIGNAL("triggered()"), self.terminal)
+        #self.connectNotify(actionTerm, SIGNAL("triggered()"), self.terminal)
+        actionTerm.triggered.connect(self.terminal)
 
         actionHelp = QAction("&Aide", self)
         actionHelp.setIcon(QIcon(HELP_ICON))
         actionHelp.setShortcut("F1")
-        self.connect(actionHelp, SIGNAL("triggered()"), self.help)
+        #self.connectNotify(actionHelp, SIGNAL("triggered()"), self.help)
+        actionHelp.triggered.connect(self.help)
 
         actionQuit = QAction("&Quitter", self)
         actionQuit.setIcon(QIcon(QUIT_ICON))
         actionQuit.setShortcut("Ctrl-Q")
-        self.connect(actionQuit, SIGNAL("triggered()"), self.close)
+        #self.connectNotify(actionQuit, SIGNAL("triggered()"), self.close)
+        actionQuit.triggered.connect(self.close)
 
         # Set ToolBar
         self.toolbar = self.addToolBar("&Barre d'outils")
@@ -166,8 +177,10 @@ class MoGui(QMainWindow):
         self.layout.addLayout(self.choicelayout)
 
         #Test
-        self.connect(self.choiceList, SIGNAL("dropEvent()"), self.dropModule)
-        self.connect(actionHelp, SIGNAL("triggered()"), self.modulelist.expert)
+        #self.connectNotify(self.choiceList, SIGNAL("dropEvent()"), self.dropModule)
+        #self.choiceList.dropEvent().triggered.connect(self.dropModule)
+        #self.connectNotify(actionHelp, SIGNAL("triggered()"), self.modulelist.expert)
+        actionHelp.triggered.connect(self.modulelist.expert)
 
     def setModules(self, modules):
         self.mods = modules.mods
@@ -279,7 +292,7 @@ class MoGui(QMainWindow):
         for mod in self.mods.values():
             if mod.selected:
                 args.append("%s" % mod)
-        tmpfile = NamedTemporaryFile(delete=False)
+        tmpfile = NamedTemporaryFile(mode='w+t', delete=False)
         tmpfile.writelines(modules.launch(command="purge",
                                                     stderr=False, stdout=True))
         tmpfile.write("""
@@ -289,20 +302,22 @@ for key in os.environ.keys():
     if key not in [ 'TMPDIR', 'LANG', 'HOME', 'USER', 'DISPLAY', 'MODULEPATH' ]:
         del os.environ[key]
 os.environ['LOADEDMODULES']=':'
-print os.environ
+print(os.environ)
 myenv=os.environ
-print "%s"
+print("%s")
 """ % args)
-        tmpfile.writelines(modules.launch(command="load", arguments=args,
-                                                    stderr=False, stdout=True)[1:])
+        for line in modules.launch(command="load", arguments=args,
+                                   stderr=False, stdout=True)[1:]:
+            tmpfile.write(line.decode())
+
         tmpfile.write("call([\"%s\"])\n" % self.consolecmd)
         tmpfile.flush()
-        print "Launching : %s" % ["python", tmpfile.name, tmpfile]
+        print("Launching : %s" % ["python", tmpfile.name, tmpfile])
         commands = Popen(["python", tmpfile.name])
         tmpfile.close()
 
     def help(self):
-        print "TODO"
+        print("TODO")
 
     def writeSettings(self):
         settings = QSettings("MoGui", "gui")
@@ -314,7 +329,8 @@ print "%s"
         settings = QSettings("MoGui", "gui")
         settings.beginGroup("toolbar")
         self.toolbar.setGeometry(settings.value("geometry",
-                                 self.toolbar.geometry()).toRect())
+                                 self.toolbar.geometry()))
+                                 #self.toolbar.geometry()).toRect())
         settings.endGroup()
 
     def close(self):
@@ -366,8 +382,8 @@ class ModuleChoice(QTreeView):
                 mods.append(mod)
             header.appendRows(mods)
             self.model.appendRow(header)
-            self.connect(self, SIGNAL("collapsed(QModelIndex)"), self.enableSubtree)
-            self.connect(self, SIGNAL("expanded(QModelIndex)"), self.disableSubtree)
+            #self.connectNotify(self, SIGNAL("collapsed(QModelIndex)"), self.enableSubtree)
+            #self.connectNotify(self, SIGNAL("expanded(QModelIndex)"), self.disableSubtree)
 
     def expert(self):
         self._expert = not self._expert
@@ -419,7 +435,7 @@ class ModuleChoice(QTreeView):
                 moduleGroup = self.model.item(index.row())
                 moduleGroup.module.select()
             module = moduleGroup.module
-            print "Selected %s" % module
+            print("Selected %s" % module)
             self.add(module)
         for index in deselected.indexes():
             parent = index.parent()
@@ -433,7 +449,7 @@ class ModuleChoice(QTreeView):
                     selection.select(child.index(), QItemSelectionModel.Deselect)
             module = moduleGroup.module
             moduleGroup.module.deselect()
-            print "Deselected %s" % module
+            print("Deselected %s" % module)
             self.remove(module)
         self.update()
 
