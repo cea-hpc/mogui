@@ -93,7 +93,7 @@ class Modulecmd(object):
 
     def load(self, destpath=None):
         """
-        Save the modulelist from self.savepath or destpath if specified
+        Load the modulelist from self.savepath or destpath if specified
         """
         if not destpath:
             destpath = self.savepath
@@ -104,7 +104,7 @@ class Modulecmd(object):
                 if line.startswith("#") or '/' not in line:
                     continue
                 (modname, version) = line.rsplit('/', 1)
-                if self.mods[modname] :
+                if self.mods.get(modname) :
                     self.mods[modname].select(version)
                     print("LOAD: select %s (should be %s)" % (self.mods[modname], version))
         except IOError as e :
@@ -140,7 +140,7 @@ class Module(object):
                        selected=False,
                        default=False,
                        description=None,
-                       modulecmd_path='/opt/Modules/default/bin/modulecmd'):
+                       modulecmd_path=DEFAULT_MODULE_PATH):
 
         super(Module, self).__init__()
         self.name = name
