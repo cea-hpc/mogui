@@ -1,0 +1,9 @@
+#%Module1.0
+
+# Software description
+set version     "13.0.0.079"
+
+# Common
+if [file exists $env(MODULEPATH)/compilers/intel/.common] {
+        source $env(MODULEPATH)/compilers/intel/.common
+}

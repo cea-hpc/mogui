@@ -1,0 +1,23 @@
+#%Module1.0
+
+# Software description
+module-whatis   "MIC User Environment for native execution"
+set software    "mic-native"
+set version     "1.0"
+set description "MIC User Environment for native execution"
+set html        ""
+
+setenv MODULESCONTACT "grid-ocre-support@cea.fr"
+
+#load default mic related modules
+module load mic-hybrid
+
+#load impi specific variables for mic
+setenv I_MPI_MIC "1"
+setenv I_MPI_HOST_PROXY_PATH "$::env(I_MPI_ROOT)/mic/bin"
+setenv I_MPI_HYDRA_BOOTSTRAP "ssh"
+setenv BRIDGE_SLURM_INTELMPI_CMD "mpirun"
+setenv BRIDGE_SLURM_INTELMPI_CMD_OPTIONS "-env LD_LIBRARY_PATH \"$::env(MIC_LD_LIBRARY_PATH)\""
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common

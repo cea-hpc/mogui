@@ -1,0 +1,28 @@
+#%Module1.0
+
+# Software description
+module-whatis   "Boost C++ Libraries"
+set software    "boost"
+set description "Boost C++ libraries"
+set html        "http://www.boost.org/"
+
+# Conflict
+conflict        "$software"
+
+# Prerequites
+
+# Loads software's environment
+set libdir      "$prefix/lib"
+# application-specific variables
+set appnameup   BOOST
+# compilerwrappers-specific variables
+set ldflags     "-L$libdir -lboost"
+
+prepend-path    LD_LIBRARY_PATH         "$libdir"
+
+setenv          BOOST_INC_DIR           "$prefix/include"
+setenv          BOOST_LIB_DIR           "$libdir"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

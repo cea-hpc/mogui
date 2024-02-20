@@ -1,0 +1,21 @@
+#%Module1.0
+
+# Software description
+module-whatis   "Intel Compiler Suite"
+set software    "intel"
+set description "Intel C compiler (icc), C++ compiler (icpc), Fortran compiler (ifort), Application Debugger (idb) and Intel Math Kernel Library"
+set html        "http://www.intel.com/"
+
+# Conflict
+conflict        "$software"
+
+# Load underlying softwares
+module load c/intel/$version
+module load c++/intel/$version
+module load fortran/intel/$version
+module load mkl/$version
+#module load idb/$version
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

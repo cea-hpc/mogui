@@ -1,0 +1,13 @@
+#%Module1.0
+
+# Software description
+set version     "12.1.7.256"
+
+# Loads software's environment
+set mklroot       "/usr/local/Intel_compilers/c/composer_xe_2011_sp1.7.256/mkl"
+
+# Common
+if [file exists $env(MODULEPATH)/libraries/mkl/.common-12] {
+    source $env(MODULEPATH)/libraries/mkl/.common-12
+}
+

@@ -1,0 +1,24 @@
+#%Module1.0
+
+# Software description
+set html        "http://www.intel.com/"
+
+# must have same version as
+set sameversionlst "c/intel c++/intel fortran/intel idb"
+source $env(MODULEPATH)/.sameversion
+# should have same version as
+set warnsameversionlst "mkl"
+
+# Conflict
+conflict        "$software"
+
+# Loads software's environment
+prepend-path    PATH                    "$intel/cproc/bin/intel64"
+prepend-path    LD_LIBRARY_PATH         "$intel/cproc/lib/intel64"
+prepend-path	MANPATH                 "$intel/cproc/man"
+setenv          OMP_NUM_THREADS         "1"
+#prepend-path	NLSPATH                 "$intel/compiler/lib/intel64/locale/en_US"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

@@ -1,0 +1,63 @@
+# Help
+proc ModulesHelp { } {
+    global software
+    global version
+    global description
+    global html
+
+    puts stderr "Name        : $software"
+    puts stderr "Description : $description"
+    puts stderr "Version     : $version"
+    puts stderr "Web Site    : $html"
+    puts stderr ""
+}
+
+
+# Log
+proc ModulesLog { } {
+    global user
+    global software
+    global version
+
+    set logmsg "$user module load $software $version"
+
+    if { [module-info mode load] || [module-info mode switch2] } {
+        set ret [exec logger -t module $logmsg]
+    }
+}
+
+# WarningSameVersion
+proc ModulesWarningSameVersion { } {
+    global software
+    global version
+    global warnsameversionlst
+
+    if { [module-info mode "load"] } {
+        set sameversion 1
+        set notwarnsameversionlst ""
+        # check that each related software has same version
+        foreach modulefile [split $warnsameversionlst " "] {
+            if { [is-loaded $modulefile] && ![is-loaded $modulefile/$version] } {
+                set notwarnsameversionlst "$notwarnsameversionlst $modulefile"
+                set sameversion 0
+            }
+        }
+
+        if { $sameversion == 0 } {
+            puts stderr "$software loaded is not from same version as:$notwarnsameversionlst"
+        }
+    }
+}
+
+# enable modules log by default
+set user "$env(USER)"
+ModulesLog
+
+# should have same version as
+if { [info exists warnsameversionlst] } {
+    ModulesWarningSameVersion    
+}
+
+# load compilerwrappers mechanism
+source $env(MODULEPATH)/.compilerwrappers
+

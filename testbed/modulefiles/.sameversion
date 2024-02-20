@@ -1,0 +1,28 @@
+
+# the SameVersion mechanism is defined as a separated file to source
+# rather than included in .common since this code needs to be
+# called at the beginning of the modulefile to avoid some definitions
+# to be unset before reaching the "break" statement
+
+if { [module-info mode "load"] } {
+    set sameversion 1
+    set notsameversionlst ""
+    # check that each related software has same version
+    foreach modulefile [split $sameversionlst " "] {
+        if { [is-loaded $modulefile] && ![is-loaded $modulefile/$version] } {
+            set notsameversionlst "$notsameversionlst $modulefile"
+            set sameversion 0
+        }
+    }
+
+    if { $sameversion == 0 } {
+        # initialize errorInfo and set it empty to avoid
+        # Modules internal error message
+        set errorInfo ""
+        puts stderr "$software must have same version as:$notsameversionlst"
+        # cannot put this SameVersion mechanism is a proc function
+        # due to "break outside of a loop" error
+        break
+    }
+}
+

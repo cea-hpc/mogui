@@ -1,0 +1,13 @@
+#%Module1.0
+
+# Software description
+set version     "11.1.038"
+
+# Loads software's environment
+set intel       "/usr/local/Intel_compilers/$version"
+
+# Common
+if [file exists $env(MODULEPATH)/compilers/fortran/intel/.common-11] {
+    source $env(MODULEPATH)/compilers/fortran/intel/.common-11
+}
+

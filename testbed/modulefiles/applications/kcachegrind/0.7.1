@@ -1,0 +1,25 @@
+#%Module1.0
+
+# Software description
+module-whatis   "KCachegrind"
+set software    "kcachegrind"
+set version     "0.7.1"
+set description "cachegrind Graphical Front-End"
+set html        "kcachegrind.sourceforge.net/"
+
+# Conflict
+conflict    "$software"
+
+# Prereq
+
+# Loads software's environment
+set prefix      "/usr/local/$software-$version"
+
+# application-specific variables
+set appnameup "kcachegrind" 
+set exedir "$prefix/qcachegrind" 
+
+append-path  PATH   "$exedir"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common 

@@ -1,0 +1,24 @@
+#%Module1.0
+
+# Software description
+module-whatis	"GhostScript"
+set software	"ghostscript"
+set version	"9.04"
+set description	"An interpreter for the PostScript language and for PDF, and related software and documentation"
+set html	"http://pages.cs.wisc.edu/~ghost/"
+
+# Conflict
+conflict	"$software"
+
+# Loads software's environment
+set prefix	"/usr/local/$software-$version"
+# application-specific variables
+set appnameup "GHOSTSCRIPT"
+set exedir    "$prefix/bin"
+
+prepend-path	PATH			"$exedir"
+prepend-path	MANPATH			"$prefix/share/man"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

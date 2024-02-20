@@ -1,0 +1,30 @@
+#%Module
+
+module-whatis   "Sets up Bullx MPI in your environment"
+set software    "bullxmpi"
+set description "Bullx MPI MPI-2 implementation"
+set html        "http://www.bull.fr/"
+
+# Conflict
+conflict        "$software"
+conflict        "openmpi"
+conflict        "bullmpi"
+conflict        "intelmpi"
+conflict        "mvapich2"
+
+# Loads software's environment
+set prefix      "/opt/mpi/$software/$version"
+# application-specific variables
+set appnameup   "BULLXMPI"
+set exedir      "$prefix/bin"
+
+prepend-path	PATH		    "$exedir"
+prepend-path	LD_LIBRARY_PATH "$prefix/lib"
+prepend-path	MANPATH 	    "$prefix/man"
+
+setenv          MPI_ROOT        "$prefix"
+setenv		    BULLXMPI_RUN	"$prefix/bin/mpirun"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

@@ -1,0 +1,62 @@
+#%Module1.0
+
+# Software description
+module-whatis   "CCC User Environment"
+set software    "ccc"
+set version     "1.0"
+set description "CCC User Environment"
+set html        "http://www-hpc.cea.fr/"
+
+# cannot unload this module
+set nounloadmsg "CCC module is mandatory and cannot be unloaded"
+source $env(MODULEPATH)/.nounload
+
+setenv MODULESCONTACT "grid-ocre-support@cea.fr"
+
+# disconnect after 6 inactive-hours
+setenv TMOUT 21600
+
+setenv LANG "en_US.UTF-8"
+
+# generate proxy compat for PKINIT
+set-alias grid-proxy-init "grid-proxy-init -bits 1024"
+
+# localize config file for prace_service
+setenv PRACE_SERVICE_CONFIG "/etc/grid-security/prace_service.config"
+
+# mask setting
+system "umask 027"
+
+# flexlm license server
+# Recuperation du nom de la machine
+set host [exec hostname -s | tr -d '\[:digit:\]']
+if {[string compare $host "inti"]==0} {
+   setenv LM_LICENSE_FILE "28518@dns-server.c-inti.ocre.cea.fr"
+}
+if {[string compare $host "cirrus"]==0} {
+   setenv LM_LICENSE_FILE "28518@cws-inti.c-inti.ocre.cea.fr"	
+}
+
+# host alias for user documentation
+set host [exec hostname -s | tr -d '\[:digit:\]']
+set-alias "${host}.info" machine.info
+
+# docs and bridge local bins
+append-path PATH "/usr/local/ccc_users_env/bin"
+append-path PATH "/usr/local/ccc_bridge_app/bin"
+
+# user dirs global variables
+#set storedir [exec ccc_home -A]
+#setenv STOREDIR "$storedir"
+#setenv CCCSTOREDIR "$storedir"
+#set workdir [exec ccc_home -W]
+#setenv WORKDIR "$workdir"
+#setenv CCCWORKDIR "$workdir"
+set scratchdir [exec ccc_home -s]
+setenv SCRATCHDIR "$scratchdir"
+setenv TMPDIR "/tmp"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+
+setenv OMP_PROC_BIND true

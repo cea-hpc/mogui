@@ -1,0 +1,26 @@
+#%Module1.0
+
+# Software description
+module-whatis   "ImageMagick"
+set software    "imagemagick"
+set version     "6.7.4"
+set description "Toolkit for manipulation of graphic images, including conversion of images between a variety of different formats"
+set html        "http://www.imagemagick.org"
+
+# Conflict
+conflict        $software
+
+# Loads software's environment
+set prefix    "/usr/local/$software-$version"
+# application-specific variables
+set appnameup "IMAGEMAGICK"
+set exedir    "$prefix/bin"
+
+prepend-path    PATH                    "$exedir"
+prepend-path    LD_LIBRARY_PATH         "$prefix/lib"
+prepend-path    MANPATH                 "$prefix/share/man"
+
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

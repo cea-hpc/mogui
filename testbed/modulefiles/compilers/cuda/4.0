@@ -1,0 +1,33 @@
+#%Module1.0
+
+# Software description
+module-whatis   "NVIDIA Compute Unified Device Architecture"
+set software    "cuda"
+set version     "4.0"
+set description "Developpement tools CUDA for GPU NVIDIA"
+set html        "http://www.nvidia.com/cuda/"
+
+# Conflict
+conflict        "cuda"
+
+# Loads software's environment
+set prefix      "/usr/local/$software-$version"
+
+prepend-path    PATH                    "$prefix/bin"
+prepend-path    PATH                    "$prefix/computeprof/bin"
+#prepend-path   PATH                    "$prefix/openclprof/bin"
+prepend-path    LD_LIBRARY_PATH         "$prefix/lib64"
+#prepend-path    LD_LIBRARY_PATH         "$prefix/computeprof/bin"
+prepend-path    LD_LIBRARY_PATH         "$prefix/sdk/CUPTI/lib"
+
+
+
+setenv          CUDA_LIB_DIR            "$prefix/lib64"
+setenv          CUDA_ROOT               "$prefix"
+setenv          CUDA_SDK_ROOT           "$prefix/sdk/C"
+setenv          NV_OPENCL_SDK_ROOT      "$prefix/sdk/OpenCL"
+setenv          NV_OPENCL_INC_DIR       "$prefix/sdk/OpenCL/common/inc"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

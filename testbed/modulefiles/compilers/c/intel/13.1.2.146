@@ -1,0 +1,22 @@
+#%Module1.0
+
+# Software description
+set version     "13.1.2.146"
+
+# Loads software's environment
+set intel       "/usr/local/Intel_compilers/composer_xe_2013.2.146"
+
+set mictbblib "$intel/tbb/lib/mic"
+
+#TODO : move to common
+#prepend-path    CPATH   "/opt/intel/opencl/include"
+#prepend-path    LD_LIBRARY_PATH   "/opt/intel/opencl/lib64"
+
+# Common
+if [file exists $env(MODULEPATH)/compilers/c/intel/.common-13] {
+    source $env(MODULEPATH)/compilers/c/intel/.common-13
+}
+if [file exists $env(MODULEPATH)/compilers/c/intel/.common-13-mic] {
+    source $env(MODULEPATH)/compilers/c/intel/.common-13-mic
+}
+

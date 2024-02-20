@@ -1,0 +1,43 @@
+#%Module1.0
+
+# Software description
+module-whatis   "PRACE Common Production Environment"
+set software    "prace"
+set version     "1.0"
+set description "PRACE Common Production Environment"
+set html        "http://prace-ri.eu/Documentation-and-Best-Practice"
+
+# user dirs global variables
+setenv PRACE_SCRATCH [exec ccc_home -s]
+setenv PRACE_STORE [exec ccc_home -A]
+# no PRACE_HOME and PRACE_DATA variables since we do
+# not provide the PRACE global GPFS service
+
+# initial PATH before loading prace module
+# not so useful in our architecture where "prace"
+# module is a modulefile like everyone
+setenv PRACE_PATH_INITIAL $env(PATH)
+
+# HPC system architecture
+setenv PRACE_ARCH "Intel_EM64T_Linux"
+
+# reload every modules to take enable/disable PRACE-specific branches
+setenv MODULE_NORELOAD "prace"
+if { [module-info mode "load"] || [module-info mode "unload"] } {
+    foreach modulefile [split $env(LOADEDMODULES) ":"] {
+        # no reload of "prace" to avoid loop and no reload of "ccc"
+        # to avoid "NoUnload" error message
+        if { "$modulefile" != "prace" && "$modulefile" != "ccc" && "$modulefile" != "" } {
+            #module unload $modulefile
+            puts stderr "***************** START reload $modulefile ***********************"
+            #module switch $modulefile
+            module unload $modulefile
+            module load $modulefile
+            puts stderr "**************** END reload $modulefile **************************"
+        }
+    }
+}
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

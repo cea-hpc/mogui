@@ -1,0 +1,15 @@
+#%Module
+
+# Software description
+set version     "4.1.1.036"
+
+# Conflict
+
+# Loads software's environment
+set prefix      "/usr/local/Intel_compilers/impi/$version"
+
+# Common
+if [file exists $env(MODULEPATH)/mpi/impi/.common-mic] {
+    source $env(MODULEPATH)/mpi/impi/.common-mic
+}
+

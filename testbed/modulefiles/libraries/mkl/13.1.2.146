@@ -1,0 +1,16 @@
+#%Module1.0
+
+# Software description
+set version     "13.1.2.146"
+
+# Loads software's environment
+set mklroot       "/usr/local/Intel_compilers/$version/mkl"
+
+# Common
+if [file exists $env(MODULEPATH)/libraries/mkl/.common-13] {
+    source $env(MODULEPATH)/libraries/mkl/.common-13
+}
+if [file exists $env(MODULEPATH)/libraries/mkl/.common-13-mic] {
+    source $env(MODULEPATH)/libraries/mkl/.common-13-mic
+}
+

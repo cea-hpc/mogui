@@ -1,0 +1,13 @@
+#%Module1.0
+
+# Software description
+set version     "13.1.2.146"
+
+# Loads software's environment
+set intel       "/usr/local/Intel_compilers/$version"
+
+# Common
+if [file exists $env(MODULEPATH)/tools/idb/.common-13] {
+    source $env(MODULEPATH)/tools/idb/.common-13
+}
+

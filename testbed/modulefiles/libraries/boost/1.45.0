@@ -1,0 +1,13 @@
+#%Module1.0
+
+# Software description
+set version     "1.45.0"
+
+# Loads software's environment
+set prefix      "/usr/local/boost-$version/gcc-4.4.0"
+
+# Common
+if [file exists $env(MODULEPATH)/libraries/boost/.common] {
+    source $env(MODULEPATH)/libraries/boost/.common
+}
+

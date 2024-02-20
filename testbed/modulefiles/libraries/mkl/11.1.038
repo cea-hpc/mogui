@@ -1,0 +1,13 @@
+#%Module1.0
+
+# Software description
+set version     "11.1.038"
+
+# Loads software's environment
+set mklroot       "/usr/local/Intel_compilers/11.1.038/cproc/mkl"
+
+# Common
+if [file exists $env(MODULEPATH)/libraries/mkl/.common-11] {
+    source $env(MODULEPATH)/libraries/mkl/.common-11
+}
+

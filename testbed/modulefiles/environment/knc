@@ -1,0 +1,25 @@
+#%Module1.0
+
+# Software description
+module-whatis   "KNC User Environment"
+set software    "knc"
+set version     "2.1.6720"
+set description "KNC User Environment"
+set html        ""
+
+setenv MODULESCONTACT "grid-ocre-support@cea.fr"
+
+#set knc arch version to use
+set knc_arch    "/usr/local/knc-$version"
+
+#set shortcuts var
+set miccfgsysroot "$knc_arch/linux-k1om-4.7/linux-k1om"
+
+#load 
+prepend-path    MIC_LD_LIBRARY_PATH         "$knc_arch/coi/device-linux-release/lib"
+prepend-path    MIC_LD_LIBRARY_PATH         "$knc_arch/myo/lib"
+prepend-path    MIC_CFG_SYSROOT             "$miccfgsysroot"
+prepend-path    LD_LIBRARY_PATH             "$knc_arch/coi/host-linux-release/lib"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common

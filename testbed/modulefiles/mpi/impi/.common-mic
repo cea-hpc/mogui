@@ -1,0 +1,36 @@
+#%Module1.0
+
+# Software description
+module-whatis   "IMPI"
+set software    "intelmpi"
+set description "Intel(R) MPI Library for Linux* OS"
+set html        ""
+
+# Conflict
+conflict        "$software"
+conflict        "openmpi"
+conflict        "bullmpi"
+conflict        "bullxmpi"
+
+# application-specific variables
+set appnameup   "INTELMPI"
+
+# FIXME : move to .common ?
+prepend-path    PATH                    "$prefix/intel64/bin"
+prepend-path    LD_LIBRARY_PATH         "$prefix/intel64/lib"
+prepend-path    LIBRARY_PATH         "$prefix/intel64/lib"
+#FV(30/07/2013): fix a bug in module file when unloading module using env variable handle by module itself
+if [info exists ::env(MIC_LD_LIBRARY_PATH)] {
+    prepend-path    MIC_LD_LIBRARY_PATH     "$prefix/mic/lib"
+} else {
+    setenv    MIC_LD_LIBRARY_PATH     "$prefix/mic/lib"
+}
+prepend-path    MIC_LIBRARY_PATH     "$prefix/mic/lib"
+prepend-path    MANPATH                 "$prefix/man"
+prepend-path    CPATH                   "$prefix/intel64/include"
+setenv          I_MPI_PMI_LIBRARY       "/usr/lib64/libpmi.so"
+setenv          I_MPI_ROOT  "$prefix"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

@@ -1,0 +1,30 @@
+#%Module1.0
+
+# Software description
+module-whatis   "HDF5"
+set software    "hdf5"
+set description "Hierarchical Data Format"
+set html        "http://www.hdfgroup.org/"
+
+# Conflict
+conflict        "$software"
+
+# Prerequites
+
+# Loads software's environment
+set libdir      "$prefix/lib"
+set exedir      "$prefix/bin"
+# application-specific variables
+set appnameup   "HDF5"
+# compilerwrappers-specific variables
+set ldflags     "-L$libdir -lhdf5"
+
+append-path     PATH                   "$exedir"
+append-path     LD_LIBRARY_PATH        "$libdir"
+
+setenv          HDF5_INC_DIR           "$prefix/include"
+setenv          HDF5_LIB_DIR           "$libdir"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

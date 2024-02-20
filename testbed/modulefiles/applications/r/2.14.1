@@ -1,0 +1,25 @@
+#%Module1.0
+
+# Software description
+module-whatis	"R"
+set software	"r"
+set version	"2.14.1"
+set description	"Free software environment for statistical computing and graphics"
+set html	"http://www.r-project.org/"
+
+# Conflict
+conflict	"$software"
+
+# Loads software's environment
+set prefix	"/usr/local/$software-$version"
+# application-specific variables
+set appnameup "R"
+set exedir    "$prefix/bin"
+
+prepend-path	PATH			"$exedir"
+prepend-path	LD_LIBRARY_PATH		"$prefix/lib64"
+prepend-path	MANPATH			"$prefix/share/man"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

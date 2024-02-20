@@ -1,0 +1,16 @@
+#%Module1.0
+
+# Software description
+module-whatis   "MIC User Environment"
+set software    "mic"
+set version     "1.0"
+set description "MIC User Environment"
+set html        ""
+
+setenv MODULESCONTACT "grid-ocre-support@cea.fr"
+
+#load default mic related modules
+module load knc
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common

@@ -1,0 +1,8 @@
+#%Module1.0
+
+# MIC specific
+prepend-path    MIC_LD_LIBRARY_PATH     "$intel/compiler/lib/mic"
+
+# load common functions and behavior
+source $env(MODULEPATH)/.common
+

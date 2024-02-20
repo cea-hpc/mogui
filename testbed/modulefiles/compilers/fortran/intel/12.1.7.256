@@ -1,0 +1,13 @@
+#%Module1.0
+
+# Software description
+set version     "12.1.7.256"
+
+# Loads software's environment
+set intel       "/usr/local/Intel_compilers/fortran/composer_xe_2011_sp1.7.256"
+
+# Common
+if [file exists $env(MODULEPATH)/compilers/fortran/intel/.common-12] {
+    source $env(MODULEPATH)/compilers/fortran/intel/.common-12
+}
+

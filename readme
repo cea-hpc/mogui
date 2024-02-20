@@ -1,0 +1,5 @@
+To test mogui please source 'env' file in your shell:
+
+$ source testbed/env
+$ python3 mogui.py
+

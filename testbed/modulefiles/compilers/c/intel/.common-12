@@ -1,0 +1,20 @@
+#%Module1.0
+
+# Software description
+module-whatis   "Intel C compiler"
+set software    "c/intel"
+set description "Intel C compiler (icc)"
+
+# Conflict
+#conflict        "c"
+
+# Loads software's environment
+# compilerwrappers-specific variables
+set c           "icc"
+#set mpic        ""
+
+# Common
+if [file exists $env(MODULEPATH)/compilers/c/intel/.common-12-ccpp] {
+    source $env(MODULEPATH)/compilers/c/intel/.common-12-ccpp
+}
+

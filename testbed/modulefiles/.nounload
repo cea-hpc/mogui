@@ -1,0 +1,18 @@
+
+# the nounload mechanism is defined as a separated file to source
+# rather than included in .common since this code needs to be
+# called at the beginning of the modulefile to avoid some definitions
+# to be unset before reaching the "break" statement
+
+# cannot unload this module
+if { [module-info mode "unload"] } {
+    # initialize errorInfo and set it empty to avoid
+    # Modules internal error message
+    set errorInfo ""
+    puts stderr "$nounloadmsg"
+    # cannot put this NoUnload mechanism is a proc function
+    # due to "break outside of a loop" error
+    break
+}
+
+
