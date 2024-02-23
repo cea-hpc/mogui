@@ -19,7 +19,7 @@
 
 ##########################################################################
 
-import os, string
+import os
 from subprocess import Popen, PIPE
 
 DEFAULT_MODULE_PATH='/usr/local/Modules/libexec/modulecmd.tcl'

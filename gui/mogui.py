@@ -19,21 +19,20 @@
 
 ##########################################################################
 
+# To launch commands
+from subprocess import Popen
+from tempfile import NamedTemporaryFile
+
 # Gui PyQt
 from PyQt5.QtCore import (
-                        #SIGNAL,
-                        #SLOT,
                         QItemSelectionModel,
                         QSettings,
                         QSize,
                         Qt,
-                        pyqtSlot,
                         pyqtSignal,
                         )
-SIGNAL = pyqtSignal
 
 from PyQt5.QtGui import (
-                        QActionEvent,
                         QIcon,
                         QStandardItem,
                         QStandardItemModel,
@@ -42,27 +41,20 @@ from PyQt5.QtGui import (
 from PyQt5.QtWidgets import (
                         QAbstractItemView,
                         QAction,
-                        QComboBox,
-                        QDialog,
                         QFrame,
                         QHBoxLayout,
-                        QItemDelegate,
                         QLabel,
                         QListView,
                         QMainWindow,
                         QMessageBox,
-                        QPushButton,
-                        QScrollArea,
                         QTextEdit,
                         QTreeView,
-                        QVBoxLayout,
-                        QWidget)
+                        QVBoxLayout)
 
-# To launch commands
-from subprocess import Popen
-from tempfile import NamedTemporaryFile
 # Save and restore modules
-from lib.module import (Modulecmd, Module, DEFAULT_MODULE_PATH)
+from lib.module import Modulecmd, DEFAULT_MODULE_PATH
+
+SIGNAL = pyqtSignal
 
 ICON = "images/accessories-dictionary.png"
 RESET_ICON = "images/reload.png"

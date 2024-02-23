@@ -22,12 +22,13 @@
 # TODO:
 # - Add Selected property to the Module class
 
-import os, sys, string
+import os
+import sys
+
+from PyQt5.QtWidgets import QApplication
 
 from lib.module import Modulecmd, DEFAULT_MODULE_PATH
 from gui.mogui import MoGui
-
-from PyQt5.QtWidgets import ( QApplication )
 
 
 if not os.environ.get('MODULEPATH'):
