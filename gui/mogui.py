@@ -25,31 +25,32 @@ from tempfile import NamedTemporaryFile
 
 # Gui PyQt
 from PyQt5.QtCore import (
-                        QItemSelectionModel,
-                        QSettings,
-                        QSize,
-                        Qt,
-                        pyqtSignal,
-                        )
+    QItemSelectionModel,
+    QSettings,
+    QSize,
+    Qt,
+    pyqtSignal,
+)
 
 from PyQt5.QtGui import (
-                        QIcon,
-                        QStandardItem,
-                        QStandardItemModel,
-                        )
+    QIcon,
+    QStandardItem,
+    QStandardItemModel,
+)
 
 from PyQt5.QtWidgets import (
-                        QAbstractItemView,
-                        QAction,
-                        QFrame,
-                        QHBoxLayout,
-                        QLabel,
-                        QListView,
-                        QMainWindow,
-                        QMessageBox,
-                        QTextEdit,
-                        QTreeView,
-                        QVBoxLayout)
+    QAbstractItemView,
+    QAction,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QListView,
+    QMainWindow,
+    QMessageBox,
+    QTextEdit,
+    QTreeView,
+    QVBoxLayout,
+)
 
 # Save and restore modules
 from lib.module import Modulecmd, DEFAULT_MODULE_PATH
@@ -65,9 +66,9 @@ QUIT_ICON = "images/gtk-quit.png"
 DEFL_ICON = "images/module.png"
 XTERM = "/usr/bin/xterm"
 
+
 class MoGui(QMainWindow):
-    def __init__(self, modules=None,
-                 modulecmd_path=DEFAULT_MODULE_PATH):
+    def __init__(self, modules=None, modulecmd_path=DEFAULT_MODULE_PATH):
         super(MoGui, self).__init__()
         self.mods = modules
         self.setWindowTitle("MoGui")
@@ -84,36 +85,36 @@ class MoGui(QMainWindow):
         actionReset = QAction("&Reset", self)
         actionReset.setIcon(QIcon(RESET_ICON))
         actionReset.setShortcut("Ctrl-R")
-        #self.connect(actionReset, SIGNAL("triggered()"), self.reset)
+        # self.connect(actionReset, SIGNAL("triggered()"), self.reset)
         actionReset.triggered.connect(self.reset)
 
         actionSave = QAction("&Sauver", self)
         actionSave.setIcon(QIcon(SAVE_ICON))
         actionSave.setShortcut("Ctrl-S")
-        #self.connectNotify(actionSave, SIGNAL("triggered()"), self.save)
+        # self.connectNotify(actionSave, SIGNAL("triggered()"), self.save)
         actionSave.triggered.connect(self.save)
 
         actionTerm = QAction("&Terminal", self)
         actionTerm.setIcon(QIcon(TERM_ICON))
         actionTerm.setShortcut("Ctrl-T")
-        #self.connectNotify(actionTerm, SIGNAL("triggered()"), self.terminal)
+        # self.connectNotify(actionTerm, SIGNAL("triggered()"), self.terminal)
         actionTerm.triggered.connect(self.terminal)
 
         actionHelp = QAction("&Aide", self)
         actionHelp.setIcon(QIcon(HELP_ICON))
         actionHelp.setShortcut("F1")
-        #self.connectNotify(actionHelp, SIGNAL("triggered()"), self.help)
+        # self.connectNotify(actionHelp, SIGNAL("triggered()"), self.help)
         actionHelp.triggered.connect(self.help)
 
         actionQuit = QAction("&Quitter", self)
         actionQuit.setIcon(QIcon(QUIT_ICON))
         actionQuit.setShortcut("Ctrl-Q")
-        #self.connectNotify(actionQuit, SIGNAL("triggered()"), self.close)
+        # self.connectNotify(actionQuit, SIGNAL("triggered()"), self.close)
         actionQuit.triggered.connect(self.close)
 
         # Set ToolBar
         self.toolbar = self.addToolBar("&Barre d'outils")
-        self.toolbar.setIconSize(QSize(32,32))
+        self.toolbar.setIconSize(QSize(32, 32))
         self.toolbar.show()
         self.toolbar.addAction(actionReset)
         self.toolbar.addAction(actionSave)
@@ -141,7 +142,6 @@ class MoGui(QMainWindow):
         # Main layout
         self.layout = QHBoxLayout(self.mainframe)
         self.setCentralWidget(self.mainframe)
-
 
         # Modules list (with label)
         self.modulelabel = QLabel("Liste des produits disponibles:")
@@ -173,9 +173,9 @@ class MoGui(QMainWindow):
         self.choiceModel = QStandardItemModel()
         self.choiceList = QListView()
         self.choiceList.setModel(self.choiceModel)
-        self.choiceList.setIconSize(QSize(256,256))
+        self.choiceList.setIconSize(QSize(256, 256))
         self.choiceList.setUniformItemSizes(True)
-        #self.choiceList.setViewMode(QListView.IconMode)
+        # self.choiceList.setViewMode(QListView.IconMode)
         self.choiceList.setAcceptDrops(True)
         self.choicelayout = QVBoxLayout()
 
@@ -184,16 +184,18 @@ class MoGui(QMainWindow):
 
         self.layout.addLayout(self.choicelayout)
 
-        #Test
-        #self.connectNotify(self.choiceList, SIGNAL("dropEvent()"), self.dropModule)
-        #self.choiceList.dropEvent().triggered.connect(self.dropModule)
-        #self.connectNotify(actionHelp, SIGNAL("triggered()"), self.modulelist.expert)
+        # Test
+        # self.connectNotify(self.choiceList, SIGNAL("dropEvent()"), self.dropModule)
+        # self.choiceList.dropEvent().triggered.connect(self.dropModule)
+        # self.connectNotify(actionHelp, SIGNAL("triggered()"), self.modulelist.expert)
         actionHelp.triggered.connect(self.modulelist.expert)
 
     def setModules(self, modules):
         self.mods = modules.mods
         # Set the module list to the modulelist widget
-        self.modulelist.set(self.mods, add=self.__addToChoice, remove=self.__removeFromChoice)
+        self.modulelist.set(
+            self.mods, add=self.__addToChoice, remove=self.__removeFromChoice
+        )
         # Add selected modules in the choiceList
         for m in modules.selected():
             self.__addToChoice(m)
@@ -230,13 +232,13 @@ class MoGui(QMainWindow):
         module_str = "%s" % module
         model = self.choiceModel
         try:
-            chosen = model.findItems(module.name, flags = Qt.MatchContains)
+            chosen = model.findItems(module.name, flags=Qt.MatchContains)
         except TypeError:
             # If FindItems is not supported create a list from the model
             chosen = []
             for index in range(0, model.rowCount()):
                 # The itemData[0] is the text field of the item
-                chosen_itemData = model.itemData(model.index(index,0))
+                chosen_itemData = model.itemData(model.index(index, 0))
                 chosen_modulename = chosen_itemData[0].toString()
                 if chosen_modulename.startsWith(module.name):
                     chosen.append(model.item(index))
@@ -245,7 +247,6 @@ class MoGui(QMainWindow):
         name.setToolTip(module_str)
         name.setEditable(False)
         name.setIcon(self.defaultIcon)
-
 
         if len(chosen) != 0:
             # Replace the module version if it exists in the choice list
@@ -275,14 +276,14 @@ class MoGui(QMainWindow):
         for mod in self.mods.values():
             if mod.selected:
                 msg += "%s\n" % mod
-        QMessageBox.information(self, "Sauvegarde des modules",
-                                      "Modules to save :\n%s" % msg
-                               )
-        modules = Modulecmd(modulecmd_path = self.modulecmd)
+        QMessageBox.information(
+            self, "Sauvegarde des modules", "Modules to save :\n%s" % msg
+        )
+        modules = Modulecmd(modulecmd_path=self.modulecmd)
         modules.save(self.mods)
 
     def reset(self):
-        modules = Modulecmd(modulecmd_path = self.modulecmd)
+        modules = Modulecmd(modulecmd_path=self.modulecmd)
         modules.modules()
         modules.load()
         ## To remove (only for test)
@@ -293,17 +294,17 @@ class MoGui(QMainWindow):
 
     def terminal(self):
         """
-            Launch a self.consolecmd with preloaded modules
+        Launch a self.consolecmd with preloaded modules
         """
-        modules = Modulecmd(modulecmd_path = self.modulecmd)
+        modules = Modulecmd(modulecmd_path=self.modulecmd)
         args = []
         for mod in self.mods.values():
             if mod.selected:
                 args.append("%s" % mod)
-        tmpfile = NamedTemporaryFile(mode='w+t', delete=False)
-        tmpfile.writelines(modules.launch(command="purge",
-                                                    stderr=False, stdout=True))
-        tmpfile.write("""
+        tmpfile = NamedTemporaryFile(mode="w+t", delete=False)
+        tmpfile.writelines(modules.launch(command="purge", stderr=False, stdout=True))
+        tmpfile.write(
+            """
 from subprocess import call
 import os
 for key in os.environ.keys():
@@ -313,12 +314,15 @@ os.environ['LOADEDMODULES']=':'
 print(os.environ)
 myenv=os.environ
 print("%s")
-""" % args)
-        for line in modules.launch(command="load", arguments=args,
-                                   stderr=False, stdout=True)[1:]:
+"""
+            % args
+        )
+        for line in modules.launch(
+            command="load", arguments=args, stderr=False, stdout=True
+        )[1:]:
             tmpfile.write(line.decode())
 
-        tmpfile.write("call([\"%s\"])\n" % self.consolecmd)
+        tmpfile.write('call(["%s"])\n' % self.consolecmd)
         tmpfile.flush()
         print("Launching : %s" % ["python", tmpfile.name, tmpfile])
         commands = Popen(["python", tmpfile.name])
@@ -336,19 +340,20 @@ print("%s")
     def readSettings(self):
         settings = QSettings("MoGui", "gui")
         settings.beginGroup("toolbar")
-        self.toolbar.setGeometry(settings.value("geometry",
-                                 self.toolbar.geometry()))
-                                 #self.toolbar.geometry()).toRect())
+        self.toolbar.setGeometry(settings.value("geometry", self.toolbar.geometry()))
+        # self.toolbar.geometry()).toRect())
         settings.endGroup()
 
     def close(self):
         self.writeSettings()
         super(MoGui, self).close()
 
+
 class ModuleGui(QStandardItem):
     """Represents a module: a name and a version"""
+
     def __init__(self, module, version=None):
-        if version :
+        if version:
             super(ModuleGui, self).__init__("%s/%s" % (module.name, version))
         else:
             super(ModuleGui, self).__init__(module.name)
@@ -360,13 +365,15 @@ class ModuleGui(QStandardItem):
         else:
             self.version = module.default_version
 
+
 class ModuleChoice(QTreeView):
     """List available modules"""
+
     def __init__(self, parent=None):
         super(ModuleChoice, self).__init__(parent)
- 
-        self.model=QStandardItemModel()
- 
+
+        self.model = QStandardItemModel()
+
         self.setModel(self.model)
         self.setAnimated(True)
         self.setHeaderHidden(True)
@@ -390,8 +397,8 @@ class ModuleChoice(QTreeView):
                 mods.append(mod)
             header.appendRows(mods)
             self.model.appendRow(header)
-            #self.connectNotify(self, SIGNAL("collapsed(QModelIndex)"), self.enableSubtree)
-            #self.connectNotify(self, SIGNAL("expanded(QModelIndex)"), self.disableSubtree)
+            # self.connectNotify(self, SIGNAL("collapsed(QModelIndex)"), self.enableSubtree)
+            # self.connectNotify(self, SIGNAL("expanded(QModelIndex)"), self.disableSubtree)
 
     def expert(self):
         self._expert = not self._expert
@@ -401,15 +408,17 @@ class ModuleChoice(QTreeView):
             self.collapseAll()
 
     def select(self, module):
-        """ Select a module in the list """
+        """Select a module in the list"""
         root = self.model.invisibleRootItem()
         selection = self.selectionModel()
         for h in range(0, root.rowCount()):
             header = root.child(h)
             for i in range(0, header.rowCount()):
                 child = header.child(i)
-                if child.module.name == module.name and \
-                       child.version == module.current_version :
+                if (
+                    child.module.name == module.name
+                    and child.version == module.current_version
+                ):
                     selection.select(child.index(), QItemSelectionModel.Select)
                     self.select_module(child.index())
 
@@ -420,9 +429,9 @@ class ModuleChoice(QTreeView):
 
     def selectionChanged(self, selected, deselected):
         """
-           Manage selection
-           * Only the root item if collapsed
-           * Only one child if expanded
+        Manage selection
+        * Only the root item if collapsed
+        * Only one child if expanded
         """
         selection = self.selectionModel()
         root = self.model.invisibleRootItem()
@@ -435,8 +444,7 @@ class ModuleChoice(QTreeView):
                 for i in range(0, moduleGroup.rowCount()):
                     child = moduleGroup.child(i)
                     if child.index() != index:
-                        selection.select(child.index(),
-                                         QItemSelectionModel.Deselect)
+                        selection.select(child.index(), QItemSelectionModel.Deselect)
                 version = moduleGroup.child(index.row()).version
                 moduleGroup.module.select(version)
             else:
@@ -497,5 +505,5 @@ class ModuleChoice(QTreeView):
             selection.select(index, QItemSelectionModel.Select)
 
     def clear(self):
-        """ Clear all items """
+        """Clear all items"""
         self.model.clear()

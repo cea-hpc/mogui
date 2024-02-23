@@ -31,25 +31,26 @@ from lib.module import Modulecmd, DEFAULT_MODULE_PATH
 from gui.mogui import MoGui
 
 
-if not os.environ.get('MODULEPATH'):
+if not os.environ.get("MODULEPATH"):
     try:
-        paths = open(os.sep.join([ os.environ['MODULESHOME'],
-                               "/init/.modulespath"])).readlines()
-        paths = [ p.strip() for p in paths if p.startswith(os.sep) ]
-        os.environ['MODULEPATH'] = ':'.join(paths)
-        print("Module path: %s" % os.environ['MODULEPATH'])
+        paths = open(
+            os.sep.join([os.environ["MODULESHOME"], "/init/.modulespath"])
+        ).readlines()
+        paths = [p.strip() for p in paths if p.startswith(os.sep)]
+        os.environ["MODULEPATH"] = ":".join(paths)
+        print("Module path: %s" % os.environ["MODULEPATH"])
     except IOError:
         print("No MODULESPATH found, no module will be loaded")
     except KeyError:
         print("No MODULESHOME found, is module correctly installed ?")
         sys.exit(1)
 
-if not os.environ.get('LOADEDMODULES'):
-    os.environ['LOADEDMODULES'] = '';
+if not os.environ.get("LOADEDMODULES"):
+    os.environ["LOADEDMODULES"] = ""
 
 if __name__ == "__main__":
     modules = Modulecmd(modulecmd_path=DEFAULT_MODULE_PATH)
-    if len(sys.argv) > 1 :
+    if len(sys.argv) > 1:
         print("".join(modules.launch(sys.argv[1], sys.argv[2:])))
         sys.exit(0)
     modules.modules()
@@ -74,4 +75,3 @@ if __name__ == "__main__":
     gui.show()
 
     sys.exit(app.exec_())
-

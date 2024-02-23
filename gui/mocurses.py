@@ -21,6 +21,7 @@
 
 import curses
 
+
 class MocurseList(object):
     SIZE = 1000
 
@@ -41,8 +42,8 @@ class MocurseList(object):
         win.chgat(len(self.mods) - 1, 2, -1, curses.A_NORMAL)
 
     def refresh(self):
-        self.window.refresh(self.scroll, 0, self.y, self.x,
-                                           self.height, self.width)
+        self.window.refresh(self.scroll, 0, self.y, self.x, self.height, self.width)
+
     def up(self):
         self.deselect()
         self.index -= 1
@@ -77,6 +78,7 @@ class MocurseList(object):
     def mod_deselect(self):
         self.deselect()
 
+
 class MocurseInfo(object):
     SIZE = 1000
 
@@ -91,13 +93,17 @@ class MocurseInfo(object):
 
     def add(self, mod):
         self.window.addstr(0, 0, "Module Information:", curses.A_BOLD)
-        self.window.addstr(2, 0, "This should display information about"
-                                 " module %s HAHA" % mod, curses.A_NORMAL)
+        self.window.addstr(
+            2,
+            0,
+            "This should display information about" " module %s HAHA" % mod,
+            curses.A_NORMAL,
+        )
         self.refresh()
 
     def refresh(self):
-        self.window.refresh(self.scroll, 0, self.y, self.x,
-                                           self.height, self.width)
+        self.window.refresh(self.scroll, 0, self.y, self.x, self.height, self.width)
+
     def up(self):
         self.scroll -= 1
         if self.scroll < 0:
@@ -132,7 +138,11 @@ def main():
     # Application Title
     stdscr.addstr(0, 0, "MoGui", curses.A_REVERSE)
     stdscr.chgat(0, 0, -1, curses.A_REVERSE)
-    stdscr.addstr(curses.LINES - 1, 0, "Use UP and DOWN to scroll, Enter to select a module and Q to quit")
+    stdscr.addstr(
+        curses.LINES - 1,
+        0,
+        "Use UP and DOWN to scroll, Enter to select a module and Q to quit",
+    )
     stdscr.chgat(curses.LINES - 1, 0, -1, curses.color_pair(4))
 
     # Create the module list
@@ -151,8 +161,7 @@ def main():
     # Create the module choice
     stdscr.addstr(1, half_cols, "Chosen modules")
     stdscr.chgat(1, half_cols, -1, curses.color_pair(4))
-    moduleschoice = MocurseList(half_cols, 2, curses.COLS - 1,
-                                              half_lines - 1)
+    moduleschoice = MocurseList(half_cols, 2, curses.COLS - 1, half_lines - 1)
     moduleschoice.refresh()
 
     # Create the info box
@@ -163,7 +172,7 @@ def main():
     # Main loop
     while True:
         c = stdscr.getch()
-        if c == ord('q'):
+        if c == ord("q"):
             break  # Exit the while loop
         elif c == curses.KEY_HOME:
             x = y = 0
@@ -171,7 +180,7 @@ def main():
             modulesinfos.add(moduleslist.down())
         elif c == curses.KEY_UP:
             modulesinfos.add(moduleslist.up())
-        elif c == ord('\n'):
+        elif c == ord("\n"):
             moduleschoice.add("module %s" % moduleslist.index)
             moduleschoice.refresh()
 
@@ -181,5 +190,6 @@ def main():
     curses.echo()
     curses.endwin()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
