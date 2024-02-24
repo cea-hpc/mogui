@@ -24,6 +24,7 @@
 
 import os
 import sys
+import warnings
 
 from PyQt5.QtWidgets import QApplication
 
@@ -32,21 +33,7 @@ from gui.mogui import MoGui
 
 
 if not os.environ.get("MODULEPATH"):
-    try:
-        paths = open(
-            os.sep.join([os.environ["MODULESHOME"], "/init/.modulespath"])
-        ).readlines()
-        paths = [p.strip() for p in paths if p.startswith(os.sep)]
-        os.environ["MODULEPATH"] = ":".join(paths)
-        print("Module path: %s" % os.environ["MODULEPATH"])
-    except IOError:
-        print("No MODULESPATH found, no module will be loaded")
-    except KeyError:
-        print("No MODULESHOME found, is module correctly installed ?")
-        sys.exit(1)
-
-if not os.environ.get("LOADEDMODULES"):
-    os.environ["LOADEDMODULES"] = ""
+    warnings.warn("Module search path empty")
 
 if __name__ == "__main__":
     modules = Modulecmd()
