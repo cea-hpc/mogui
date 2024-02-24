@@ -27,7 +27,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from lib.module import Modulecmd, DEFAULT_MODULE_PATH
+from lib.module import Modulecmd
 from gui.mogui import MoGui
 
 
@@ -49,7 +49,7 @@ if not os.environ.get("LOADEDMODULES"):
     os.environ["LOADEDMODULES"] = ""
 
 if __name__ == "__main__":
-    modules = Modulecmd(modulecmd_path=DEFAULT_MODULE_PATH)
+    modules = Modulecmd()
     if len(sys.argv) > 1:
         print("".join(modules.launch(sys.argv[1], sys.argv[2:])))
         sys.exit(0)
@@ -70,7 +70,7 @@ if __name__ == "__main__":
         pass
 
     print(modules)
-    gui = MoGui(modules.mods, modulecmd_path=DEFAULT_MODULE_PATH)
+    gui = MoGui(modules.mods)
     gui.setModules(modules)
     gui.show()
 

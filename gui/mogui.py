@@ -52,7 +52,7 @@ from PyQt5.QtWidgets import (
 )
 
 # Save and restore modules
-from lib.module import Modulecmd, DEFAULT_MODULE_PATH
+from lib.module import Modulecmd
 
 SIGNAL = pyqtSignal
 
@@ -67,14 +67,13 @@ XTERM = "/usr/bin/xterm"
 
 
 class MoGui(QMainWindow):
-    def __init__(self, modules=None, modulecmd_path=DEFAULT_MODULE_PATH):
+    def __init__(self, modules=None):
         super(MoGui, self).__init__()
         self.mods = modules
         self.setWindowTitle("MoGui")
         self.setWindowIcon(QIcon(ICON))
         self.createObjects()
         self.consolecmd = XTERM
-        self.modulecmd = modulecmd_path
         self.defaultIcon = QIcon(DEFL_ICON)
         self.readSettings()
 
@@ -278,11 +277,11 @@ class MoGui(QMainWindow):
         QMessageBox.information(
             self, "Sauvegarde des modules", "Modules to save :\n%s" % msg
         )
-        modules = Modulecmd(modulecmd_path=self.modulecmd)
+        modules = Modulecmd()
         modules.save(self.mods)
 
     def reset(self):
-        modules = Modulecmd(modulecmd_path=self.modulecmd)
+        modules = Modulecmd()
         modules.modules()
         modules.load()
         ## To remove (only for test)
@@ -295,7 +294,7 @@ class MoGui(QMainWindow):
         """
         Launch a self.consolecmd with preloaded modules
         """
-        modules = Modulecmd(modulecmd_path=self.modulecmd)
+        modules = Modulecmd()
         args = []
         for mod in self.mods.values():
             if mod.selected:

@@ -18,17 +18,36 @@
 
 ##########################################################################
 
+import errno
 import os
 from subprocess import Popen, PIPE
 
-DEFAULT_MODULE_PATH = "/usr/local/Modules/libexec/modulecmd.tcl"
+
+def get_modulecmd_path():
+    """Get path of module command from environment and test this file is
+    executable.
+
+    Returns:
+        File pathname of module command
+    """
+    modulecmd_path = os.environ.get("MODULES_CMD")
+    if not modulecmd_path:
+        raise EnvironmentError("Environment variable 'MODULES_CMD' not defined")
+
+    if not os.path.isfile(modulecmd_path):
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), modulecmd_path)
+
+    if not (os.access(modulecmd_path, os.R_OK) and os.access(modulecmd_path, os.X_OK)):
+        raise PermissionError(errno.EACCES, os.strerror(errno.EACCES), modulecmd_path)
+
+    return modulecmd_path
 
 
 class Modulecmd(object):
-    def __init__(self, shell="python", modulecmd_path=DEFAULT_MODULE_PATH):
+    def __init__(self, shell="python"):
         self.shell = shell
         self.mods = {}
-        self.modulecmd = modulecmd_path
+        self.modulecmd = get_modulecmd_path()
         self.helppath = "/opt/Modules/%s/description"
         self.savepath = "%s%s%s%s%s" % (
             os.environ["HOME"],
@@ -91,7 +110,6 @@ class Modulecmd(object):
                         version,
                         default=default,
                         description=desc,
-                        modulecmd_path=self.modulecmd,
                     )
         return self.mods
 
@@ -177,7 +195,6 @@ class Module(object):
         selected=False,
         default=False,
         description=None,
-        modulecmd_path=DEFAULT_MODULE_PATH,
     ):
 
         super(Module, self).__init__()
@@ -191,7 +208,6 @@ class Module(object):
         self.description = description
         self.addVersion(version, default)
         self.helpMessage = None
-        self.modulecmd = modulecmd_path
         self.desc()
 
     def select(self, version=False, isselected=True):
@@ -209,7 +225,7 @@ class Module(object):
         self.__str__()
 
     def desc(self):
-        cmd = Modulecmd(modulecmd_path=self.modulecmd)
+        cmd = Modulecmd()
         try:
             self.description = (
                 cmd.launch(
@@ -225,7 +241,7 @@ class Module(object):
         return self.description
 
     def help(self):
-        cmd = Modulecmd(modulecmd_path=self.modulecmd)
+        cmd = Modulecmd()
         if not self.helpMessage:
             try:
                 helpfile = open(cmd.helppath % self.name)
