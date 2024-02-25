@@ -226,7 +226,7 @@ class Module:
     def select(self, version=False, isselected=True):
         self.selected = isselected
         if version:
-            self.setVersion(version)
+            self.set_version(version)
 
     def deselect(self):
         self.select(False, False)
@@ -261,6 +261,6 @@ class Module:
         if default:
             self.default_version = version
 
-    def setVersion(self, version):
+    def set_version(self, version):
         if version in self.versions:
             self.current_version = version
