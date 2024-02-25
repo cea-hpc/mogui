@@ -22,6 +22,7 @@ import errno
 import os
 import sys
 from subprocess import Popen, PIPE
+from distutils.version import LooseVersion
 
 
 def get_modulecmd_path():
@@ -210,6 +211,25 @@ class Module(object):
         self.helpMessage = None
         self.desc()
 
+    def current_designation(self):
+        if self.current_version is None:
+            designation = self.name
+        else:
+            designation = os.path.join(self.name, self.current_version)
+        return designation
+
+    def default_designation(self):
+        if self.default_version is None:
+            if not self.versions:
+                designation = self.name
+            else:
+                # get implicit default: highest version number
+                latest_version = self.versions.sort(key=LooseVersion)[-1]
+                designation = os.path.join(self.name, latest_version)
+        else:
+            designation = os.path.join(self.name, self.default_version)
+        return designation
+
     def select(self, version=False, isselected=True):
         self.selected = isselected
         if version:
@@ -219,7 +239,7 @@ class Module(object):
         self.select(False, False)
 
     def __str__(self):
-        return "%s/%s" % (self.name, self.current_version)
+        return self.current_designation()
 
     def __repr__(self):
         self.__str__()
@@ -228,7 +248,7 @@ class Module(object):
         cmd = Modulecmd()
         try:
             self.description = (
-                cmd.run("whatis", "%s/%s" % (self.name, self.default_version), "0>&2")
+                cmd.run("whatis", self.default_designation(), "0>&2")
                 .strip()
                 .split(":")[1]
                 .strip()
@@ -240,9 +260,7 @@ class Module(object):
     def help(self):
         cmd = Modulecmd()
         if not self.helpMessage:
-            self.helpMessage = cmd.run(
-                "help", "%s/%s" % (self.name, self.default_version)
-            )
+            self.helpMessage = cmd.run("help", self.default_designation())
         if not self.helpMessage:
             self.helpMessage = "No help for %s" % self.name
         return self.helpMessage
