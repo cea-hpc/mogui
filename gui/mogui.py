@@ -300,7 +300,7 @@ class MoGui(QMainWindow):
             if mod.selected:
                 args.append("%s" % mod)
         tmpfile = NamedTemporaryFile(mode="w+t", delete=False)
-        tmpfile.writelines(modules.launch(command="purge", stderr=False, stdout=True))
+        tmpfile.writelines(modules.run("purge", return_content="out"))
         tmpfile.write(
             """
 from subprocess import call
@@ -315,9 +315,7 @@ print("%s")
 """
             % args
         )
-        for line in modules.launch(
-            command="load", arguments=args, stderr=False, stdout=True
-        )[1:]:
+        for line in modules.run("load", *args, return_content="out")[1:]:
             tmpfile.write(line.decode())
 
         tmpfile.write('call(["%s"])\n' % self.consolecmd)

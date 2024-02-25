@@ -20,6 +20,7 @@
 
 import errno
 import os
+import sys
 from subprocess import Popen, PIPE
 
 
@@ -57,41 +58,43 @@ class Modulecmd(object):
             "modules",
         )
 
-    def launch(self, command, arguments=[], stderr=True, stdout=False):
-        output = []
-        try:
-            commands = Popen(
-                [self.modulecmd, self.shell, command] + arguments,
-                stdout=PIPE,
-                stderr=PIPE,
-            )
-            if stderr:
-                output += commands.stderr.readlines()
-            if stdout:
-                output += commands.stdout.readlines()
-        except OSError as e:
-            print(
-                "Impossible d'executer la commande %s : %s"
-                % ([self.modulecmd, self.shell, command] + arguments, e)
-            )
+    def run(self, *arguments, out_shell="python", return_content="err"):
+        """Run module command with given arguments to produce code for
+        specified output shell.
 
-        ## commands starts from the 2nd index to skip the headers
-        return output
+        Args:
+            arguments: module command and its arguments to run
+            out_shell: shell code kind module should produce
+            return_content: return 'out' or 'err' content
+
+        Returns:
+            Content produced by run commands. Either stdout or stderr content
+            base on return_content value.
+        """
+        with Popen(
+            [self.modulecmd, out_shell] + list(arguments), stdout=PIPE, stderr=PIPE
+        ) as proc:
+            out, err = proc.communicate()
+        if return_content == "out":
+            content = out
+            if err.decode():
+                print(err.decode(), end="", file=sys.stderr)
+        else:
+            content = err.decode()
+        return content
 
     def modules(self):
         """
         Fetch all modules available on this environnment
         return a hash table with all modules and their current version
         """
-        lines = self.launch("avail", ["-t"])
+        lines = self.run("avail", "-t").strip().split("\n")
         version = "1.0"
         desc = None
 
-        for l in lines:
-            l = l.decode()
-            ## Ignore empty lines and line statring with a path
-            if (l != "\n") and not (l.startswith("/")) and not (l.startswith("--")):
-                mod = l.split(None)[0]
+        for mod in lines:
+            # ignore modulepath lines
+            if not mod.endswith(":"):
                 modname = mod.rsplit("/", 1)[0]
                 try:
                     version = mod.rsplit("/", 1)[1].split("(")[0]
@@ -228,10 +231,7 @@ class Module(object):
         cmd = Modulecmd()
         try:
             self.description = (
-                cmd.launch(
-                    "whatis", ["%s/%s" % (self.name, self.default_version), "0>&2"]
-                )[0]
-                .decode()
+                cmd.run("whatis", "%s/%s" % (self.name, self.default_version), "0>&2")
                 .strip()
                 .split(":")[1]
                 .strip()
@@ -249,11 +249,8 @@ class Module(object):
                     [line.decode() for line in helpfile.readlines()]
                 )
             except IOError:
-                raw_help_message = cmd.launch(
-                    "help", ["%s/%s" % (self.name, self.default_version)]
-                )
-                self.helpMessage = " ".join(
-                    [line.decode() for line in raw_help_message]
+                self.helpMessage = cmd.run(
+                    "help", "%s/%s" % (self.name, self.default_version)
                 )
         if not self.helpMessage:
             self.helpMessage = "No help for %s" % self.name

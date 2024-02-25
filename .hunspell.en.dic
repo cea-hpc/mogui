@@ -28,3 +28,6 @@ tcl
 MODULEPATH
 LOADEDMODULES
 args
+stdout
+stderr
+wip
