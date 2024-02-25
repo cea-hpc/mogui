@@ -282,7 +282,7 @@ class MoGui(QMainWindow):
 
     def reset(self):
         modules = Modulecmd()
-        modules.modules()
+        modules.avail()
         modules.load()
         ## To remove (only for test)
         modules.test()
@@ -492,6 +492,7 @@ class ModuleChoice(QTreeView):
         item = self.model.item(index.row())
         selection = self.selectionModel()
         # Select root item if at least one subitem is selected
+        selected = False
         for i in range(0, item.rowCount()):
             child = item.child(i)
             selected = selection.isSelected(child.index())

@@ -37,7 +37,7 @@ if not os.environ.get("MODULEPATH"):
 
 if __name__ == "__main__":
     modules = Modulecmd()
-    modules.modules()
+    modules.avail()
     modules.load()
     modules.test()
 

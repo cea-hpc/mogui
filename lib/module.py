@@ -82,34 +82,33 @@ class Modulecmd(object):
             content = err.decode()
         return content
 
-    def modules(self):
-        """
-        Fetch all modules available on this environnment
-        return a hash table with all modules and their current version
+    def avail(self):
+        """Fetch available modules in enabled module search paths
+
+        Returns:
+            Hash table with all Module objects
         """
         lines = self.run("avail", "--terse", "--output=sym").strip().split("\n")
         version = "1.0"
-        desc = None
 
         for mod in lines:
-            modname = mod.rsplit("/", 1)[0]
-            try:
-                version = mod.rsplit("/", 1)[1].split("(")[0]
-            except IndexError:
-                version = "default"
-            try:
-                default = mod.rsplit("/", 1)[1].split("(")[1].rstrip(")")
-            except IndexError:
-                default = None
-            # desc = self.launch("whatis", [mod])[0].strip().split(":")[1].strip()
-            if modname in self.mods.keys():
-                self.mods[modname].addVersion(version, default)
+            mod_split_raw = mod.rsplit("/", 1)
+            mod_name = mod_split_raw[0]
+            if len(mod_split_raw) > 1:
+                versions = mod_split_raw[1].rstrip(")").replace("(", ":").split(":")
+                version = versions[0]
+                default = "default" in versions
             else:
-                self.mods[modname] = Module(
-                    modname,
+                version = None
+                default = False
+
+            if mod_name in self.mods:
+                self.mods[mod_name].addVersion(version, default)
+            else:
+                self.mods[mod_name] = Module(
+                    mod_name,
                     version,
                     default=default,
-                    description=desc,
                 )
         return self.mods
 
@@ -206,7 +205,8 @@ class Module(object):
         if description == None:
             description = self.name
         self.description = description
-        self.addVersion(version, default)
+        if version is not None:
+            self.addVersion(version, default)
         self.helpMessage = None
         self.desc()
 
