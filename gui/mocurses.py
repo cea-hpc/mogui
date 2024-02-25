@@ -22,7 +22,7 @@
 import curses
 
 
-class MocurseList(object):
+class MocurseList:
     SIZE = 1000
 
     def __init__(self, x, y, width, height):
@@ -79,7 +79,7 @@ class MocurseList(object):
         self.deselect()
 
 
-class MocurseInfo(object):
+class MocurseInfo:
     SIZE = 1000
 
     def __init__(self, x, y, width, height):

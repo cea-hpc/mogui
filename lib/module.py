@@ -45,7 +45,7 @@ def get_modulecmd_path():
     return modulecmd_path
 
 
-class Modulecmd(object):
+class Modulecmd:
     def __init__(self, shell="python"):
         self.shell = shell
         self.mods = {}
@@ -179,7 +179,7 @@ class Modulecmd(object):
         return selected
 
 
-class Module(object):
+class Module:
     """
     Class to manupulate Module
         name : name of the module
