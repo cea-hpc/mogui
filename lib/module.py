@@ -88,32 +88,30 @@ class Modulecmd(object):
         Fetch all modules available on this environnment
         return a hash table with all modules and their current version
         """
-        lines = self.run("avail", "-t").strip().split("\n")
+        lines = self.run("avail", "--terse", "--output=sym").strip().split("\n")
         version = "1.0"
         desc = None
 
         for mod in lines:
-            # ignore modulepath lines
-            if not mod.endswith(":"):
-                modname = mod.rsplit("/", 1)[0]
-                try:
-                    version = mod.rsplit("/", 1)[1].split("(")[0]
-                except IndexError:
-                    version = "default"
-                try:
-                    default = mod.rsplit("/", 1)[1].split("(")[1].rstrip(")")
-                except IndexError:
-                    default = None
-                # desc = self.launch("whatis", [mod])[0].strip().split(":")[1].strip()
-                if modname in self.mods.keys():
-                    self.mods[modname].addVersion(version, default)
-                else:
-                    self.mods[modname] = Module(
-                        modname,
-                        version,
-                        default=default,
-                        description=desc,
-                    )
+            modname = mod.rsplit("/", 1)[0]
+            try:
+                version = mod.rsplit("/", 1)[1].split("(")[0]
+            except IndexError:
+                version = "default"
+            try:
+                default = mod.rsplit("/", 1)[1].split("(")[1].rstrip(")")
+            except IndexError:
+                default = None
+            # desc = self.launch("whatis", [mod])[0].strip().split(":")[1].strip()
+            if modname in self.mods.keys():
+                self.mods[modname].addVersion(version, default)
+            else:
+                self.mods[modname] = Module(
+                    modname,
+                    version,
+                    default=default,
+                    description=desc,
+                )
         return self.mods
 
     def test(self):
