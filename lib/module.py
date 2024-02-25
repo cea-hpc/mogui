@@ -104,7 +104,7 @@ class Modulecmd:
                 default = False
 
             if mod_name in self.mods:
-                self.mods[mod_name].addVersion(version, default)
+                self.mods[mod_name].add_version(version, default)
             else:
                 self.mods[mod_name] = Module(
                     mod_name,
@@ -121,8 +121,8 @@ class Modulecmd:
             name = "test%d" % i
             self.mods[name] = Module(name, "v1", default="default")
         for i in range(2, 5):
-            self.mods["test1"].addVersion("v%d" % i)
-            self.mods["test5"].addVersion("v%d" % i)
+            self.mods["test1"].add_version("v%d" % i)
+            self.mods["test5"].add_version("v%d" % i)
 
     def save(self, modulelist):
         """
@@ -202,7 +202,7 @@ class Module:
         self.whatis = None
         self.help_message = None
         if version is not None:
-            self.addVersion(version, default)
+            self.add_version(version, default)
 
     def current_designation(self):
         if self.current_version is None:
@@ -255,7 +255,7 @@ class Module:
                 self.help_message = f"No help for {self.default_designation()}"
         return self.help_message
 
-    def addVersion(self, version, default=False):
+    def add_version(self, version, default=False):
         self.versions.append(version)
         # print("Module: %s - added version : %s" % (self.name, version))
         if default:
