@@ -37,9 +37,6 @@ if not os.environ.get("MODULEPATH"):
 
 if __name__ == "__main__":
     modules = Modulecmd()
-    if len(sys.argv) > 1:
-        print("".join(modules.launch(sys.argv[1], sys.argv[2:])))
-        sys.exit(0)
     modules.modules()
     modules.load()
     modules.test()

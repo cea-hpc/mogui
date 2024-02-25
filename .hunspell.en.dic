@@ -27,3 +27,4 @@ modulecmd
 tcl
 MODULEPATH
 LOADEDMODULES
+args
