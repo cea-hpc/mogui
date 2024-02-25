@@ -119,9 +119,7 @@ class Modulecmd:
         """
         for i in range(1, 10):
             name = "test%d" % i
-            self.mods[name] = Module(
-                name, "v1", default="default", description="test module %d v1" % i
-            )
+            self.mods[name] = Module(name, "v1", default="default")
         for i in range(2, 5):
             self.mods["test1"].addVersion("v%d" % i)
             self.mods["test5"].addVersion("v%d" % i)
@@ -185,7 +183,6 @@ class Module:
         name : name of the module
         versions : list of the module versions
         selected : is the module selected for the user
-        description: the module description
     """
 
     def __init__(
@@ -194,7 +191,6 @@ class Module:
         version,
         selected=False,
         default=False,
-        description=None,
     ):
 
         super().__init__()
@@ -203,13 +199,10 @@ class Module:
         self.default_version = version
         self.current_version = version
         self.selected = selected
-        if description == None:
-            description = self.name
-        self.description = description
+        self.whatis = None
         if version is not None:
             self.addVersion(version, default)
         self.helpMessage = None
-        self.desc()
 
     def current_designation(self):
         if self.current_version is None:
@@ -245,17 +238,14 @@ class Module:
         self.__str__()
 
     def desc(self):
-        cmd = Modulecmd()
-        try:
-            self.description = (
-                cmd.run("whatis", self.default_designation(), "0>&2")
-                .strip()
-                .split(":")[1]
-                .strip()
+        if self.whatis is None:
+            cmd = Modulecmd()
+            self.whatis = (
+                cmd.run("whatis", self.default_designation()).split(":")[1].strip()
             )
-        except IndexError as e:
-            print("Unable to get description of %s : %s" % (self.name, e))
-        return self.description
+            if not self.whatis:
+                self.whatis = self.default_designation()
+        return self.whatis
 
     def help(self):
         cmd = Modulecmd()
