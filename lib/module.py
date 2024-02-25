@@ -200,9 +200,9 @@ class Module:
         self.current_version = version
         self.selected = selected
         self.whatis = None
+        self.help_message = None
         if version is not None:
             self.addVersion(version, default)
-        self.helpMessage = None
 
     def current_designation(self):
         if self.current_version is None:
@@ -248,12 +248,12 @@ class Module:
         return self.whatis
 
     def help(self):
-        cmd = Modulecmd()
-        if not self.helpMessage:
-            self.helpMessage = cmd.run("help", self.default_designation())
-        if not self.helpMessage:
-            self.helpMessage = "No help for %s" % self.name
-        return self.helpMessage
+        if self.help_message is None:
+            cmd = Modulecmd()
+            self.help_message = cmd.run("help", self.default_designation())
+            if not self.help_message:
+                self.help_message = f"No help for {self.default_designation()}"
+        return self.help_message
 
     def addVersion(self, version, default=False):
         self.versions.append(version)
