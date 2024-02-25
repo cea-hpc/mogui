@@ -138,9 +138,9 @@ class Modulecmd:
         except IOError as e:
             print("Impossible de sauvegarder %s : %s" % (self.savepath, e))
 
-    def load(self, destpath=None):
+    def restore(self, destpath=None):
         """
-        Load the modulelist from self.savepath or destpath if specified
+        Restore the modulelist from self.savepath or destpath if specified
         """
         if not destpath:
             destpath = self.savepath
