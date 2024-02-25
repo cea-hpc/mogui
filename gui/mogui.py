@@ -68,7 +68,7 @@ XTERM = "/usr/bin/xterm"
 
 class MoGui(QMainWindow):
     def __init__(self, modules=None):
-        super(MoGui, self).__init__()
+        super().__init__()
         self.mods = modules
         self.setWindowTitle("MoGui")
         self.setWindowIcon(QIcon(ICON))
@@ -342,7 +342,7 @@ print("%s")
 
     def close(self):
         self.writeSettings()
-        super(MoGui, self).close()
+        super().close()
 
 
 class ModuleGui(QStandardItem):
@@ -350,9 +350,9 @@ class ModuleGui(QStandardItem):
 
     def __init__(self, module, version=None):
         if version:
-            super(ModuleGui, self).__init__("%s/%s" % (module.name, version))
+            super().__init__("%s/%s" % (module.name, version))
         else:
-            super(ModuleGui, self).__init__(module.name)
+            super().__init__(module.name)
         self.setIcon(QIcon(DEFL_ICON))
         self.setEditable(False)
         self.module = module
@@ -366,7 +366,7 @@ class ModuleChoice(QTreeView):
     """List available modules"""
 
     def __init__(self, parent=None):
-        super(ModuleChoice, self).__init__(parent)
+        super().__init__(parent)
 
         self.model = QStandardItemModel()
 

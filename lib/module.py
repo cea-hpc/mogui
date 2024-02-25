@@ -197,7 +197,7 @@ class Module:
         description=None,
     ):
 
-        super(Module, self).__init__()
+        super().__init__()
         self.name = name
         self.versions = []
         self.default_version = version
