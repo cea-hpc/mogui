@@ -49,7 +49,6 @@ class Modulecmd(object):
         self.shell = shell
         self.mods = {}
         self.modulecmd = get_modulecmd_path()
-        self.helppath = "/opt/Modules/%s/description"
         self.savepath = "%s%s%s%s%s" % (
             os.environ["HOME"],
             os.sep,
@@ -241,15 +240,9 @@ class Module(object):
     def help(self):
         cmd = Modulecmd()
         if not self.helpMessage:
-            try:
-                helpfile = open(cmd.helppath % self.name)
-                self.helpMessage = " ".join(
-                    [line.decode() for line in helpfile.readlines()]
-                )
-            except IOError:
-                self.helpMessage = cmd.run(
-                    "help", "%s/%s" % (self.name, self.default_version)
-                )
+            self.helpMessage = cmd.run(
+                "help", "%s/%s" % (self.name, self.default_version)
+            )
         if not self.helpMessage:
             self.helpMessage = "No help for %s" % self.name
         return self.helpMessage
