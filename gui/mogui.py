@@ -448,6 +448,9 @@ class ModuleChoice(QTreeView):
                 moduleGroup.module.select()
             module = moduleGroup.module
             print("Selected %s" % module)
+            # load selected module
+            modules = Modulecmd()
+            modules.load(module.current_designation())
             self.add(module)
         for index in deselected.indexes():
             parent = index.parent()

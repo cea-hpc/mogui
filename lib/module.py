@@ -83,6 +83,22 @@ class Modulecmd:
             content = err.decode()
         return content
 
+    def eval(self, *arguments):
+        """Evaluate content produced by module command run to update current
+        environment.
+
+        Args:
+            arguments: module command and its argument to run
+
+        Returns:
+            Boolean status of content evaluation
+        """
+        content = self.run(*arguments, return_content="out")
+        global_ns = {}
+        exec(content, global_ns)
+        _mlstatus = global_ns.get("_mlstatus", True)
+        return _mlstatus
+
     def avail(self):
         """Fetch available modules in enabled module search paths
 
@@ -123,6 +139,16 @@ class Modulecmd:
         for i in range(2, 5):
             self.mods["test1"].add_version("v%d" % i)
             self.mods["test5"].add_version("v%d" % i)
+
+    def load(self, module):
+        """Load given module into environment
+
+        Args:
+            module: designation of module to load
+
+        Returns:
+            Boolean status of module load evaluation"""
+        return self.eval("load", module)
 
     def save(self, modulelist):
         """
