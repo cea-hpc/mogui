@@ -463,6 +463,9 @@ class ModuleChoice(QTreeView):
                     child = moduleGroup.child(i)
                     selection.select(child.index(), QItemSelectionModel.Deselect)
             module = moduleGroup.module
+            # unload unselected module
+            modules = Modulecmd()
+            modules.unload(module.current_designation())
             moduleGroup.module.deselect()
             print("Deselected %s" % module)
             self.remove(module)

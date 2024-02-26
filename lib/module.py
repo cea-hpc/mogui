@@ -150,6 +150,16 @@ class Modulecmd:
             Boolean status of module load evaluation"""
         return self.eval("load", module)
 
+    def unload(self, module):
+        """Unload given module from environment
+
+        Args:
+            module: designation of module to unload
+
+        Returns:
+            Boolean status of module unload evaluation"""
+        return self.eval("unload", module)
+
     def save(self, modulelist):
         """
         Save the modulelist to self.savepath
