@@ -50,13 +50,6 @@ class Modulecmd:
         self.shell = shell
         self.mods = {}
         self.modulecmd = get_modulecmd_path()
-        self.savepath = "%s%s%s%s%s" % (
-            os.environ["HOME"],
-            os.sep,
-            ".config/MoGui",
-            os.sep,
-            "modules",
-        )
 
     def run(self, *arguments, out_shell="python", return_content="err"):
         """Run module command with given arguments to produce code for
@@ -160,40 +153,19 @@ class Modulecmd:
             Boolean status of module unload evaluation"""
         return self.eval("unload", module)
 
-    def save(self, modulelist):
-        """
-        Save the modulelist to self.savepath
-        """
-        msg = ""
-        for mod in modulelist.values():
-            if mod.selected:
-                msg += "%s\n" % mod
-        try:
-            file = open(self.savepath, "w")
-            file.write(msg)
-        except IOError as e:
-            print("Impossible de sauvegarder %s : %s" % (self.savepath, e))
+    def save(self):
+        """Save loaded modules in default collection
 
-    def restore(self, destpath=None):
-        """
-        Restore the modulelist from self.savepath or destpath if specified
-        """
-        if not destpath:
-            destpath = self.savepath
-        try:
-            file = open(destpath, "r")
-            for line in file.readlines():
-                line = line.strip()
-                if line.startswith("#") or "/" not in line:
-                    continue
-                (modname, version) = line.rsplit("/", 1)
-                if self.mods.get(modname):
-                    self.mods[modname].select(version)
-                    print(
-                        "LOAD: select %s (should be %s)" % (self.mods[modname], version)
-                    )
-        except IOError as e:
-            print("Impossible de lire %s : %s" % (destpath, e))
+        Returns:
+            Boolean status of module save evaluation"""
+        return self.eval("save")
+
+    def restore(self):
+        """Restore default collection in environment
+
+        Returns:
+            Boolean status of module restore evaluation"""
+        return self.eval("restore")
 
     def loaded(self):
         """Return list of loaded modules"""

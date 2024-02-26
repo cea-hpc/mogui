@@ -249,15 +249,8 @@ class MoGui(QMainWindow):
             model.appendRow(mod_item)
 
     def save(self):
-        msg = ""
-        for mod in self.mods.values():
-            if mod.selected:
-                msg += "%s\n" % mod
-        QMessageBox.information(
-            self, "Sauvegarde des modules", "Modules to save :\n%s" % msg
-        )
         modules = Modulecmd()
-        modules.save(self.mods)
+        modules.save()
 
     def reset(self):
         modules = Modulecmd()
