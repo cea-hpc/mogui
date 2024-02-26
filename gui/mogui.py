@@ -192,11 +192,11 @@ class MoGui(QMainWindow):
         self.mods = modules.mods
         # Set the module list to the modulelist widget
         self.modulelist.set(
-            self.mods, add=self.__addToChoice, remove=self.__removeFromChoice
+            self.mods, add=self.add_module, remove=self.remove_module
         )
-        # Add selected modules in the choiceList
-        for m in modules.selected():
-            self.__addToChoice(m)
+        # Add loaded modules in the choiceList
+        self.refresh_loaded()
+        for m in modules.loaded():
             # Selected modules in the modulelist
             self.modulelist.select(m)
         # Hack to select all moduleGroup
@@ -224,50 +224,29 @@ class MoGui(QMainWindow):
         moduleversion = "%s" % (module_gui.version.text())
         module = module_gui.data
         module.select(moduleversion)
-        self.__addToChoice(module)
+        self.add_module(module)
 
-    def __addToChoice(self, module):
-        module_str = "%s" % module
-        model = self.choiceModel
-        try:
-            chosen = model.findItems(module.name, flags=Qt.MatchContains)
-        except TypeError:
-            # If FindItems is not supported create a list from the model
-            chosen = []
-            for index in range(0, model.rowCount()):
-                # The itemData[0] is the text field of the item
-                chosen_itemData = model.itemData(model.index(index, 0))
-                chosen_modulename = chosen_itemData[0].toString()
-                if chosen_modulename.startsWith(module.name):
-                    chosen.append(model.item(index))
-
-        name = QStandardItem(module_str)
-        name.setToolTip(module_str)
-        name.setEditable(False)
-        name.setIcon(self.defaultIcon)
-
-        if len(chosen) != 0:
-            # Replace the module version if it exists in the choice list
-            row = chosen[0].index().row()
-            model.setItem(row, name)
-            # Should be a popup
-            self.history.append("%s already added !!" % module_str)
-        else:
-            # Add only the module if it doesn't exist in the choice list
-            self.history.append("Try to add %s" % module_str)
-            model.appendRow(name)
-
-        self.history.append("%s selected" % module_str)
+    def add_module(self, module):
+        self.history.append(f"{module} selected")
         self.info.setText(module.help())
-        name.setToolTip(module.help())
+        self.refresh_loaded()
 
-    def __removeFromChoice(self, module):
-        module_str = "%s" % module
+    def remove_module(self, module):
+        self.history.append(f"{module} deselected")
+        self.refresh_loaded()
+
+    def refresh_loaded(self):
+        """Clear choice list and fill it with currently loaded modules"""
         model = self.choiceModel
-        chosen = model.findItems(module_str)
-        if len(chosen):
-            model.removeRow(chosen[0].index().row())
-            self.history.append("%s deselected" % module_str)
+        model.clear()
+        modules = Modulecmd()
+
+        for loaded_mod in modules.loaded():
+            mod_item = QStandardItem(loaded_mod)
+            mod_item.setToolTip(loaded_mod)
+            mod_item.setEditable(False)
+            mod_item.setIcon(self.defaultIcon)
+            model.appendRow(mod_item)
 
     def save(self):
         msg = ""
@@ -411,10 +390,7 @@ class ModuleChoice(QTreeView):
             header = root.child(h)
             for i in range(0, header.rowCount()):
                 child = header.child(i)
-                if (
-                    child.module.name == module.name
-                    and child.version == module.current_version
-                ):
+                if child.text() == module:
                     selection.select(child.index(), QItemSelectionModel.Select)
                     self.select_module(child.index())
 

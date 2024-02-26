@@ -195,6 +195,14 @@ class Modulecmd:
         except IOError as e:
             print("Impossible de lire %s : %s" % (destpath, e))
 
+    def loaded(self):
+        """Return list of loaded modules"""
+        if os.environ.get("LOADEDMODULES"):
+            loaded = os.environ.get("LOADEDMODULES").split(":")
+        else:
+            loaded = []
+        return loaded
+
     def __str__(self):
         ret = ""
         for mod in self.mods.values():
