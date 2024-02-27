@@ -66,9 +66,9 @@ XTERM = "/usr/bin/xterm"
 
 
 class MoGui(QMainWindow):
-    def __init__(self, modules=None):
+    def __init__(self, modulecmd: Modulecmd):
         super().__init__()
-        self.mods = modules
+        self.modulecmd = modulecmd
         self.setWindowTitle("MoGui")
         self.setWindowIcon(QIcon(ICON))
         self.createObjects()
@@ -142,7 +142,7 @@ class MoGui(QMainWindow):
 
         # Modules list (with label)
         self.modulelabel = QLabel("Liste des produits disponibles:")
-        self.modulelist = ModuleChoice()
+        self.modulelist = ModuleChoice(self.modulecmd)
 
         # Info about current Module
         self.infolabel = QLabel("Information :")
@@ -187,15 +187,14 @@ class MoGui(QMainWindow):
         # self.connectNotify(actionHelp, SIGNAL("triggered()"), self.modulelist.expert)
         actionHelp.triggered.connect(self.modulelist.expert)
 
-    def setModules(self, modules):
-        self.mods = modules.mods
+    def setModules(self):
         # Set the module list to the modulelist widget
         self.modulelist.set(
-            self.mods, add=self.add_module, remove=self.remove_module
+            self.modulecmd.mods, add=self.add_module, remove=self.remove_module
         )
         # Add loaded modules in the choiceList
         self.refresh_loaded()
-        for m in modules.loaded():
+        for m in self.modulecmd.loaded():
             # Selected modules in the modulelist
             self.modulelist.select(m)
         # Hack to select all moduleGroup
@@ -238,9 +237,8 @@ class MoGui(QMainWindow):
         """Clear choice list and fill it with currently loaded modules"""
         model = self.choiceModel
         model.clear()
-        modules = Modulecmd()
 
-        for loaded_mod in modules.loaded():
+        for loaded_mod in self.modulecmd.loaded():
             mod_item = QStandardItem(loaded_mod)
             mod_item.setToolTip(loaded_mod)
             mod_item.setEditable(False)
@@ -248,18 +246,16 @@ class MoGui(QMainWindow):
             model.appendRow(mod_item)
 
     def save(self):
-        modules = Modulecmd()
-        modules.save()
+        self.modulecmd.save()
 
     def reset(self):
-        modules = Modulecmd()
-        modules.avail()
-        modules.restore()
+        self.modulecmd.avail()
+        self.modulecmd.restore()
         ## To remove (only for test)
-        modules.test()
+        self.modulecmd.test()
         self.choiceModel.clear()
         self.modulelist.clear()
-        self.setModules(modules)
+        self.setModules()
 
     def terminal(self):
         """Launch self.consolecmd terminal that inherits GUI's environment"""
@@ -306,8 +302,10 @@ class ModuleGui(QStandardItem):
 class ModuleChoice(QTreeView):
     """List available modules"""
 
-    def __init__(self, parent=None):
+    def __init__(self, modulecmd: Modulecmd, parent=None):
         super().__init__(parent)
+
+        self.modulecmd = modulecmd
 
         self.model = QStandardItemModel()
 
@@ -387,8 +385,7 @@ class ModuleChoice(QTreeView):
             module = moduleGroup.module
             print("Selected %s" % module)
             # load selected module
-            modules = Modulecmd()
-            modules.load(module.current_designation())
+            self.modulecmd.load(module.current_designation())
             self.add(module)
         for index in deselected.indexes():
             parent = index.parent()
@@ -402,8 +399,7 @@ class ModuleChoice(QTreeView):
                     selection.select(child.index(), QItemSelectionModel.Deselect)
             module = moduleGroup.module
             # unload unselected module
-            modules = Modulecmd()
-            modules.unload(module.current_designation())
+            self.modulecmd.unload(module.current_designation())
             moduleGroup.module.deselect()
             print("Deselected %s" % module)
             self.remove(module)

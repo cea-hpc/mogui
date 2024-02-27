@@ -54,8 +54,8 @@ if __name__ == "__main__":
         pass
 
     print(modules)
-    gui = MoGui(modules.mods)
-    gui.setModules(modules)
+    gui = MoGui(modules)
+    gui.setModules()
     gui.show()
 
     sys.exit(app.exec_())
