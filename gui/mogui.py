@@ -19,8 +19,7 @@
 ##########################################################################
 
 # To launch commands
-from subprocess import Popen
-from tempfile import NamedTemporaryFile
+from subprocess import run
 
 # Gui PyQt
 from PyQt5.QtCore import (
@@ -263,38 +262,8 @@ class MoGui(QMainWindow):
         self.setModules(modules)
 
     def terminal(self):
-        """
-        Launch a self.consolecmd with preloaded modules
-        """
-        modules = Modulecmd()
-        args = []
-        for mod in self.mods.values():
-            if mod.selected:
-                args.append("%s" % mod)
-        tmpfile = NamedTemporaryFile(mode="w+t", delete=False)
-        tmpfile.writelines(modules.run("purge", return_content="out"))
-        tmpfile.write(
-            """
-from subprocess import call
-import os
-for key in os.environ.keys():
-    if key not in [ 'TMPDIR', 'LANG', 'HOME', 'USER', 'DISPLAY', 'MODULEPATH' ]:
-        del os.environ[key]
-os.environ['LOADEDMODULES']=':'
-print(os.environ)
-myenv=os.environ
-print("%s")
-"""
-            % args
-        )
-        for line in modules.run("load", *args, return_content="out")[1:]:
-            tmpfile.write(line.decode())
-
-        tmpfile.write('call(["%s"])\n' % self.consolecmd)
-        tmpfile.flush()
-        print("Launching : %s" % ["python", tmpfile.name, tmpfile])
-        commands = Popen(["python", tmpfile.name])
-        tmpfile.close()
+        """Launch self.consolecmd terminal that inherits GUI's environment"""
+        run(self.consolecmd, check=False)
 
     def help(self):
         print("TODO")

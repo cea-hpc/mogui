@@ -184,14 +184,6 @@ class Modulecmd:
     def __repr__(self):
         self.__str__()
 
-    def selected(self):
-        """Return the list of selected modules"""
-        selected = []
-        for mod in self.mods.values():
-            if mod.selected:
-                selected.append(mod)
-        return selected
-
 
 class Module:
     """
