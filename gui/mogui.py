@@ -348,11 +348,16 @@ class ModuleChoice(QTreeView):
         selection = self.selectionModel()
         for h in range(0, root.rowCount()):
             header = root.child(h)
-            for i in range(0, header.rowCount()):
-                child = header.child(i)
-                if child.text() == module:
-                    selection.select(child.index(), QItemSelectionModel.Select)
-                    self.select_module(child.index())
+            if header.rowCount():
+                for i in range(0, header.rowCount()):
+                    child = header.child(i)
+                    if child.text() == module:
+                        selection.select(child.index(), QItemSelectionModel.Select)
+                        self.select_module(child.index())
+            else:
+                if header.text() == module:
+                    selection.select(header.index(), QItemSelectionModel.Select)
+                    self.select_module(header.index())
 
     def collapseAll(self):
         root = self.model.invisibleRootItem()

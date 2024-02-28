@@ -36,3 +36,5 @@ modulefiles
 desc
 whatis
 ModuleChoice
+TreeView
+modulepath
