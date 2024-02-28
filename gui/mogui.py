@@ -226,7 +226,7 @@ class MoGui(QMainWindow):
 
     def add_module(self, module):
         self.history.append(f"{module} selected")
-        self.info.setText(module.help())
+        self.info.setText(module.help(self.modulecmd))
         self.refresh_loaded()
 
     def remove_module(self, module):

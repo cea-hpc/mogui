@@ -245,20 +245,20 @@ class Module:
     def __repr__(self):
         self.__str__()
 
-    def desc(self):
+    def desc(self, modulecmd: Modulecmd):
         if self.whatis is None:
-            cmd = Modulecmd()
             self.whatis = (
-                cmd.run("whatis", self.default_designation()).split(":")[1].strip()
+                modulecmd.run("whatis", self.default_designation())
+                .split(":")[1]
+                .strip()
             )
             if not self.whatis:
                 self.whatis = self.default_designation()
         return self.whatis
 
-    def help(self):
+    def help(self, modulecmd: Modulecmd):
         if self.help_message is None:
-            cmd = Modulecmd()
-            self.help_message = cmd.run("help", self.default_designation())
+            self.help_message = modulecmd.run("help", self.default_designation())
             if not self.help_message:
                 self.help_message = f"No help for {self.default_designation()}"
         return self.help_message
