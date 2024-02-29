@@ -90,6 +90,10 @@ class MoGui(QMainWindow):
         actionPurge.setShortcut("Ctrl-P")
         actionPurge.triggered.connect(self.purge)
 
+        actionRestore = QAction("&Restore", self)
+        actionRestore.setIcon(QIcon(RESET_ICON))
+        actionRestore.triggered.connect(self.restore)
+
         actionSave = QAction("&Sauver", self)
         actionSave.setIcon(QIcon(SAVE_ICON))
         actionSave.setShortcut("Ctrl-S")
@@ -120,6 +124,7 @@ class MoGui(QMainWindow):
         self.toolbar.show()
         self.toolbar.addAction(actionReset)
         self.toolbar.addAction(actionPurge)
+        self.toolbar.addAction(actionRestore)
         self.toolbar.addAction(actionSave)
         self.toolbar.addAction(actionTerm)
         self.toolbar.addAction(actionHelp)
@@ -134,6 +139,7 @@ class MoGui(QMainWindow):
         menufile = self.menubar.addMenu("&Fichier")
         menufile.addAction(actionReset)
         menufile.addAction(actionPurge)
+        menufile.addAction(actionRestore)
         menufile.addAction(actionSave)
         menufile.addAction(actionQuit)
         menuaction = self.menubar.addMenu("&Action")
@@ -260,6 +266,13 @@ class MoGui(QMainWindow):
         self.modulecmd.reset()
         ## To remove (only for test)
         self.modulecmd.test()
+        self.choiceModel.clear()
+        self.modulelist.clear()
+        self.setModules()
+
+    def restore(self):
+        self.modulecmd.avail()
+        self.modulecmd.restore()
         self.choiceModel.clear()
         self.modulelist.clear()
         self.setModules()
