@@ -167,6 +167,13 @@ class Modulecmd:
             Boolean status of module restore evaluation"""
         return self.eval("restore")
 
+    def purge(self):
+        """Unload all loaded modules
+
+        Returns:
+            Boolean status of module purge evaluation"""
+        return self.eval("purge")
+
     def loaded(self):
         """Return list of loaded modules"""
         if os.environ.get("LOADEDMODULES"):
