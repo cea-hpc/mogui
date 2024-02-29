@@ -38,3 +38,5 @@ whatis
 ModuleChoice
 TreeView
 modulepath
+config
+Flake8
