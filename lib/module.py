@@ -278,7 +278,8 @@ class Module:
         return self.help_message
 
     def add_version(self, version, default=False):
-        self.versions.append(version)
+        if version:
+            self.versions.append(version)
         # print("Module: %s - added version : %s" % (self.name, version))
         if default:
             self.default_version = version
