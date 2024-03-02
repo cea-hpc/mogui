@@ -189,9 +189,6 @@ class MoGui(QMainWindow):
 
         self.layout.addLayout(self.choicelayout)
 
-        # Test
-        actionHelp.triggered.connect(self.modulelist.expert)
-
     def setModules(self):
         # Set the module list to the modulelist widget
         self.modulelist.set(
@@ -332,7 +329,6 @@ class ModuleChoice(QTreeView):
         self.setSelectionMode(QAbstractItemView.MultiSelection)
         self.add = None
         self.remove = None
-        self._expert = False
 
     def set(self, modules, add=None, remove=None):
         # Create a line in the model with modulename, versions and desc
@@ -348,13 +344,6 @@ class ModuleChoice(QTreeView):
                 mods.append(mod)
             header.appendRows(mods)
             self.model.appendRow(header)
-
-    def expert(self):
-        self._expert = not self._expert
-        if self._expert:
-            self.expandAll()
-        else:
-            self.collapseAll()
 
     def select(self, module):
         """Select a module in the list"""
