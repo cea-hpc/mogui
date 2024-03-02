@@ -83,7 +83,6 @@ class MoGui(QMainWindow):
         actionReset = QAction("&Reset", self)
         actionReset.setIcon(QIcon(RESET_ICON))
         actionReset.setShortcut("Ctrl-R")
-        # self.connect(actionReset, SIGNAL("triggered()"), self.reset)
         actionReset.triggered.connect(self.reset)
 
         actionPurge = QAction("&Purge", self)
@@ -98,25 +97,21 @@ class MoGui(QMainWindow):
         actionSave = QAction("&Sauver", self)
         actionSave.setIcon(QIcon(SAVE_ICON))
         actionSave.setShortcut("Ctrl-S")
-        # self.connectNotify(actionSave, SIGNAL("triggered()"), self.save)
         actionSave.triggered.connect(self.save)
 
         actionTerm = QAction("&Terminal", self)
         actionTerm.setIcon(QIcon(TERM_ICON))
         actionTerm.setShortcut("Ctrl-T")
-        # self.connectNotify(actionTerm, SIGNAL("triggered()"), self.terminal)
         actionTerm.triggered.connect(self.terminal)
 
         actionHelp = QAction("&Aide", self)
         actionHelp.setIcon(QIcon(HELP_ICON))
         actionHelp.setShortcut("F1")
-        # self.connectNotify(actionHelp, SIGNAL("triggered()"), self.help)
         actionHelp.triggered.connect(self.help)
 
         actionQuit = QAction("&Quitter", self)
         actionQuit.setIcon(QIcon(QUIT_ICON))
         actionQuit.setShortcut("Ctrl-Q")
-        # self.connectNotify(actionQuit, SIGNAL("triggered()"), self.close)
         actionQuit.triggered.connect(self.close)
 
         # Set ToolBar
@@ -186,7 +181,6 @@ class MoGui(QMainWindow):
         self.choiceList.setModel(self.choiceModel)
         self.choiceList.setIconSize(QSize(256, 256))
         self.choiceList.setUniformItemSizes(True)
-        # self.choiceList.setViewMode(QListView.IconMode)
         self.choiceList.setAcceptDrops(True)
         self.choicelayout = QVBoxLayout()
 
@@ -196,9 +190,6 @@ class MoGui(QMainWindow):
         self.layout.addLayout(self.choicelayout)
 
         # Test
-        # self.connectNotify(self.choiceList, SIGNAL("dropEvent()"), self.dropModule)
-        # self.choiceList.dropEvent().triggered.connect(self.dropModule)
-        # self.connectNotify(actionHelp, SIGNAL("triggered()"), self.modulelist.expert)
         actionHelp.triggered.connect(self.modulelist.expert)
 
     def setModules(self):
@@ -214,7 +205,6 @@ class MoGui(QMainWindow):
         # Hack to select all moduleGroup
         self.modulelist.expandAll()
         self.modulelist.collapseAll()
-        ##
 
     def dropModule(self, event):
         module_gui = event.mimeData()
@@ -300,7 +290,6 @@ class MoGui(QMainWindow):
         settings = QSettings("MoGui", "gui")
         settings.beginGroup("toolbar")
         self.toolbar.setGeometry(settings.value("geometry", self.toolbar.geometry()))
-        # self.toolbar.geometry()).toRect())
         settings.endGroup()
 
     def close(self):
@@ -359,8 +348,6 @@ class ModuleChoice(QTreeView):
                 mods.append(mod)
             header.appendRows(mods)
             self.model.appendRow(header)
-            # self.connectNotify(self, SIGNAL("collapsed(QModelIndex)"), self.enableSubtree)
-            # self.connectNotify(self, SIGNAL("expanded(QModelIndex)"), self.disableSubtree)
 
     def expert(self):
         self._expert = not self._expert
