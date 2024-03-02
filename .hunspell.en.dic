@@ -40,3 +40,7 @@ TreeView
 modulepath
 config
 Flake8
+modulepaths
+cmd
+repr
+str

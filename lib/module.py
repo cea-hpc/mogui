@@ -51,6 +51,7 @@ class Modulecmd:
         self.avail_mods = {}
         self.avail_fetched = False
         self.modulecmd = get_modulecmd_path()
+        self.cmd_version = None
 
     def run(self, *arguments, out_shell="python", return_content="err"):
         """Run module command with given arguments to produce code for
@@ -180,14 +181,31 @@ class Modulecmd:
             loaded = []
         return loaded
 
-    def __str__(self):
-        ret = ""
-        for mod in self.avail_mods.values():
-            ret += "%s\n" % mod
-        return ret
+    def used(self):
+        """Return list of enabled modulepaths"""
+        if os.environ.get("MODULEPATH"):
+            used = os.environ.get("MODULEPATH").split(":")
+        else:
+            used = []
+        return used
+
+    def version(self):
+        """Return version of module command"""
+        if self.cmd_version is None:
+            version_raw = self.run("--version")
+            self.cmd_version = version_raw.split()[2]
+
+        return self.cmd_version
 
     def __repr__(self):
-        self.__str__()
+        loaded_str = ", ".join(self.loaded())
+        used_str = ", ".join(self.used())
+        info = [
+            f"Module command version {self.version()}",
+            f"Used modulepaths: {used_str}",
+            f"Loaded modules: {loaded_str}",
+        ]
+        return "\n  ".join(info)
 
 
 class Module:
