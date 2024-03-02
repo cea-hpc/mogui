@@ -264,8 +264,6 @@ class MoGui(QMainWindow):
     def reset(self):
         self.modulecmd.avail()
         self.modulecmd.reset()
-        ## To remove (only for test)
-        self.modulecmd.test()
         self.choiceModel.clear()
         self.modulelist.clear()
         self.setModules()

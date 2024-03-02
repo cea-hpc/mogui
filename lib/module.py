@@ -122,17 +122,6 @@ class Modulecmd:
                 )
         return self.mods
 
-    def test(self):
-        """
-        Create fake module list
-        """
-        for i in range(1, 10):
-            name = "test%d" % i
-            self.mods[name] = Module(name, "v1", default="default")
-        for i in range(2, 5):
-            self.mods["test1"].add_version("v%d" % i)
-            self.mods["test5"].add_version("v%d" % i)
-
     def load(self, module):
         """Load given module into environment
 

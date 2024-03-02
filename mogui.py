@@ -38,7 +38,6 @@ if not os.environ.get("MODULEPATH"):
 if __name__ == "__main__":
     modules = Modulecmd()
     modules.avail()
-    modules.test()
 
     # Init in Qt gui mode
     app = QApplication(sys.argv)
