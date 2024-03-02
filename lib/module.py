@@ -45,6 +45,15 @@ def get_modulecmd_path():
     return modulecmd_path
 
 
+def get_path_envvar_value_list(envvar, sep=":"):
+    """Return list value of a path-like environment variable"""
+    if os.environ.get(envvar):
+        value_list = os.environ.get(envvar).split(sep)
+    else:
+        value_list = []
+    return value_list
+
+
 class Modulecmd:
     def __init__(self, shell="python"):
         self.shell = shell
@@ -175,19 +184,11 @@ class Modulecmd:
 
     def loaded(self):
         """Return list of loaded modules"""
-        if os.environ.get("LOADEDMODULES"):
-            loaded = os.environ.get("LOADEDMODULES").split(":")
-        else:
-            loaded = []
-        return loaded
+        return get_path_envvar_value_list("LOADEDMODULES")
 
     def used(self):
         """Return list of enabled modulepaths"""
-        if os.environ.get("MODULEPATH"):
-            used = os.environ.get("MODULEPATH").split(":")
-        else:
-            used = []
-        return used
+        return get_path_envvar_value_list("MODULEPATH")
 
     def version(self):
         """Return version of module command"""
