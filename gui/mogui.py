@@ -18,6 +18,8 @@
 
 ##########################################################################
 
+import sys
+
 # To launch commands
 from subprocess import run
 
@@ -288,7 +290,7 @@ class MoGui(QMainWindow):
 
     def help(self):
         if self.debug:
-            print("TODO")
+            print("TODO", file=sys.stderr)
 
     def writeSettings(self):
         settings = QSettings("MoGui", "gui")
@@ -416,7 +418,7 @@ class ModuleChoice(QTreeView):
                 moduleGroup.module.select()
             module = moduleGroup.module
             if self.debug:
-                print("Selected {module}")
+                print(f"Selected {module}", file=sys.stderr)
             # load selected module
             self.modulecmd.load(module.current_designation())
             self.add(module)
@@ -435,7 +437,7 @@ class ModuleChoice(QTreeView):
             self.modulecmd.unload(module.current_designation())
             moduleGroup.module.deselect()
             if self.debug:
-                print("Deselected %s" % module)
+                print(f"Deselected {module}", file=sys.stderr)
             self.remove(module)
         self.update()
 

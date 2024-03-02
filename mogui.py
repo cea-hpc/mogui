@@ -45,6 +45,10 @@ if __name__ == "__main__":
     arg_parser.add_argument(
         "-d", "--debug", dest="debug", action="store_true", help="enable debug mode"
     )
+    # manually handle --help option to print usage message on stderr
+    if "-h" in sys.argv or "--help" in sys.argv:
+        arg_parser.print_help(file=sys.stderr)
+        sys.exit(0)
     args = arg_parser.parse_args()
 
     # Init in Qt gui mode
@@ -60,7 +64,7 @@ if __name__ == "__main__":
         pass
 
     if args.debug:
-        print(modules)
+        print(modules, file=sys.stderr)
 
     gui = MoGui(modules, debug=args.debug)
     gui.setModules()
