@@ -18,8 +18,6 @@
 
 ##########################################################################
 
-import sys
-
 # To launch commands
 from subprocess import run
 
@@ -52,8 +50,8 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-# Save and restore modules
 from lib.module import Modulecmd
+from lib.utils import print_debug
 
 SIGNAL = pyqtSignal
 
@@ -290,7 +288,7 @@ class MoGui(QMainWindow):
 
     def help(self):
         if self.debug:
-            print("TODO", file=sys.stderr)
+            print_debug("TODO")
 
     def writeSettings(self):
         settings = QSettings("MoGui", "gui")
@@ -418,7 +416,7 @@ class ModuleChoice(QTreeView):
                 moduleGroup.module.select()
             module = moduleGroup.module
             if self.debug:
-                print(f"Selected {module}", file=sys.stderr)
+                print_debug(f"Selected {module}")
             # load selected module
             self.modulecmd.load(module.current_designation())
             self.add(module)
@@ -437,7 +435,7 @@ class ModuleChoice(QTreeView):
             self.modulecmd.unload(module.current_designation())
             moduleGroup.module.deselect()
             if self.debug:
-                print(f"Deselected {module}", file=sys.stderr)
+                print_debug(f"Deselected {module}")
             self.remove(module)
         self.update()
 

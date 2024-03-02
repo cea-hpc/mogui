@@ -30,6 +30,7 @@ import warnings
 from PyQt5.QtWidgets import QApplication
 
 from lib.module import Modulecmd
+from lib.utils import print_debug
 from gui.mogui import MoGui
 
 
@@ -64,7 +65,7 @@ if __name__ == "__main__":
         pass
 
     if args.debug:
-        print(modules, file=sys.stderr)
+        print_debug(modules)
 
     gui = MoGui(modules, debug=args.debug)
     gui.setModules()
