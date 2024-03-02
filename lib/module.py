@@ -48,7 +48,8 @@ def get_modulecmd_path():
 class Modulecmd:
     def __init__(self, shell="python"):
         self.shell = shell
-        self.mods = {}
+        self.avail_mods = {}
+        self.avail_fetched = False
         self.modulecmd = get_modulecmd_path()
 
     def run(self, *arguments, out_shell="python", return_content="err"):
@@ -98,29 +99,30 @@ class Modulecmd:
         Returns:
             Hash table with all Module objects
         """
-        lines = self.run("avail", "--terse", "--output=sym").strip().split("\n")
-        version = "1.0"
+        if not self.avail_fetched:
+            lines = self.run("avail", "--terse", "--output=sym").strip().split("\n")
+            for mod in lines:
+                mod_split_raw = mod.rsplit("/", 1)
+                mod_name = mod_split_raw[0]
+                if len(mod_split_raw) > 1:
+                    versions = mod_split_raw[1].rstrip(")").replace("(", ":").split(":")
+                    version = versions[0]
+                    default = "default" in versions
+                else:
+                    version = None
+                    default = False
 
-        for mod in lines:
-            mod_split_raw = mod.rsplit("/", 1)
-            mod_name = mod_split_raw[0]
-            if len(mod_split_raw) > 1:
-                versions = mod_split_raw[1].rstrip(")").replace("(", ":").split(":")
-                version = versions[0]
-                default = "default" in versions
-            else:
-                version = None
-                default = False
+                if mod_name in self.avail_mods:
+                    self.avail_mods[mod_name].add_version(version, default)
+                else:
+                    self.avail_mods[mod_name] = Module(
+                        mod_name,
+                        version,
+                        default=default,
+                    )
+            self.avail_fetched = True
 
-            if mod_name in self.mods:
-                self.mods[mod_name].add_version(version, default)
-            else:
-                self.mods[mod_name] = Module(
-                    mod_name,
-                    version,
-                    default=default,
-                )
-        return self.mods
+        return self.avail_mods
 
     def load(self, module):
         """Load given module into environment
@@ -180,7 +182,7 @@ class Modulecmd:
 
     def __str__(self):
         ret = ""
-        for mod in self.mods.values():
+        for mod in self.avail_mods.values():
             ret += "%s\n" % mod
         return ret
 
