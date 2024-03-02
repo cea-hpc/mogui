@@ -226,12 +226,12 @@ class MoGui(QMainWindow):
         self.add_module(module)
 
     def add_module(self, module):
-        self.history.append(f"{module} selected")
+        self.report_event(f"Module '{module}' selected")
         self.info.setText(module.help(self.modulecmd))
         self.refresh_loaded()
 
     def remove_module(self, module):
-        self.history.append(f"{module} deselected")
+        self.report_event(f"Module '{module}' deselected")
         self.refresh_loaded()
 
     def refresh_loaded(self):
@@ -246,10 +246,18 @@ class MoGui(QMainWindow):
             mod_item.setIcon(self.defaultIcon)
             model.appendRow(mod_item)
 
+    def report_event(self, message):
+        """Report an event message"""
+        self.history.append(message)
+        if self.debug:
+            print_debug(message)
+
     def save(self):
+        self.report_event("Save loaded environment as default collection")
         self.modulecmd.save()
 
     def reset(self):
+        self.report_event("Reset to initial environment")
         self.modulecmd.avail()
         self.modulecmd.reset()
         self.choiceModel.clear()
@@ -257,6 +265,7 @@ class MoGui(QMainWindow):
         self.setModules()
 
     def restore(self):
+        self.report_event("Restore default collection's environment")
         self.modulecmd.avail()
         self.modulecmd.restore()
         self.choiceModel.clear()
@@ -264,6 +273,7 @@ class MoGui(QMainWindow):
         self.setModules()
 
     def purge(self):
+        self.report_event("Purge loaded modules")
         self.modulecmd.purge()
         self.choiceModel.clear()
         self.modulelist.clear()
