@@ -22,6 +22,7 @@
 # TODO:
 # - Add Selected property to the Module class
 
+import argparse
 import os
 import sys
 import warnings
@@ -35,8 +36,16 @@ from gui.mogui import MoGui
 if not os.environ.get("MODULEPATH"):
     warnings.warn("Module search path empty")
 
+
 if __name__ == "__main__":
     modules = Modulecmd()
+
+    # parse command line arguments
+    arg_parser = argparse.ArgumentParser(description="MoGui, GUI frontend for Modules")
+    arg_parser.add_argument(
+        "-d", "--debug", dest="debug", action="store_true", help="enable debug mode"
+    )
+    args = arg_parser.parse_args()
 
     # Init in Qt gui mode
     app = QApplication(sys.argv)
@@ -50,8 +59,10 @@ if __name__ == "__main__":
     except IOError:
         pass
 
-    print(modules)
-    gui = MoGui(modules)
+    if args.debug:
+        print(modules)
+
+    gui = MoGui(modules, debug=args.debug)
     gui.setModules()
     gui.show()
 

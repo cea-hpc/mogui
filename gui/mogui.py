@@ -66,9 +66,10 @@ XTERM = "/usr/bin/xterm"
 
 
 class MoGui(QMainWindow):
-    def __init__(self, modulecmd: Modulecmd):
+    def __init__(self, modulecmd: Modulecmd, debug=False):
         super().__init__()
         self.modulecmd = modulecmd
+        self.debug = debug
         self.setWindowTitle("MoGui")
         self.setWindowIcon(QIcon(ICON))
         self.createObjects()
@@ -155,7 +156,7 @@ class MoGui(QMainWindow):
 
         # Modules list (with label)
         self.modulelabel = QLabel("Liste des produits disponibles:")
-        self.modulelist = ModuleChoice(self.modulecmd)
+        self.modulelist = ModuleChoice(self.modulecmd, self.debug)
 
         # Info about current Module
         self.infolabel = QLabel("Information :")
@@ -286,7 +287,8 @@ class MoGui(QMainWindow):
         run(self.consolecmd, check=False)
 
     def help(self):
-        print("TODO")
+        if self.debug:
+            print("TODO")
 
     def writeSettings(self):
         settings = QSettings("MoGui", "gui")
@@ -326,10 +328,11 @@ class ModuleGui(QStandardItem):
 class ModuleChoice(QTreeView):
     """List available modules"""
 
-    def __init__(self, modulecmd: Modulecmd, parent=None):
+    def __init__(self, modulecmd: Modulecmd, debug=False, parent=None):
         super().__init__(parent)
 
         self.modulecmd = modulecmd
+        self.debug = debug
 
         self.model = QStandardItemModel()
 
@@ -412,7 +415,8 @@ class ModuleChoice(QTreeView):
                 moduleGroup = self.model.item(index.row())
                 moduleGroup.module.select()
             module = moduleGroup.module
-            print("Selected %s" % module)
+            if self.debug:
+                print("Selected {module}")
             # load selected module
             self.modulecmd.load(module.current_designation())
             self.add(module)
@@ -430,7 +434,8 @@ class ModuleChoice(QTreeView):
             # unload unselected module
             self.modulecmd.unload(module.current_designation())
             moduleGroup.module.deselect()
-            print("Deselected %s" % module)
+            if self.debug:
+                print("Deselected %s" % module)
             self.remove(module)
         self.update()
 
