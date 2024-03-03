@@ -258,24 +258,19 @@ class MoGui(QMainWindow):
 
     def reset(self):
         self.report_event("Reset to initial environment")
-        self.modulecmd.avail()
         self.modulecmd.reset()
-        self.choiceModel.clear()
         self.modulelist.clear()
         self.setModules()
 
     def restore(self):
         self.report_event("Restore default collection's environment")
-        self.modulecmd.avail()
         self.modulecmd.restore()
-        self.choiceModel.clear()
         self.modulelist.clear()
         self.setModules()
 
     def purge(self):
         self.report_event("Purge loaded modules")
         self.modulecmd.purge()
-        self.choiceModel.clear()
         self.modulelist.clear()
         self.setModules()
 
