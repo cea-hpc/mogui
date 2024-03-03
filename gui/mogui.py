@@ -201,26 +201,6 @@ class MoGui(QMainWindow):
             # Selected modules in the modulelist
             self.modulelist.select(m)
 
-    def dropModule(self, event):
-        module_gui = event.mimeData()
-        self._addToList(module_gui)
-
-    def add(self):
-        """
-        Add the specified module/version to the choice list
-        We retrieve version and name from the signal sender
-        which should be a ModuleGui object where we can fetch
-        the module and version name from the both attribute QLabel
-         * name
-         * version
-        """
-        module_gui = self.sender()
-        self._addToChoice(module_gui)
-
-    def _addToChoice(self, module_gui):
-        module = module_gui.data
-        self.add_module(module)
-
     def add_module(self, module: Module):
         """Load specified module"""
         self.report_event(f"Module '{module}' added")
