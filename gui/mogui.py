@@ -191,6 +191,7 @@ class MoGui(QMainWindow):
 
     def setModules(self):
         # Set the module list to the modulelist widget
+        self.modulelist.clear()
         self.modulelist.set(
             self.modulecmd.avail(), add=self.add_module, remove=self.remove_module
         )
@@ -259,19 +260,16 @@ class MoGui(QMainWindow):
     def reset(self):
         self.report_event("Reset to initial environment")
         self.modulecmd.reset()
-        self.modulelist.clear()
         self.setModules()
 
     def restore(self):
         self.report_event("Restore default collection's environment")
         self.modulecmd.restore()
-        self.modulelist.clear()
         self.setModules()
 
     def purge(self):
         self.report_event("Purge loaded modules")
         self.modulecmd.purge()
-        self.modulelist.clear()
         self.setModules()
 
     def terminal(self):
