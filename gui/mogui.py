@@ -151,7 +151,7 @@ class MoGui(QMainWindow):
 
         # Modules list (with label)
         self.modulelabel = QLabel("Liste des produits disponibles:")
-        self.modulelist = ModuleChoice(self.modulecmd, self.debug)
+        self.modulelist = ModuleChoice(self.modulecmd)
 
         # Info about current Module
         self.infolabel = QLabel("Information :")
@@ -200,9 +200,6 @@ class MoGui(QMainWindow):
         for m in self.modulecmd.loaded():
             # Selected modules in the modulelist
             self.modulelist.select(m)
-        # Hack to select all moduleGroup
-        self.modulelist.expandAll()
-        self.modulelist.collapseAll()
 
     def dropModule(self, event):
         module_gui = event.mimeData()
@@ -308,11 +305,10 @@ class ModuleGui(QStandardItem):
 class ModuleChoice(QTreeView):
     """List available modules"""
 
-    def __init__(self, modulecmd: Modulecmd, debug=False, parent=None):
+    def __init__(self, modulecmd: Modulecmd, parent=None):
         super().__init__(parent)
 
         self.modulecmd = modulecmd
-        self.debug = debug
 
         self.model = QStandardItemModel()
 
@@ -328,100 +324,35 @@ class ModuleChoice(QTreeView):
         # Create a line in the model with module name
         self.add = add
         self.remove = remove
-        l = list(modules.keys())
-        l.sort()
-        for m in l:
-            header = ModuleGui(modules[m])
-            self.model.appendRow(header)
+        mod_name_list = list(modules.keys())
+        mod_name_list.sort()
+        for mod_name in mod_name_list:
+            item = ModuleGui(modules[mod_name])
+            self.model.appendRow(item)
 
     def select(self, module):
         """Select a module in the list"""
         root = self.model.invisibleRootItem()
         selection = self.selectionModel()
-        for h in range(0, root.rowCount()):
-            header = root.child(h)
-            if header.rowCount():
-                for i in range(0, header.rowCount()):
-                    child = header.child(i)
-                    if child.text() == module:
-                        selection.select(child.index(), QItemSelectionModel.Select)
-                        self.select_module(child.index())
-            else:
-                if header.text() == module:
-                    selection.select(header.index(), QItemSelectionModel.Select)
-                    self.select_module(header.index())
-
-    def collapseAll(self):
-        root = self.model.invisibleRootItem()
-        for i in range(0, root.rowCount()):
-            self.collapse(root.child(i).index())
+        for index in range(0, root.rowCount()):
+            item = root.child(index)
+            if item.text() == module:
+                selection.select(item.index(), QItemSelectionModel.Select)
+                self.select_module(item.index())
 
     def selectionChanged(self, selected, deselected):
-        """
-        Manage selection
-        * Only the root item if collapsed
-        * Only one child if expanded
-        """
-        selection = self.selectionModel()
-        root = self.model.invisibleRootItem()
+        """Manage module selection"""
         for index in selected.indexes():
-            parent = index.parent()
-            moduleGroup = self.model.item(parent.row())
-            # We selected a version of a module
-            if moduleGroup:
-                # Only select one element in the subtree
-                for i in range(0, moduleGroup.rowCount()):
-                    child = moduleGroup.child(i)
-                    if child.index() != index:
-                        selection.select(child.index(), QItemSelectionModel.Deselect)
-                version = moduleGroup.child(index.row()).version
-            else:
-                moduleGroup = self.model.item(index.row())
-            module = moduleGroup.module
-            if self.debug:
-                print_debug(f"Selected {module}")
+            module = self.model.item(index.row()).module
             # load selected module
             self.modulecmd.load(str(module))
             self.add(module)
         for index in deselected.indexes():
-            parent = index.parent()
-            moduleGroup = self.model.item(parent.row())
-            # We selected module header
-            if not moduleGroup:
-                moduleGroup = self.model.item(index.row())
-                # We deselect all its childs
-                for i in range(0, moduleGroup.rowCount()):
-                    child = moduleGroup.child(i)
-                    selection.select(child.index(), QItemSelectionModel.Deselect)
-            module = moduleGroup.module
+            module = self.model.item(index.row()).module
             # unload unselected module
             self.modulecmd.unload(str(module))
-            if self.debug:
-                print_debug(f"Deselected {module}")
             self.remove(module)
         self.update()
-
-    def enableSubtree(self, index):
-        """Enable root item"""
-        self.model.item(index.row()).setSelectable(True)
-        self.select_module(index)
-
-    def disableSubtree(self, index):
-        """Disable root item"""
-        self.model.item(index.row()).setSelectable(False)
-        self.select_version(index)
-
-    def select_version(self, index):
-        # Select subversion item of a module
-        item = self.model.item(index.row())
-        selection = self.selectionModel()
-        selected = selection.isSelected(index)
-        for i in range(0, item.rowCount()):
-            child = item.child(i)
-            if child.text() == "%s" % item.module:
-                selected_child = child
-        if selected:
-            selection.select(selected_child.index(), QItemSelectionModel.Select)
 
     def select_module(self, index):
         # Select module item of a module version
