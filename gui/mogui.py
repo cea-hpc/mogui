@@ -221,9 +221,7 @@ class MoGui(QMainWindow):
         self._addToChoice(module_gui)
 
     def _addToChoice(self, module_gui):
-        moduleversion = "%s" % (module_gui.version.text())
         module = module_gui.data
-        module.select(moduleversion)
         self.add_module(module)
 
     def add_module(self, module):
@@ -300,18 +298,11 @@ class MoGui(QMainWindow):
 class ModuleGui(QStandardItem):
     """Represents a module: a name and a version"""
 
-    def __init__(self, module, version=None):
-        if version:
-            super().__init__("%s/%s" % (module.name, version))
-        else:
-            super().__init__(module.name)
+    def __init__(self, module):
+        super().__init__(module.name)
         self.setIcon(QIcon(DEFL_ICON))
         self.setEditable(False)
         self.module = module
-        if version:
-            self.version = version
-        else:
-            self.version = module.default_version
 
 
 class ModuleChoice(QTreeView):
@@ -334,18 +325,13 @@ class ModuleChoice(QTreeView):
         self.remove = None
 
     def set(self, modules, add=None, remove=None):
-        # Create a line in the model with modulename, versions and desc
+        # Create a line in the model with module name
         self.add = add
         self.remove = remove
         l = list(modules.keys())
         l.sort()
         for m in l:
             header = ModuleGui(modules[m])
-            mods = []
-            for v in modules[m].versions:
-                mod = ModuleGui(modules[m], v)
-                mods.append(mod)
-            header.appendRows(mods)
             self.model.appendRow(header)
 
     def select(self, module):
@@ -389,15 +375,13 @@ class ModuleChoice(QTreeView):
                     if child.index() != index:
                         selection.select(child.index(), QItemSelectionModel.Deselect)
                 version = moduleGroup.child(index.row()).version
-                moduleGroup.module.select(version)
             else:
                 moduleGroup = self.model.item(index.row())
-                moduleGroup.module.select()
             module = moduleGroup.module
             if self.debug:
                 print_debug(f"Selected {module}")
             # load selected module
-            self.modulecmd.load(module.current_designation())
+            self.modulecmd.load(str(module))
             self.add(module)
         for index in deselected.indexes():
             parent = index.parent()
@@ -411,8 +395,7 @@ class ModuleChoice(QTreeView):
                     selection.select(child.index(), QItemSelectionModel.Deselect)
             module = moduleGroup.module
             # unload unselected module
-            self.modulecmd.unload(module.current_designation())
-            moduleGroup.module.deselect()
+            self.modulecmd.unload(str(module))
             if self.debug:
                 print_debug(f"Deselected {module}")
             self.remove(module)

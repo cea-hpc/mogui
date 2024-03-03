@@ -19,9 +19,6 @@
 
 ##########################################################################
 
-# TODO:
-# - Add Selected property to the Module class
-
 import argparse
 import os
 import sys

@@ -22,7 +22,6 @@ import errno
 import os
 import sys
 from subprocess import Popen, PIPE
-from distutils.version import LooseVersion
 
 
 def get_modulecmd_path():
@@ -112,24 +111,13 @@ class Modulecmd:
         if not self.avail_fetched:
             lines = self.run("avail", "--terse", "--output=sym").strip().split("\n")
             for mod in lines:
-                mod_split_raw = mod.rsplit("/", 1)
+                mod_split_raw = mod.rsplit("(", 1)
                 mod_name = mod_split_raw[0]
                 if len(mod_split_raw) > 1:
-                    versions = mod_split_raw[1].rstrip(")").replace("(", ":").split(":")
-                    version = versions[0]
-                    default = "default" in versions
+                    mod_syms = mod_split_raw[1].rstrip(")").split(":")
                 else:
-                    version = None
-                    default = False
-
-                if mod_name in self.avail_mods:
-                    self.avail_mods[mod_name].add_version(version, default)
-                else:
-                    self.avail_mods[mod_name] = Module(
-                        mod_name,
-                        version,
-                        default=default,
-                    )
+                    mod_syms = None
+                self.avail_mods[mod_name] = Module(mod_name, mod_syms)
             self.avail_fetched = True
 
         return self.avail_mods
@@ -210,90 +198,37 @@ class Modulecmd:
 
 
 class Module:
-    """
-    Class to manupulate Module
-        name : name of the module
-        versions : list of the module versions
-        selected : is the module selected for the user
+    """Module file representation
+
+    Args:
+        name: module name and version designation
+        symbols: list of symbolic versions attached to module
     """
 
-    def __init__(
-        self,
-        name,
-        version,
-        selected=False,
-        default=False,
-    ):
-
+    def __init__(self, name, symbols=None):
         super().__init__()
         self.name = name
-        self.versions = []
-        self.default_version = version
-        self.current_version = version
-        self.selected = selected
+        self.symbols = symbols
         self.whatis = None
         self.help_message = None
-        if version is not None:
-            self.add_version(version, default)
-
-    def current_designation(self):
-        if self.current_version is None:
-            designation = self.name
-        else:
-            designation = os.path.join(self.name, self.current_version)
-        return designation
-
-    def default_designation(self):
-        if self.default_version is None:
-            if not self.versions:
-                designation = self.name
-            else:
-                # get implicit default: highest version number
-                latest_version = self.versions.sort(key=LooseVersion)[-1]
-                designation = os.path.join(self.name, latest_version)
-        else:
-            designation = os.path.join(self.name, self.default_version)
-        return designation
-
-    def select(self, version=False, isselected=True):
-        self.selected = isselected
-        if version:
-            self.set_version(version)
-
-    def deselect(self):
-        self.select(False, False)
-
-    def __str__(self):
-        return self.current_designation()
 
     def __repr__(self):
-        self.__str__()
+        return self.name
 
     def desc(self, modulecmd: Modulecmd):
         if self.whatis is None:
             self.whatis = (
-                modulecmd.run("whatis", self.default_designation())
+                modulecmd.run("whatis", self.name)
                 .split(":")[1]
                 .strip()
             )
             if not self.whatis:
-                self.whatis = self.default_designation()
+                self.whatis = self.name
         return self.whatis
 
     def help(self, modulecmd: Modulecmd):
         if self.help_message is None:
-            self.help_message = modulecmd.run("help", self.default_designation())
+            self.help_message = modulecmd.run("help", self.name)
             if not self.help_message:
-                self.help_message = f"No help for {self.default_designation()}"
+                self.help_message = f"No help for {self.name}"
         return self.help_message
-
-    def add_version(self, version, default=False):
-        if version:
-            self.versions.append(version)
-        # print("Module: %s - added version : %s" % (self.name, version))
-        if default:
-            self.default_version = version
-
-    def set_version(self, version):
-        if version in self.versions:
-            self.current_version = version
