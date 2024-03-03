@@ -50,7 +50,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
 )
 
-from lib.module import Modulecmd
+from lib.module import Modulecmd, Module
 from lib.utils import print_debug
 
 SIGNAL = pyqtSignal
@@ -151,7 +151,7 @@ class MoGui(QMainWindow):
 
         # Modules list (with label)
         self.modulelabel = QLabel("Liste des produits disponibles:")
-        self.modulelist = ModuleChoice(self.modulecmd)
+        self.modulelist = ModuleChoice()
 
         # Info about current Module
         self.infolabel = QLabel("Information :")
@@ -221,13 +221,17 @@ class MoGui(QMainWindow):
         module = module_gui.data
         self.add_module(module)
 
-    def add_module(self, module):
-        self.report_event(f"Module '{module}' selected")
+    def add_module(self, module: Module):
+        """Load specified module"""
+        self.report_event(f"Module '{module}' added")
+        self.modulecmd.load(str(module))
         self.info.setText(module.help(self.modulecmd))
         self.refresh_loaded()
 
-    def remove_module(self, module):
-        self.report_event(f"Module '{module}' deselected")
+    def remove_module(self, module: Module):
+        """Unload specified module"""
+        self.report_event(f"Module '{module}' removed")
+        self.modulecmd.unload(str(module))
         self.refresh_loaded()
 
     def refresh_loaded(self):
@@ -305,13 +309,10 @@ class ModuleGui(QStandardItem):
 class ModuleChoice(QTreeView):
     """List available modules"""
 
-    def __init__(self, modulecmd: Modulecmd, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.modulecmd = modulecmd
-
         self.model = QStandardItemModel()
-
         self.setModel(self.model)
         self.setAnimated(True)
         self.setHeaderHidden(True)
@@ -344,13 +345,9 @@ class ModuleChoice(QTreeView):
         """Manage module selection"""
         for index in selected.indexes():
             module = self.model.item(index.row()).module
-            # load selected module
-            self.modulecmd.load(str(module))
             self.add(module)
         for index in deselected.indexes():
             module = self.model.item(index.row()).module
-            # unload unselected module
-            self.modulecmd.unload(str(module))
             self.remove(module)
         self.update()
 
