@@ -122,54 +122,6 @@ class Modulecmd:
 
         return self.avail_mods
 
-    def load(self, module):
-        """Load given module into environment
-
-        Args:
-            module: designation of module to load
-
-        Returns:
-            Boolean status of module load evaluation"""
-        return self.eval("load", module)
-
-    def unload(self, module):
-        """Unload given module from environment
-
-        Args:
-            module: designation of module to unload
-
-        Returns:
-            Boolean status of module unload evaluation"""
-        return self.eval("unload", module)
-
-    def save(self):
-        """Save loaded modules in default collection
-
-        Returns:
-            Boolean status of module save evaluation"""
-        return self.eval("save")
-
-    def restore(self):
-        """Restore default collection in environment
-
-        Returns:
-            Boolean status of module restore evaluation"""
-        return self.eval("restore")
-
-    def purge(self):
-        """Unload all loaded modules
-
-        Returns:
-            Boolean status of module purge evaluation"""
-        return self.eval("purge")
-
-    def reset(self):
-        """Restore initial environment
-
-        Returns:
-            Boolean status of module reset evaluation"""
-        return self.eval("reset")
-
     def loaded(self):
         """Return list of loaded modules"""
         return get_path_envvar_value_list("LOADEDMODULES")
