@@ -315,8 +315,10 @@ class ModuleChoice(QTreeView):
         self.setHeaderHidden(True)
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.setSelectionMode(QAbstractItemView.MultiSelection)
+
         self.add = None
         self.remove = None
+        self.clicked.connect(self.on_clicked)
 
     def set(self, modules, add=None, remove=None):
         # Create a line in the model with module name
@@ -338,15 +340,13 @@ class ModuleChoice(QTreeView):
                 selection.select(item.index(), QItemSelectionModel.Select)
                 self.select_module(item.index())
 
-    def selectionChanged(self, selected, deselected):
-        """Manage module selection"""
-        for index in selected.indexes():
-            module = self.model.item(index.row()).module
+    def on_clicked(self, index):
+        """Load or unload selected or deselected item module"""
+        module = self.model.item(index.row()).module
+        if self.selectionModel().isSelected(index):
             self.add(module)
-        for index in deselected.indexes():
-            module = self.model.item(index.row()).module
+        else:
             self.remove(module)
-        self.update()
 
     def select_module(self, index):
         # Select module item of a module version
