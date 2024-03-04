@@ -203,16 +203,14 @@ class MoGui(QMainWindow):
 
     def add_module(self, module: Module):
         """Load specified module"""
-        self.report_event(f"Module '{module}' added")
-        self.modulecmd.load(str(module))
+        self.report_event(f"Module '{module}' selected")
+        self.modulecmd_eval("load", str(module))
         self.info.setText(module.help(self.modulecmd))
-        self.refresh_loaded()
 
     def remove_module(self, module: Module):
         """Unload specified module"""
-        self.report_event(f"Module '{module}' removed")
-        self.modulecmd.unload(str(module))
-        self.refresh_loaded()
+        self.report_event(f"Module '{module}' deselected")
+        self.modulecmd_eval("unload", str(module))
 
     def refresh_loaded(self):
         """Clear choice list and fill it with currently loaded modules"""
@@ -232,24 +230,43 @@ class MoGui(QMainWindow):
         if self.debug:
             print_debug(message)
 
+    def modulecmd_eval(self, *arguments):
+        """Evaluate module command, refresh widgets and report module changes
+
+        Args:
+            arguments: list of module command and its arguments
+        """
+        loaded_before = self.modulecmd.loaded()
+        self.modulecmd.eval(*arguments)
+        loaded_after = self.modulecmd.loaded()
+
+        # refresh widgets
+        self.setModules()
+
+        # report module changes
+        loaded_before.reverse()
+        for module in loaded_before:
+            if module not in loaded_after:
+                self.report_event(f"- '{module}' unloaded")
+        for module in loaded_after:
+            if module not in loaded_before:
+                self.report_event(f"- '{module}' loaded")
+
     def save(self):
         self.report_event("Save loaded environment as default collection")
-        self.modulecmd.save()
+        self.modulecmd.eval("save")
 
     def reset(self):
         self.report_event("Reset to initial environment")
-        self.modulecmd.reset()
-        self.setModules()
+        self.modulecmd_eval("reset")
 
     def restore(self):
         self.report_event("Restore default collection's environment")
-        self.modulecmd.restore()
-        self.setModules()
+        self.modulecmd_eval("restore")
 
     def purge(self):
         self.report_event("Purge loaded modules")
-        self.modulecmd.purge()
-        self.setModules()
+        self.modulecmd_eval("purge")
 
     def terminal(self):
         """Launch self.consolecmd terminal that inherits GUI's environment"""

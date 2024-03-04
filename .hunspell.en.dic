@@ -45,3 +45,4 @@ cmd
 repr
 str
 sys
+eval
