@@ -192,25 +192,12 @@ class MoGui(QMainWindow):
     def setModules(self):
         # Set the module list to the modulelist widget
         self.modulelist.clear()
-        self.modulelist.set(
-            self.modulecmd.avail(), add=self.add_module, remove=self.remove_module
-        )
+        self.modulelist.set(self.modulecmd.avail(), load=self.load, unload=self.unload)
         # Add loaded modules in the choiceList
         self.refresh_loaded()
         for m in self.modulecmd.loaded():
             # Selected modules in the modulelist
             self.modulelist.select(m)
-
-    def add_module(self, module: Module):
-        """Load specified module"""
-        self.report_event(f"Module '{module}' selected")
-        self.modulecmd_eval("load", str(module))
-        self.info.setText(module.help(self.modulecmd))
-
-    def remove_module(self, module: Module):
-        """Unload specified module"""
-        self.report_event(f"Module '{module}' deselected")
-        self.modulecmd_eval("unload", str(module))
 
     def refresh_loaded(self):
         """Clear choice list and fill it with currently loaded modules"""
@@ -251,6 +238,17 @@ class MoGui(QMainWindow):
         for module in loaded_after:
             if module not in loaded_before:
                 self.report_event(f"- '{module}' loaded")
+
+    def load(self, module: Module):
+        """Load specified module"""
+        self.report_event(f"Module '{module}' selected")
+        self.modulecmd_eval("load", str(module))
+        self.info.setText(module.help(self.modulecmd))
+
+    def unload(self, module: Module):
+        """Unload specified module"""
+        self.report_event(f"Module '{module}' deselected")
+        self.modulecmd_eval("unload", str(module))
 
     def save(self):
         self.report_event("Save loaded environment as default collection")
@@ -316,14 +314,14 @@ class ModuleChoice(QTreeView):
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.setSelectionMode(QAbstractItemView.MultiSelection)
 
-        self.add = None
-        self.remove = None
+        self.load = None
+        self.unload = None
         self.clicked.connect(self.on_clicked)
 
-    def set(self, modules, add=None, remove=None):
+    def set(self, modules, load=None, unload=None):
         # Create a line in the model with module name
-        self.add = add
-        self.remove = remove
+        self.load = load
+        self.unload = unload
         mod_name_list = list(modules.keys())
         mod_name_list.sort()
         for mod_name in mod_name_list:
@@ -344,9 +342,9 @@ class ModuleChoice(QTreeView):
         """Load or unload selected or deselected item module"""
         module = self.model.item(index.row()).module
         if self.selectionModel().isSelected(index):
-            self.add(module)
+            self.load(module)
         else:
-            self.remove(module)
+            self.unload(module)
 
     def select_module(self, index):
         # Select module item of a module version
