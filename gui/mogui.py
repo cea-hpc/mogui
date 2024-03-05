@@ -45,7 +45,6 @@ from PyQt5.QtWidgets import (
     QLabel,
     QListView,
     QMainWindow,
-    QMessageBox,
     QTextEdit,
     QTreeView,
     QVBoxLayout,
