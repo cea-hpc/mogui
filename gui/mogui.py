@@ -212,11 +212,17 @@ class MoGui(QMainWindow):
             mod_item.setIcon(self.defaultIcon)
             model.appendRow(mod_item)
 
-    def report_event(self, message):
+    def report_event(self, message, sub=False):
         """Report an event message"""
-        self.history.append(message)
+        if sub:
+            prefix = "  * "
+        else:
+            prefix = ""
+        text = prefix + message
+
+        self.history.append(text)
         if self.debug:
-            print_debug(message)
+            print_debug(text)
 
     def modulecmd_eval(self, *arguments):
         """Evaluate module command, refresh widgets and report module changes
@@ -235,10 +241,10 @@ class MoGui(QMainWindow):
         loaded_before.reverse()
         for module in loaded_before:
             if module not in loaded_after:
-                self.report_event(f"- '{module}' unloaded")
+                self.report_event(f"'{module}' unloaded", True)
         for module in loaded_after:
             if module not in loaded_before:
-                self.report_event(f"- '{module}' loaded")
+                self.report_event(f"'{module}' loaded", True)
 
     def load(self, module: Module):
         """Load specified module"""
