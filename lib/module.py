@@ -169,11 +169,7 @@ class Module:
 
     def desc(self, modulecmd: Modulecmd):
         if self.whatis is None:
-            self.whatis = (
-                modulecmd.run("whatis", self.name)
-                .split(":")[1]
-                .strip()
-            )
+            self.whatis = modulecmd.run("whatis", self.name).split(":")[1].strip()
             if not self.whatis:
                 self.whatis = self.name
         return self.whatis

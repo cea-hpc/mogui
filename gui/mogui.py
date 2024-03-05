@@ -328,7 +328,7 @@ class ModuleChoice(QTreeView):
             item = ModuleGui(modules[mod_name])
             self.model.appendRow(item)
 
-    def select(self, module):
+    def select(self, module: str):
         """Select a module in the list"""
         root = self.model.invisibleRootItem()
         selection = self.selectionModel()
@@ -336,7 +336,6 @@ class ModuleChoice(QTreeView):
             item = root.child(index)
             if item.text() == module:
                 selection.select(item.index(), QItemSelectionModel.Select)
-                self.select_module(item.index())
 
     def on_clicked(self, index):
         """Load or unload selected or deselected item module"""
@@ -345,20 +344,6 @@ class ModuleChoice(QTreeView):
             self.load(module)
         else:
             self.unload(module)
-
-    def select_module(self, index):
-        # Select module item of a module version
-        item = self.model.item(index.row())
-        selection = self.selectionModel()
-        # Select root item if at least one subitem is selected
-        selected = False
-        for i in range(0, item.rowCount()):
-            child = item.child(i)
-            selected = selection.isSelected(child.index())
-            if selected:
-                break
-        if selected:
-            selection.select(index, QItemSelectionModel.Select)
 
     def clear(self):
         """Clear all items"""
