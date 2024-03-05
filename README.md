@@ -31,3 +31,4 @@ Authors
 -------
 
  * Aurélien Cedeyn <aurelien.cedeyn AT cea.fr>
+ * Xavier Delaruelle <xavier.delaruelle AT cea.fr>

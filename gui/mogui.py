@@ -2,6 +2,7 @@
 
 # MOGUI, GUI frontend for module
 # Copyright (C) 2011-2024 Aurelien Cedeyn
+# Copyright (C)      2024 Xavier Delaruelle
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
