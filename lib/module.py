@@ -103,13 +103,17 @@ class Modulecmd:
         _mlstatus = global_ns.get("_mlstatus", True)
         return _mlstatus
 
-    def avail(self):
+    def avail(self, refresh=False):
         """Fetch available modules in enabled module search paths
+
+        Args:
+            refresh: fetch modules even if already done
 
         Returns:
             Hash table with all Module objects
         """
-        if not self.avail_fetched:
+        if not self.avail_fetched or refresh:
+            self.avail_mods = {}
             lines = self.run("avail", "--terse", "--output=sym").strip().split("\n")
             for mod in lines:
                 mod_split_raw = mod.rsplit("(", 1)

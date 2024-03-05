@@ -193,7 +193,9 @@ class MoGui(QMainWindow):
     def setModules(self):
         # Set the module list to the modulelist widget
         self.modulelist.clear()
-        self.modulelist.set(self.modulecmd.avail(), load=self.load, unload=self.unload)
+        self.modulelist.set(
+            self.modulecmd.avail(refresh=True), load=self.load, unload=self.unload
+        )
         # Add loaded modules in the choiceList
         self.refresh_loaded()
         for m in self.modulecmd.loaded():
