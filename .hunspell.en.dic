@@ -46,3 +46,5 @@ repr
 str
 sys
 eval
+findItems
+QStandardItemModel

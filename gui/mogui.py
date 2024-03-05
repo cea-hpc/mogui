@@ -339,12 +339,9 @@ class ModuleChoice(QTreeView):
 
     def select(self, module: str):
         """Select a module in the list"""
-        root = self.model.invisibleRootItem()
         selection = self.selectionModel()
-        for index in range(0, root.rowCount()):
-            item = root.child(index)
-            if item.text() == module:
-                selection.select(item.index(), QItemSelectionModel.Select)
+        for item in self.model.findItems(module):
+            selection.select(item.index(), QItemSelectionModel.Select)
 
     def on_clicked(self, index):
         """Load or unload selected or deselected item module"""
