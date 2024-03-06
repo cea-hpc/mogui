@@ -122,6 +122,8 @@ class Modulecmd:
                     mod_syms = mod_split_raw[1].rstrip(")").split(":")
                 else:
                     mod_syms = None
+                # modules are correctly sorted in dict, as they are recorded in the natural
+                # sorted order provided by module command
                 self.avail_mods[mod_name] = Module(mod_name, mod_syms)
             self.avail_fetched = True
 

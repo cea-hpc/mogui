@@ -330,8 +330,8 @@ class ModuleChoice(QTreeView):
         # Create a line in the model with module name
         self.load = load
         self.unload = unload
+        # module keys are already sorted
         mod_name_list = list(modules.keys())
-        mod_name_list.sort()
         for mod_name in mod_name_list:
             item = ModuleGui(modules[mod_name])
             self.model.appendRow(item)

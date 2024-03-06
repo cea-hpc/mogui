@@ -15,7 +15,7 @@ To test `mogui` please source `env` file in your shell:
 Requirements
 ------------
 
- * Python >= 3
+ * Python >= 3.6
  * PyQt >= 5
  * Qt >= 5
  * Modules >= 5.2
