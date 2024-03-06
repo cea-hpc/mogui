@@ -48,3 +48,7 @@ sys
 eval
 findItems
 QStandardItemModel
+zsh
+ksh
+csh
+tcsh

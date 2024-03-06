@@ -42,6 +42,12 @@ if __name__ == "__main__":
     # parse command line arguments
     arg_parser = argparse.ArgumentParser(description="MoGui, GUI frontend for Modules")
     arg_parser.add_argument(
+        "shell_out",
+        nargs="?",
+        choices=["sh", "bash", "ksh", "zsh", "csh", "tcsh", "fish"],
+        help="shell to produce environment change code to",
+    )
+    arg_parser.add_argument(
         "-d", "--debug", dest="debug", action="store_true", help="enable debug mode"
     )
     # manually handle --help option to print usage message on stderr
@@ -65,7 +71,7 @@ if __name__ == "__main__":
     if args.debug:
         print_debug(modules)
 
-    gui = MoGui(modules, debug=args.debug)
+    gui = MoGui(modules, shell_out=args.shell_out, debug=args.debug)
     gui.setModules()
     gui.show()
 

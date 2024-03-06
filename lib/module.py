@@ -62,7 +62,7 @@ class Modulecmd:
         self.modulecmd = get_modulecmd_path()
         self.cmd_version = None
 
-    def run(self, *arguments, out_shell="python", return_content="err"):
+    def run(self, *arguments, out_shell="python", return_content="err", silent_err=False):
         """Run module command with given arguments to produce code for
         specified output shell.
 
@@ -70,6 +70,7 @@ class Modulecmd:
             arguments: module command and its arguments to run
             out_shell: shell code kind module should produce
             return_content: return 'out' or 'err' content
+            silent_err: drop error output if enabled
 
         Returns:
             Content produced by run commands. Either stdout or stderr content
@@ -79,12 +80,18 @@ class Modulecmd:
             [self.modulecmd, out_shell] + list(arguments), stdout=PIPE, stderr=PIPE
         ) as proc:
             out, err = proc.communicate()
-        if return_content == "out":
-            content = out
-            if err.decode():
-                print(err.decode(), end="", file=sys.stderr)
+
+        if err.decode() and not silent_err:
+            err_content = err.decode()
         else:
-            content = err.decode()
+            err_content = None
+
+        if return_content == "out":
+            content = out.decode()
+            if err_content:
+                print(err_content, end="", file=sys.stderr)
+        else:
+            content = err_content
         return content
 
     def eval(self, *arguments):

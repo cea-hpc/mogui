@@ -66,9 +66,10 @@ XTERM = "/usr/bin/xterm"
 
 
 class MoGui(QMainWindow):
-    def __init__(self, modulecmd: Modulecmd, debug=False):
+    def __init__(self, modulecmd: Modulecmd, shell_out=None, debug=False):
         super().__init__()
         self.modulecmd = modulecmd
+        self.shell_out = shell_out
         self.debug = debug
         self.setWindowTitle("MoGui")
         self.setWindowIcon(QIcon(ICON))
@@ -225,6 +226,23 @@ class MoGui(QMainWindow):
         if self.debug:
             print_debug(text)
 
+    def modulecmd_print_out(self, *arguments):
+        """Print on stdout environment change code produced by module command for
+        configured out shell
+
+        Args:
+            arguments: list of module command and its arguments
+        """
+        if self.shell_out:
+            content = self.modulecmd.run(
+                *arguments,
+                out_shell=self.shell_out,
+                return_content="out",
+                silent_err=True,
+            )
+            if content:
+                print(content)
+
     def modulecmd_eval(self, *arguments):
         """Evaluate module command, refresh widgets and report module changes
 
@@ -232,6 +250,7 @@ class MoGui(QMainWindow):
             arguments: list of module command and its arguments
         """
         loaded_before = self.modulecmd.loaded()
+        self.modulecmd_print_out(*arguments)
         self.modulecmd.eval(*arguments)
         loaded_after = self.modulecmd.loaded()
 
