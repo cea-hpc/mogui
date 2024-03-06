@@ -7,10 +7,24 @@ users selecting modules to load and save module collections.
 Testing MoGui
 -------------
 
-To test `mogui` please source `env` file in your shell:
+To test `mogui` please source the `setup-env` file corresponding to your
+shell kind.
 
-    $ source testbed/env
-    $ python3 mogui.py
+For `sh`, `bash`, `ksh` or `zsh`  shells:
+
+    $ source share/setup-env.sh
+
+For `csh` or `tcsh` shells:
+
+    $ source share/setup-env.csh
+
+For `fish` shell:
+
+    $ source share/setup-env.fish
+
+Then run created `mogui` shell function/alias:
+
+    $ mogui
 
 Requirements
 ------------
