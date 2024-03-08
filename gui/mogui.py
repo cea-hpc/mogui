@@ -62,7 +62,6 @@ SAVE_ICON = "images/gtk-save.png"
 TERM_ICON = "images/terminal.png"
 HELP_ICON = "images/help.png"
 QUIT_ICON = "images/gtk-quit.png"
-DEFL_ICON = "images/module.png"
 XTERM = "/usr/bin/xterm"
 
 
@@ -76,7 +75,6 @@ class MoGui(QMainWindow):
         self.setWindowIcon(QIcon(ICON))
         self.createObjects()
         self.consolecmd = XTERM
-        self.defaultIcon = QIcon(DEFL_ICON)
         self.readSettings()
 
     def createObjects(self):
@@ -305,7 +303,6 @@ class ModuleGui(QStandardItem):
 
     def __init__(self, module):
         super().__init__(module.name)
-        self.setIcon(QIcon(DEFL_ICON))
         self.setEditable(False)
         self.module = module
 
