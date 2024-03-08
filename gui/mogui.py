@@ -162,18 +162,13 @@ class MoGui(QMainWindow):
 
         self.layout.addLayout(self.moduleslayout)
 
-        # Module choice frame
+        # Loaded modules frame
         self.choiceLabel = QLabel("Liste des produits choisis:")
-        self.choiceModel = QStandardItemModel()
-        self.choiceList = QListView()
-        self.choiceList.setModel(self.choiceModel)
-        self.choiceList.setIconSize(QSize(256, 256))
-        self.choiceList.setUniformItemSizes(True)
-        self.choiceList.setAcceptDrops(True)
-        self.choicelayout = QVBoxLayout()
+        self.loaded_modules = LoadedModulesView()
 
+        self.choicelayout = QVBoxLayout()
         self.choicelayout.addWidget(self.choiceLabel)
-        self.choicelayout.addWidget(self.choiceList)
+        self.choicelayout.addWidget(self.loaded_modules)
 
         self.layout.addLayout(self.choicelayout)
 
@@ -187,22 +182,11 @@ class MoGui(QMainWindow):
             show_help=self.show_help,
         )
         # Select loaded modules in the available modules list
-        self.refresh_loaded()
-        for m in self.modulecmd.loaded():
-            # Selected modules in the avail_modules
-            self.avail_modules.select(m)
-
-    def refresh_loaded(self):
-        """Clear choice list and fill it with currently loaded modules"""
-        model = self.choiceModel
-        model.clear()
-
         for loaded_mod in self.modulecmd.loaded():
-            mod_item = QStandardItem(loaded_mod)
-            mod_item.setToolTip(loaded_mod)
-            mod_item.setEditable(False)
-            mod_item.setIcon(self.defaultIcon)
-            model.appendRow(mod_item)
+            # Selected modules in the avail_modules
+            self.avail_modules.select(loaded_mod)
+        # Refresh the loaded modules widget
+        self.loaded_modules.refresh(self.modulecmd.loaded())
 
     def report_event(self, message, sub=False):
         """Report an event message"""
@@ -381,3 +365,26 @@ class AvailModulesView(QTreeView):
     def clear(self):
         """Clear all items"""
         self.model.clear()
+
+
+class LoadedModulesView(QListView):
+    """List loaded modules"""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.model = QStandardItemModel()
+        self.setModel(self.model)
+
+        self.setUniformItemSizes(True)
+        self.setAcceptDrops(True)
+
+    def refresh(self, loaded_module_list: list):
+        """Clear then fill widget with currently loaded modules"""
+        self.model.clear()
+
+        for loaded_mod in loaded_module_list:
+            mod_item = QStandardItem(loaded_mod)
+            mod_item.setToolTip(loaded_mod)
+            mod_item.setEditable(False)
+            self.model.appendRow(mod_item)
