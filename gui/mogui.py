@@ -153,12 +153,12 @@ class MoGui(QMainWindow):
 
         # Modules list (with label)
         self.modulelabel = QLabel("Liste des produits disponibles:")
-        self.modulelist = ModuleChoice()
+        self.avail_modules = AvailModulesView()
 
-        # Module list frame
+        # Available modules frame
         self.moduleslayout = QVBoxLayout()
         self.moduleslayout.addWidget(self.modulelabel)
-        self.moduleslayout.addWidget(self.modulelist)
+        self.moduleslayout.addWidget(self.avail_modules)
 
         self.layout.addLayout(self.moduleslayout)
 
@@ -178,19 +178,19 @@ class MoGui(QMainWindow):
         self.layout.addLayout(self.choicelayout)
 
     def setModules(self):
-        # Set the module list to the modulelist widget
-        self.modulelist.clear()
-        self.modulelist.set(
+        # Refresh the available modules widget
+        self.avail_modules.clear()
+        self.avail_modules.set(
             self.modulecmd.avail(refresh=True),
             load=self.load,
             unload=self.unload,
             show_help=self.show_help,
         )
-        # Add loaded modules in the choiceList
+        # Select loaded modules in the available modules list
         self.refresh_loaded()
         for m in self.modulecmd.loaded():
-            # Selected modules in the modulelist
-            self.modulelist.select(m)
+            # Selected modules in the avail_modules
+            self.avail_modules.select(m)
 
     def refresh_loaded(self):
         """Clear choice list and fill it with currently loaded modules"""
@@ -326,7 +326,7 @@ class ModuleGui(QStandardItem):
         self.module = module
 
 
-class ModuleChoice(QTreeView):
+class AvailModulesView(QTreeView):
     """List available modules"""
 
     def __init__(self, parent=None):

@@ -35,7 +35,6 @@ sym
 modulefiles
 desc
 whatis
-ModuleChoice
 TreeView
 modulepath
 config
@@ -54,3 +53,4 @@ csh
 tcsh
 WhatsThis
 UI
+AvailModulesView
