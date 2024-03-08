@@ -21,6 +21,7 @@
 
 import errno
 import os
+import re
 import sys
 from subprocess import Popen, PIPE
 
@@ -62,7 +63,9 @@ class Modulecmd:
         self.modulecmd = get_modulecmd_path()
         self.cmd_version = None
 
-    def run(self, *arguments, out_shell="python", return_content="err", silent_err=False):
+    def run(
+        self, *arguments, out_shell="python", return_content="err", silent_err=False
+    ):
         """Run module command with given arguments to produce code for
         specified output shell.
 
@@ -189,8 +192,14 @@ class Module:
         return self.whatis
 
     def help(self, modulecmd: Modulecmd):
+        """Return help message defined for module"""
         if self.help_message is None:
-            self.help_message = modulecmd.run("help", self.name)
-            if not self.help_message:
-                self.help_message = f"No help for {self.name}"
+            help_out = modulecmd.run("help", self.name)
+            # extract help message from module command output
+            help_out = re.sub(r"Module Specific Help for .*:", "", help_out)
+            help_out = re.sub(
+                r"WARNING: Unable to find ModulesHelp in .*\.", "", help_out
+            )
+            help_out = help_out.strip("-\n ")
+            self.help_message = help_out
         return self.help_message

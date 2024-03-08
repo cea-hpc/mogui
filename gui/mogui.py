@@ -29,6 +29,7 @@ from PyQt5.QtCore import (
     QSize,
     Qt,
     pyqtSignal,
+    QPoint,
 )
 
 from PyQt5.QtGui import (
@@ -48,6 +49,7 @@ from PyQt5.QtWidgets import (
     QTextEdit,
     QTreeView,
     QVBoxLayout,
+    QWhatsThis,
 )
 
 from lib.module import Modulecmd, Module
@@ -194,7 +196,10 @@ class MoGui(QMainWindow):
         # Set the module list to the modulelist widget
         self.modulelist.clear()
         self.modulelist.set(
-            self.modulecmd.avail(refresh=True), load=self.load, unload=self.unload
+            self.modulecmd.avail(refresh=True),
+            load=self.load,
+            unload=self.unload,
+            show_help=self.show_help,
         )
         # Add loaded modules in the choiceList
         self.refresh_loaded()
@@ -277,6 +282,16 @@ class MoGui(QMainWindow):
         self.report_event(f"Module '{module}' deselected")
         self.modulecmd_eval("unload", str(module))
 
+    def show_help(self, position: QPoint, module: Module):
+        """Report help info of selected module in WhatsThis window"""
+        help_message = module.help(self.modulecmd)
+        if len(help_message):
+            text = [
+                f"<u>Module Help for <b>{module.name}</b></u><br/>",
+                help_message.replace("\n", "<br/>"),
+            ]
+            QWhatsThis.showText(position, "\n".join(text))
+
     def save(self):
         self.report_event("Save loaded environment as default collection")
         self.modulecmd.eval("save")
@@ -345,10 +360,15 @@ class ModuleChoice(QTreeView):
         self.unload = None
         self.clicked.connect(self.on_clicked)
 
-    def set(self, modules, load=None, unload=None):
+        self.show_help = None
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.on_right_clicked)
+
+    def set(self, modules, load=None, unload=None, show_help=None):
         # Create a line in the model with module name
         self.load = load
         self.unload = unload
+        self.show_help = show_help
         # module keys are already sorted
         mod_name_list = list(modules.keys())
         for mod_name in mod_name_list:
@@ -368,6 +388,12 @@ class ModuleChoice(QTreeView):
             self.load(module)
         else:
             self.unload(module)
+
+    def on_right_clicked(self, position: QPoint):
+        """Show help message of selected module item"""
+        index = self.indexAt(position)
+        module = self.model.item(index.row()).module
+        self.show_help(position, module)
 
     def clear(self):
         """Clear all items"""
