@@ -46,7 +46,6 @@ from PyQt5.QtWidgets import (
     QLabel,
     QListView,
     QMainWindow,
-    QTextEdit,
     QTreeView,
     QVBoxLayout,
     QWhatsThis,
@@ -156,17 +155,10 @@ class MoGui(QMainWindow):
         self.modulelabel = QLabel("Liste des produits disponibles:")
         self.modulelist = ModuleChoice()
 
-        # Actions history
-        self.historylabel = QLabel("Historique:")
-        self.history = QTextEdit()
-        self.history.setReadOnly(True)
-
         # Module list frame
         self.moduleslayout = QVBoxLayout()
         self.moduleslayout.addWidget(self.modulelabel)
         self.moduleslayout.addWidget(self.modulelist)
-        self.moduleslayout.addWidget(self.historylabel)
-        self.moduleslayout.addWidget(self.history)
 
         self.layout.addLayout(self.moduleslayout)
 
@@ -220,7 +212,6 @@ class MoGui(QMainWindow):
             prefix = ""
         text = prefix + message
 
-        self.history.append(text)
         if self.debug:
             print_debug(text)
 
