@@ -156,11 +156,6 @@ class MoGui(QMainWindow):
         self.modulelabel = QLabel("Liste des produits disponibles:")
         self.modulelist = ModuleChoice()
 
-        # Info about current Module
-        self.infolabel = QLabel("Information :")
-        self.info = QTextEdit()
-        self.info.setReadOnly(True)
-
         # Actions history
         self.historylabel = QLabel("Historique:")
         self.history = QTextEdit()
@@ -170,8 +165,6 @@ class MoGui(QMainWindow):
         self.moduleslayout = QVBoxLayout()
         self.moduleslayout.addWidget(self.modulelabel)
         self.moduleslayout.addWidget(self.modulelist)
-        self.moduleslayout.addWidget(self.infolabel)
-        self.moduleslayout.addWidget(self.info)
         self.moduleslayout.addWidget(self.historylabel)
         self.moduleslayout.addWidget(self.history)
 
@@ -275,7 +268,6 @@ class MoGui(QMainWindow):
         """Load specified module"""
         self.report_event(f"Module '{module}' selected")
         self.modulecmd_eval("load", str(module))
-        self.info.setText(module.help(self.modulecmd))
 
     def unload(self, module: Module):
         """Unload specified module"""
