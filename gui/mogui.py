@@ -122,7 +122,7 @@ class MoGui(QMainWindow):
 
         # Modules list (with label)
         self.modulelabel = QLabel("Liste des produits disponibles:")
-        self.avail_modules = AvailModulesView()
+        self.avail_modules = AvailModulesView(self.load, self.unload, self.show_help)
 
         # Available modules frame
         self.moduleslayout = QVBoxLayout()
@@ -145,13 +145,7 @@ class MoGui(QMainWindow):
         avail_dict = self.modulecmd.avail(refresh=True)
 
         # Refresh the available modules widget
-        self.avail_modules.clear()
-        self.avail_modules.set(
-            avail_dict,
-            load=self.load,
-            unload=self.unload,
-            show_help=self.show_help,
-        )
+        self.avail_modules.refresh(avail_dict)
 
         loaded_list = []
         for loaded_mod in self.modulecmd.loaded():
@@ -291,7 +285,7 @@ class ModuleGui(QStandardItem):
 class AvailModulesView(QTreeView):
     """List available modules"""
 
-    def __init__(self, parent=None):
+    def __init__(self, load, unload, show_help, parent=None):
         super().__init__(parent)
 
         self.model = QStandardItemModel()
@@ -301,23 +295,22 @@ class AvailModulesView(QTreeView):
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.setSelectionMode(QAbstractItemView.MultiSelection)
 
-        self.load = None
-        self.unload = None
+        self.load = load
+        self.unload = unload
         self.clicked.connect(self.on_clicked)
 
-        self.show_help = None
+        self.show_help = show_help
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.on_right_clicked)
 
-    def set(self, modules, load=None, unload=None, show_help=None):
-        # Create a line in the model with module name
-        self.load = load
-        self.unload = unload
-        self.show_help = show_help
+    def refresh(self, avail_module_list: list[Module]):
+        """Clear then fill widget with currently available modules"""
+        self.model.clear()
+
         # module keys are already sorted
-        mod_name_list = list(modules.keys())
+        mod_name_list = list(avail_module_list.keys())
         for mod_name in mod_name_list:
-            item = ModuleGui(modules[mod_name])
+            item = ModuleGui(avail_module_list[mod_name])
             self.model.appendRow(item)
 
     def select(self, module_list: list[Module]):
@@ -340,10 +333,6 @@ class AvailModulesView(QTreeView):
         index = self.indexAt(position)
         module = self.model.item(index.row()).module
         self.show_help(position, module)
-
-    def clear(self):
-        """Clear all items"""
-        self.model.clear()
 
 
 class LoadedModulesView(QListView):
