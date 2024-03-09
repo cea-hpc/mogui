@@ -73,12 +73,12 @@ class MoGui(QMainWindow):
         # Set Actions
         actionReset = QAction("&Reset", self)
         actionReset.setIcon(QIcon(RESET_ICON))
-        actionReset.setShortcut("Ctrl-R")
+        actionReset.setShortcut("Ctrl+R")
         actionReset.triggered.connect(self.reset)
 
         actionPurge = QAction("&Purge", self)
         actionPurge.setIcon(QIcon(RESET_ICON))
-        actionPurge.setShortcut("Ctrl-P")
+        actionPurge.setShortcut("Ctrl+P")
         actionPurge.triggered.connect(self.purge)
 
         actionRestore = QAction("&Restore", self)
@@ -87,7 +87,7 @@ class MoGui(QMainWindow):
 
         actionSave = QAction("&Sauver", self)
         actionSave.setIcon(QIcon(SAVE_ICON))
-        actionSave.setShortcut("Ctrl-S")
+        actionSave.setShortcut("Ctrl+S")
         actionSave.triggered.connect(self.save)
 
         actionHelp = QAction("&Aide", self)
@@ -97,7 +97,7 @@ class MoGui(QMainWindow):
 
         actionQuit = QAction("&Quitter", self)
         actionQuit.setIcon(QIcon(QUIT_ICON))
-        actionQuit.setShortcut("Ctrl-Q")
+        actionQuit.setShortcut("Ctrl+Q")
         actionQuit.triggered.connect(self.close)
 
         # Set ToolBar
