@@ -28,7 +28,6 @@ from PyQt5.QtCore import (
     QSettings,
     QSize,
     Qt,
-    pyqtSignal,
     QPoint,
 )
 
@@ -53,8 +52,6 @@ from PyQt5.QtWidgets import (
 
 from lib.module import Modulecmd, Module
 from lib.utils import print_debug
-
-SIGNAL = pyqtSignal
 
 ICON = "images/accessories-dictionary.png"
 RESET_ICON = "images/reload.png"
