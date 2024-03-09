@@ -114,18 +114,6 @@ class MoGui(QMainWindow):
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.toolbar.setFloatable(False)
 
-        # Set Menu
-        self.menubar = self.menuBar()
-        self.menubar.hide()
-        menufile = self.menubar.addMenu("&Fichier")
-        menufile.addAction(actionReset)
-        menufile.addAction(actionPurge)
-        menufile.addAction(actionRestore)
-        menufile.addAction(actionSave)
-        menufile.addAction(actionQuit)
-        menuhelp = self.menubar.addMenu("&Aide")
-        menuhelp.addAction(actionHelp)
-
         # Main frame
         self.mainframe = QFrame(self)
         # Main layout
