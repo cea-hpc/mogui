@@ -162,7 +162,7 @@ class MoGui(QMainWindow):
 
         # Loaded modules frame
         self.choiceLabel = QLabel("Liste des produits choisis:")
-        self.loaded_modules = LoadedModulesView()
+        self.loaded_modules = LoadedModulesView(self.show_display)
 
         self.choicelayout = QVBoxLayout()
         self.choicelayout.addWidget(self.choiceLabel)
@@ -171,20 +171,24 @@ class MoGui(QMainWindow):
         self.layout.addLayout(self.choicelayout)
 
     def setModules(self):
+        avail_dict = self.modulecmd.avail(refresh=True)
+
         # Refresh the available modules widget
         self.avail_modules.clear()
         self.avail_modules.set(
-            self.modulecmd.avail(refresh=True),
+            avail_dict,
             load=self.load,
             unload=self.unload,
             show_help=self.show_help,
         )
-        # Select loaded modules in the available modules list
+
+        loaded_list = []
         for loaded_mod in self.modulecmd.loaded():
-            # Selected modules in the avail_modules
+            loaded_list.append(avail_dict[loaded_mod])
+            # Select loaded modules in the available modules list
             self.avail_modules.select(loaded_mod)
         # Refresh the loaded modules widget
-        self.loaded_modules.refresh(self.modulecmd.loaded())
+        self.loaded_modules.refresh(loaded_list)
 
     def report_event(self, message, sub=False):
         """Report an event message"""
@@ -246,6 +250,16 @@ class MoGui(QMainWindow):
         """Unload specified module"""
         self.report_event(f"Module '{module}' deselected")
         self.modulecmd_eval("unload", str(module))
+
+    def show_display(self, position: QPoint, module: Module):
+        """Report display info of selected module in WhatsThis window"""
+        display_message = module.display(self.modulecmd)
+        if len(display_message):
+            text = [
+                f"<u>Module Display for <b>{module.name}</b></u><br/>",
+                display_message.replace("\n", "<br/>"),
+            ]
+            QWhatsThis.showText(position, "\n".join(text))
 
     def show_help(self, position: QPoint, module: Module):
         """Report help info of selected module in WhatsThis window"""
@@ -367,7 +381,7 @@ class AvailModulesView(QTreeView):
 class LoadedModulesView(QListView):
     """List loaded modules"""
 
-    def __init__(self, parent=None):
+    def __init__(self, show_display, parent=None):
         super().__init__(parent)
 
         self.model = QStandardItemModel()
@@ -376,12 +390,20 @@ class LoadedModulesView(QListView):
         self.setUniformItemSizes(True)
         self.setAcceptDrops(True)
 
-    def refresh(self, loaded_module_list: list):
+        self.show_display = show_display
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.on_right_clicked)
+
+    def refresh(self, loaded_module_list: list[Module]):
         """Clear then fill widget with currently loaded modules"""
         self.model.clear()
 
         for loaded_mod in loaded_module_list:
-            mod_item = QStandardItem(loaded_mod)
-            mod_item.setToolTip(loaded_mod)
-            mod_item.setEditable(False)
+            mod_item = ModuleGui(loaded_mod)
             self.model.appendRow(mod_item)
+
+    def on_right_clicked(self, position: QPoint):
+        """Show display message of selected module item"""
+        index = self.indexAt(position)
+        module = self.model.item(index.row()).module
+        self.show_display(position, module)

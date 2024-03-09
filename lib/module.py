@@ -180,6 +180,7 @@ class Module:
         self.symbols = symbols
         self.whatis = None
         self.help_message = None
+        self.display_message = None
 
     def __repr__(self):
         return self.name
@@ -190,6 +191,15 @@ class Module:
             if not self.whatis:
                 self.whatis = self.name
         return self.whatis
+
+    def display(self, modulecmd: Modulecmd):
+        """Return display message defined for module"""
+        if self.display_message is None:
+            display_out = modulecmd.run("display", self.name)
+            # extract display message from module command output
+            display_out_list = display_out.split("\n")[2:-2]
+            self.display_message = "\n".join(display_out_list)
+        return self.display_message
 
     def help(self, modulecmd: Modulecmd):
         """Return help message defined for module"""
