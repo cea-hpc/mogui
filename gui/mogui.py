@@ -185,8 +185,8 @@ class MoGui(QMainWindow):
         loaded_list = []
         for loaded_mod in self.modulecmd.loaded():
             loaded_list.append(avail_dict[loaded_mod])
-            # Select loaded modules in the available modules list
-            self.avail_modules.select(loaded_mod)
+        # Select loaded modules in the available modules list
+        self.avail_modules.select(loaded_list)
         # Refresh the loaded modules widget
         self.loaded_modules.refresh(loaded_list)
 
@@ -353,11 +353,12 @@ class AvailModulesView(QTreeView):
             item = ModuleGui(modules[mod_name])
             self.model.appendRow(item)
 
-    def select(self, module: str):
-        """Select a module in the list"""
+    def select(self, module_list: list[Module]):
+        """Select given modules in the list"""
         selection = self.selectionModel()
-        for item in self.model.findItems(module):
-            selection.select(item.index(), QItemSelectionModel.Select)
+        for module in module_list:
+            for item in self.model.findItems(module.name):
+                selection.select(item.index(), QItemSelectionModel.Select)
 
     def on_clicked(self, index):
         """Load or unload selected or deselected item module"""
