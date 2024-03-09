@@ -19,9 +19,6 @@
 
 ##########################################################################
 
-# To launch commands
-from subprocess import run
-
 # Gui PyQt
 from PyQt5.QtCore import (
     QItemSelectionModel,
@@ -56,10 +53,8 @@ from lib.utils import print_debug
 ICON = "images/accessories-dictionary.png"
 RESET_ICON = "images/reload.png"
 SAVE_ICON = "images/gtk-save.png"
-TERM_ICON = "images/terminal.png"
 HELP_ICON = "images/help.png"
 QUIT_ICON = "images/gtk-quit.png"
-XTERM = "/usr/bin/xterm"
 
 
 class MoGui(QMainWindow):
@@ -71,7 +66,6 @@ class MoGui(QMainWindow):
         self.setWindowTitle("MoGui")
         self.setWindowIcon(QIcon(ICON))
         self.createObjects()
-        self.consolecmd = XTERM
         self.readSettings()
 
     def createObjects(self):
@@ -96,11 +90,6 @@ class MoGui(QMainWindow):
         actionSave.setShortcut("Ctrl-S")
         actionSave.triggered.connect(self.save)
 
-        actionTerm = QAction("&Terminal", self)
-        actionTerm.setIcon(QIcon(TERM_ICON))
-        actionTerm.setShortcut("Ctrl-T")
-        actionTerm.triggered.connect(self.terminal)
-
         actionHelp = QAction("&Aide", self)
         actionHelp.setIcon(QIcon(HELP_ICON))
         actionHelp.setShortcut("F1")
@@ -119,7 +108,6 @@ class MoGui(QMainWindow):
         self.toolbar.addAction(actionPurge)
         self.toolbar.addAction(actionRestore)
         self.toolbar.addAction(actionSave)
-        self.toolbar.addAction(actionTerm)
         self.toolbar.addAction(actionHelp)
         self.toolbar.addSeparator()
         self.toolbar.addAction(actionQuit)
@@ -135,8 +123,6 @@ class MoGui(QMainWindow):
         menufile.addAction(actionRestore)
         menufile.addAction(actionSave)
         menufile.addAction(actionQuit)
-        menuaction = self.menubar.addMenu("&Action")
-        menuaction.addAction(actionTerm)
         menuhelp = self.menubar.addMenu("&Aide")
         menuhelp.addAction(actionHelp)
 
@@ -283,10 +269,6 @@ class MoGui(QMainWindow):
     def purge(self):
         self.report_event("Purge loaded modules")
         self.modulecmd_eval("purge")
-
-    def terminal(self):
-        """Launch self.consolecmd terminal that inherits GUI's environment"""
-        run(self.consolecmd, check=False)
 
     def help(self):
         if self.debug:
