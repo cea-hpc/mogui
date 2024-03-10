@@ -257,18 +257,18 @@ class MoGui(QMainWindow):
             print_debug("TODO")
 
     def writeSettings(self):
-        settings = QSettings("MoGui", "gui")
-        settings.beginGroup("toolbar")
-        settings.setValue("geometry", self.toolbar.geometry())
-        settings.endGroup()
+        """Save GUI properties in application configuration file"""
+        settings = QSettings("environment-modules", "mogui")
+        settings.setValue("size", self.size())
 
     def readSettings(self):
-        settings = QSettings("MoGui", "gui")
-        settings.beginGroup("toolbar")
-        self.toolbar.setGeometry(settings.value("geometry", self.toolbar.geometry()))
-        settings.endGroup()
+        """Load GUI properties from application configuration file"""
+        settings = QSettings("environment-modules", "mogui")
+        size = settings.value("size", QSize(400, 400))
+        self.resize(size)
 
     def close(self):
+        """Save application properties and quit"""
         self.writeSettings()
         super().close()
 
