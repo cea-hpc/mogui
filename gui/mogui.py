@@ -21,6 +21,7 @@
 
 # Gui PyQt
 from PyQt5.QtCore import (
+    QEvent,
     QItemSelectionModel,
     QSettings,
     QSize,
@@ -271,6 +272,10 @@ class MoGui(QMainWindow):
         """Save application properties and quit"""
         self.writeSettings()
         super().close()
+
+    def closeEvent(self, event: QEvent):
+        """Properly close application when clicking window manager exit button"""
+        self.close()
 
 
 class ModuleGui(QStandardItem):
