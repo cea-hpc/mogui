@@ -85,23 +85,23 @@ class MoGui(QMainWindow):
         actionRestore.setIcon(QIcon(RESET_ICON))
         actionRestore.triggered.connect(self.restore)
 
-        actionSave = QAction("&Sauver", self)
+        actionSave = QAction("&Save", self)
         actionSave.setIcon(QIcon(SAVE_ICON))
         actionSave.setShortcut("Ctrl+S")
         actionSave.triggered.connect(self.save)
 
-        actionHelp = QAction("&Aide", self)
+        actionHelp = QAction("&Help", self)
         actionHelp.setIcon(QIcon(HELP_ICON))
         actionHelp.setShortcut("F1")
         actionHelp.triggered.connect(self.help)
 
-        actionQuit = QAction("&Quitter", self)
+        actionQuit = QAction("&Quit", self)
         actionQuit.setIcon(QIcon(QUIT_ICON))
         actionQuit.setShortcut("Ctrl+Q")
         actionQuit.triggered.connect(self.close)
 
         # Set ToolBar
-        self.toolbar = self.addToolBar("&Barre d'outils")
+        self.toolbar = self.addToolBar("&Toolbar")
         self.toolbar.setIconSize(QSize(32, 32))
         self.toolbar.show()
         self.toolbar.addAction(actionReset)
@@ -121,7 +121,7 @@ class MoGui(QMainWindow):
         self.setCentralWidget(self.mainframe)
 
         # Modules list (with label)
-        self.modulelabel = QLabel("Liste des produits disponibles:")
+        self.modulelabel = QLabel("Available modules:")
         self.avail_modules = AvailModulesView(self.load, self.unload, self.show_help)
 
         # Available modules frame
@@ -132,7 +132,7 @@ class MoGui(QMainWindow):
         self.layout.addLayout(self.moduleslayout)
 
         # Loaded modules frame
-        self.choiceLabel = QLabel("Liste des produits choisis:")
+        self.choiceLabel = QLabel("Currently loaded modules:")
         self.loaded_modules = LoadedModulesView(self.unload, self.show_display)
 
         self.choicelayout = QVBoxLayout()
