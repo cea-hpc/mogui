@@ -133,7 +133,7 @@ class MoGui(QMainWindow):
 
         # Loaded modules frame
         self.choiceLabel = QLabel("Liste des produits choisis:")
-        self.loaded_modules = LoadedModulesView(self.show_display)
+        self.loaded_modules = LoadedModulesView(self.unload, self.show_display)
 
         self.choicelayout = QVBoxLayout()
         self.choicelayout.addWidget(self.choiceLabel)
@@ -338,7 +338,7 @@ class AvailModulesView(QTreeView):
 class LoadedModulesView(QListView):
     """List loaded modules"""
 
-    def __init__(self, show_display, parent=None):
+    def __init__(self, unload, show_display, parent=None):
         super().__init__(parent)
 
         self.model = QStandardItemModel()
@@ -346,6 +346,9 @@ class LoadedModulesView(QListView):
 
         self.setUniformItemSizes(True)
         self.setAcceptDrops(True)
+
+        self.unload = unload
+        self.doubleClicked.connect(self.on_double_clicked)
 
         self.show_display = show_display
         self.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -359,6 +362,11 @@ class LoadedModulesView(QListView):
             mod_item = ModuleGui(loaded_mod)
             mod_item.setSelectable(False)
             self.model.appendRow(mod_item)
+
+    def on_double_clicked(self, index):
+        """Unload double clicked item module"""
+        module = self.model.item(index.row()).module
+        self.unload(module)
 
     def on_right_clicked(self, position: QPoint):
         """Show display message of selected module item"""
