@@ -357,6 +357,7 @@ class LoadedModulesView(QListView):
 
         for loaded_mod in loaded_module_list:
             mod_item = ModuleGui(loaded_mod)
+            mod_item.setSelectable(False)
             self.model.appendRow(mod_item)
 
     def on_right_clicked(self, position: QPoint):
