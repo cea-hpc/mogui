@@ -97,6 +97,9 @@ class MoGui(QMainWindow):
         self.create_button("Help", "help-contents-symbolic", "F1", self.help)
         self.create_button("Quit", "application-exit-symbolic", "Ctrl+Q", self.close)
 
+        # Status bar
+        self.statusBar()
+
         # Main frame
         self.mainframe = QFrame(self)
         # Main layout
@@ -159,6 +162,9 @@ class MoGui(QMainWindow):
         else:
             prefix = ""
         text = prefix + message
+
+        if not sub:
+            self.statusBar().showMessage(text)
 
         if self.debug:
             print_debug(text)
@@ -234,19 +240,19 @@ class MoGui(QMainWindow):
             QWhatsThis.showText(position, "\n".join(text))
 
     def save(self):
-        self.report_event("Save loaded environment as default collection")
+        self.report_event("Default collection saved")
         self.modulecmd.eval("save")
 
     def reset(self):
-        self.report_event("Reset to initial environment")
+        self.report_event("Initial environment restored")
         self.modulecmd_eval("reset")
 
     def restore(self):
-        self.report_event("Restore default collection's environment")
+        self.report_event("Default collection restored")
         self.modulecmd_eval("restore")
 
     def purge(self):
-        self.report_event("Purge loaded modules")
+        self.report_event("Loaded modules purged")
         self.modulecmd_eval("purge")
 
     def help(self):
