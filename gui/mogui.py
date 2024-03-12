@@ -19,6 +19,8 @@
 
 ##########################################################################
 
+from typing import Dict
+
 # Gui PyQt
 from PyQt5.QtCore import (
     QEvent,
@@ -64,56 +66,36 @@ class MoGui(QMainWindow):
         self.modulecmd = modulecmd
         self.shell_out = shell_out
         self.debug = debug
+        self.buttons: Dict[str, QAction] = {}
         self.setWindowTitle("MoGui")
         self.setWindowIcon(QIcon(ICON))
-        self.createObjects()
+        self.create_objects()
         self.readSettings()
 
-    def createObjects(self):
+    def create_button(self, text: str, icon: str, shortcut: str, call):
+        """Initialize a toolbar button"""
+        self.buttons[text] = QAction(text, self)
+        self.buttons[text].setIcon(QIcon(icon))
+        self.buttons[text].setShortcut(shortcut)
+        self.buttons[text].triggered.connect(call)
+        self.toolbar.addAction(self.buttons[text])
 
-        # Set Actions
-        actionReset = QAction("&Reset", self)
-        actionReset.setIcon(QIcon(RESET_ICON))
-        actionReset.setShortcut("Ctrl+R")
-        actionReset.triggered.connect(self.reset)
-
-        actionPurge = QAction("&Purge", self)
-        actionPurge.setIcon(QIcon(RESET_ICON))
-        actionPurge.setShortcut("Ctrl+P")
-        actionPurge.triggered.connect(self.purge)
-
-        actionRestore = QAction("&Restore", self)
-        actionRestore.setIcon(QIcon(RESET_ICON))
-        actionRestore.triggered.connect(self.restore)
-
-        actionSave = QAction("&Save", self)
-        actionSave.setIcon(QIcon(SAVE_ICON))
-        actionSave.setShortcut("Ctrl+S")
-        actionSave.triggered.connect(self.save)
-
-        actionHelp = QAction("&Help", self)
-        actionHelp.setIcon(QIcon(HELP_ICON))
-        actionHelp.setShortcut("F1")
-        actionHelp.triggered.connect(self.help)
-
-        actionQuit = QAction("&Quit", self)
-        actionQuit.setIcon(QIcon(QUIT_ICON))
-        actionQuit.setShortcut("Ctrl+Q")
-        actionQuit.triggered.connect(self.close)
-
+    def create_objects(self):
+        """Initialize GUI objects"""
         # Set ToolBar
         self.toolbar = self.addToolBar("&Toolbar")
         self.toolbar.setIconSize(QSize(32, 32))
         self.toolbar.show()
-        self.toolbar.addAction(actionReset)
-        self.toolbar.addAction(actionPurge)
-        self.toolbar.addAction(actionRestore)
-        self.toolbar.addAction(actionSave)
-        self.toolbar.addAction(actionHelp)
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(actionQuit)
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
         self.toolbar.setFloatable(False)
+
+        # Set Actions
+        self.create_button("Reset", RESET_ICON, "Ctrl+Z", self.reset)
+        self.create_button("Purge", RESET_ICON, "Ctrl+P", self.purge)
+        self.create_button("Restore", RESET_ICON, "Ctrl+R", self.restore)
+        self.create_button("Save", SAVE_ICON, "Ctrl+S", self.save)
+        self.create_button("Help", HELP_ICON, "F1", self.help)
+        self.create_button("Quit", QUIT_ICON, "Ctrl+Q", self.close)
 
         # Main frame
         self.mainframe = QFrame(self)
