@@ -54,10 +54,6 @@ from lib.module import Modulecmd, Module
 from lib.utils import print_debug
 
 ICON = "images/accessories-dictionary.png"
-RESET_ICON = "images/reload.png"
-SAVE_ICON = "images/gtk-save.png"
-HELP_ICON = "images/help.png"
-QUIT_ICON = "images/gtk-quit.png"
 
 
 class MoGui(QMainWindow):
@@ -69,13 +65,15 @@ class MoGui(QMainWindow):
         self.buttons: Dict[str, QAction] = {}
         self.setWindowTitle("MoGui")
         self.setWindowIcon(QIcon(ICON))
+        QIcon.setThemeSearchPaths(QIcon.themeSearchPaths() + ["share/icons"])
+        self.set_icon_theme_based_on_palette()
         self.create_objects()
         self.readSettings()
 
     def create_button(self, text: str, icon: str, shortcut: str, call):
         """Initialize a toolbar button"""
         self.buttons[text] = QAction(text, self)
-        self.buttons[text].setIcon(QIcon(icon))
+        self.buttons[text].setIcon(QIcon.fromTheme(icon))
         self.buttons[text].setShortcut(shortcut)
         self.buttons[text].triggered.connect(call)
         self.toolbar.addAction(self.buttons[text])
@@ -90,12 +88,14 @@ class MoGui(QMainWindow):
         self.toolbar.setFloatable(False)
 
         # Set Actions
-        self.create_button("Reset", RESET_ICON, "Ctrl+Z", self.reset)
-        self.create_button("Purge", RESET_ICON, "Ctrl+P", self.purge)
-        self.create_button("Restore", RESET_ICON, "Ctrl+R", self.restore)
-        self.create_button("Save", SAVE_ICON, "Ctrl+S", self.save)
-        self.create_button("Help", HELP_ICON, "F1", self.help)
-        self.create_button("Quit", QUIT_ICON, "Ctrl+Q", self.close)
+        self.create_button("Reset", "edit-undo-symbolic", "Ctrl+Z", self.reset)
+        self.create_button("Purge", "edit-clear-symbolic", "Ctrl+P", self.purge)
+        self.create_button(
+            "Restore", "document-revert-symbolic", "Ctrl+R", self.restore
+        )
+        self.create_button("Save", "document-save-symbolic", "Ctrl+S", self.save)
+        self.create_button("Help", "help-contents-symbolic", "F1", self.help)
+        self.create_button("Quit", "application-exit-symbolic", "Ctrl+Q", self.close)
 
         # Main frame
         self.mainframe = QFrame(self)
@@ -123,6 +123,20 @@ class MoGui(QMainWindow):
         self.choicelayout.addWidget(self.loaded_modules)
 
         self.layout.addLayout(self.choicelayout)
+
+    def is_palette_dark(self):
+        """Return if GUI's color palette is currently in dark mode"""
+        return self.palette().window().color().lightnessF() < 0.5
+
+    def set_icon_theme_based_on_palette(self):
+        """Set widget icons depending on palette lightness"""
+        theme_name = "dark" if self.is_palette_dark() else "light"
+        QIcon.setThemeName(theme_name)
+
+    def changeEvent(self, event: QEvent):
+        """Trap GUI's color palette change to refresh icons"""
+        if event.type() == QEvent.PaletteChange:
+            self.set_icon_theme_based_on_palette()
 
     def setModules(self):
         avail_dict = self.modulecmd.avail(refresh=True)

@@ -1,0 +1,15 @@
+[Icon Theme]
+Name=Adwaita Dark
+Comment=The Only One
+Example=folder
+Inherits=hicolor
+
+# Directory list
+Directories=symbolic/actions
+
+[symbolic/actions]
+Context=Actions
+Size=16
+MinSize=8
+MaxSize=512
+Type=Scalable
