@@ -56,18 +56,12 @@ if __name__ == "__main__":
         sys.exit(0)
     args = arg_parser.parse_args()
 
+    if args.debug:
+        print_debug(modules)
+
     # Init in Qt gui mode
     app = QApplication(sys.argv)
     app.setApplicationName("MoGui")
-
-    try:
-        qss = os.sep.join([os.environ["HOME"], ".config/MoGui", "mogui.qss"])
-        app.setStyleSheet("".join(open(qss).readlines()))
-    except IOError:
-        pass
-
-    if args.debug:
-        print_debug(modules)
 
     gui = MoGui(modules, shell_out=args.shell_out, debug=args.debug)
     gui.setModules()
