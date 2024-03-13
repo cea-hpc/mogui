@@ -41,7 +41,6 @@ from PyQt5.QtWidgets import (
     QAbstractItemView,
     QAction,
     QFrame,
-    QHBoxLayout,
     QLabel,
     QListView,
     QMainWindow,
@@ -102,31 +101,23 @@ class MoGui(QMainWindow):
         self.statusBar()
 
         # Main frame
-        self.mainframe = QFrame(self)
-        # Main layout
-        self.layout = QHBoxLayout(self.mainframe)
-        self.setCentralWidget(self.mainframe)
+        self.main_frame = QFrame(self)
+        self.setCentralWidget(self.main_frame)
 
         # Modules list (with label)
-        self.modulelabel = QLabel("Available modules:")
+        self.avail_label = QLabel("Available modules")
         self.avail_modules = AvailModulesView(self.load, self.unload, self.show_help)
 
-        # Available modules frame
-        self.moduleslayout = QVBoxLayout()
-        self.moduleslayout.addWidget(self.modulelabel)
-        self.moduleslayout.addWidget(self.avail_modules)
-
-        self.layout.addLayout(self.moduleslayout)
-
         # Loaded modules frame
-        self.choiceLabel = QLabel("Currently loaded modules:")
+        self.loaded_label = QLabel("Currently loaded modules")
         self.loaded_modules = LoadedModulesView(self.unload, self.show_display)
 
-        self.choicelayout = QVBoxLayout()
-        self.choicelayout.addWidget(self.choiceLabel)
-        self.choicelayout.addWidget(self.loaded_modules)
-
-        self.layout.addLayout(self.choicelayout)
+        # Main layout
+        self.layout = QVBoxLayout(self.main_frame)
+        self.layout.addWidget(self.avail_label)
+        self.layout.addWidget(self.avail_modules)
+        self.layout.addWidget(self.loaded_label)
+        self.layout.addWidget(self.loaded_modules)
 
     def is_palette_dark(self):
         """Return if GUI's color palette is currently in dark mode"""
