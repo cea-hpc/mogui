@@ -53,8 +53,6 @@ from PyQt5.QtWidgets import (
 from lib.module import Modulecmd, Module
 from lib.utils import print_debug
 
-ICON = "images/accessories-dictionary.png"
-
 
 class MoGui(QMainWindow):
     def __init__(self, modulecmd: Modulecmd, shell_out=None, debug=False):
@@ -63,10 +61,13 @@ class MoGui(QMainWindow):
         self.shell_out = shell_out
         self.debug = debug
         self.buttons: Dict[str, QAction] = {}
-        self.setWindowTitle("MoGui")
-        self.setWindowIcon(QIcon(ICON))
+
         QIcon.setThemeSearchPaths(QIcon.themeSearchPaths() + ["share/icons"])
         self.set_icon_theme_based_on_palette()
+
+        self.setWindowTitle("MoGui")
+        self.setWindowIcon(QIcon.fromTheme("environment-modules"))
+
         self.create_objects()
         self.readSettings()
 
