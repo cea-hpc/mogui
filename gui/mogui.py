@@ -257,8 +257,39 @@ class MoGui(QMainWindow):
         self.modulecmd_eval("purge")
 
     def help(self):
-        if self.debug:
-            print_debug("TODO")
+        """Show application help in WhatsThis window"""
+        text = [
+            "<h2>Help for MoGui application</h2>",
+            "<p>MoGui shows currently loaded module environment and enables to update\
+                current shell session.</p>",
+            "<h3>Toolbar</h3>",
+            "<ul>",
+            "<li><b>Reset</b>: restore initial environment</li>",
+            "<li><b>Purge</b>: unload all loaded modules</li>",
+            "<li><b>Restore</b>: load environment described in <i>default</i> collection</li>",
+            "<li><b>Save</b>: record currently loaded environment in <i>default</i>\
+                collection</li>",
+            "<li><b>Help</b>: show this informational page</li>",
+            "<li><b>Quit</b>: terminate this application</li>",
+            "</ul>",
+            "<h3>Available modules</h3>",
+            "<p>This section of the application lists the environment modules available\
+                in the currently enabled modulepaths.</p>",
+            "<ul>",
+            "<li><b>Click on an unselected module item</b>: load corresponding module</li>",
+            "<li><b>Click on a selected module item</b>: unload corresponding loaded\
+                module</li>",
+            "<li><b>Right click</b>: display help of selected module item</li>",
+            "</ul>",
+            "<h3>Loaded modules</h3>",
+            "<p>This section of the application lists the environment modules currently\
+            loaded.</p>",
+            "<ul>",
+            "<li><b>Double click</b>: unload selected module</li>"
+            "<li><b>Right click</b>: display content of selected module</li>",
+            "</ul>",
+        ]
+        QWhatsThis.showText(self.pos(), "\n".join(text))
 
     def writeSettings(self):
         """Save GUI properties in application configuration file"""
