@@ -58,9 +58,7 @@ if __name__ == "__main__":
 
     # Init in Qt gui mode
     app = QApplication(sys.argv)
-    app.setOrganizationName("cea")
     app.setApplicationName("MoGui")
-    app.setOrganizationDomain("cea.fr")
 
     try:
         qss = os.sep.join([os.environ["HOME"], ".config/MoGui", "mogui.qss"])
