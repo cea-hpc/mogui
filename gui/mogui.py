@@ -44,6 +44,7 @@ from PyQt5.QtWidgets import (
     QLabel,
     QListView,
     QMainWindow,
+    QTabWidget,
     QTreeView,
     QVBoxLayout,
     QWhatsThis,
@@ -104,18 +105,20 @@ class MoGui(QMainWindow):
         self.main_frame = QFrame(self)
         self.setCentralWidget(self.main_frame)
 
-        # Modules list (with label)
-        self.avail_label = QLabel("Available modules")
+        # Available modules list
         self.avail_modules = AvailModulesView(self.load, self.unload, self.show_help)
 
         # Loaded modules frame
         self.loaded_label = QLabel("Currently loaded modules")
         self.loaded_modules = LoadedModulesView(self.unload, self.show_display)
 
+        # Tab
+        self.tab = QTabWidget(self)
+        self.tab.addTab(self.avail_modules, "Available modules")
+
         # Main layout
         self.layout = QVBoxLayout(self.main_frame)
-        self.layout.addWidget(self.avail_label)
-        self.layout.addWidget(self.avail_modules)
+        self.layout.addWidget(self.tab)
         self.layout.addWidget(self.loaded_label)
         self.layout.addWidget(self.loaded_modules)
 
