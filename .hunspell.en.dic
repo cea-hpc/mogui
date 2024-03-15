@@ -59,3 +59,4 @@ ModuleGui
 conf
 Adwaita
 QSS
+QTableView

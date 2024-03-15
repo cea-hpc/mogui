@@ -19,6 +19,7 @@
 
 ##########################################################################
 
+import math
 from typing import Dict
 
 # Gui PyQt
@@ -41,11 +42,12 @@ from PyQt5.QtWidgets import (
     QAbstractItemView,
     QAction,
     QFrame,
+    QHeaderView,
     QLabel,
     QListView,
     QMainWindow,
+    QTableView,
     QTabWidget,
-    QTreeView,
     QVBoxLayout,
     QWhatsThis,
 )
@@ -315,17 +317,30 @@ class ModuleGui(QStandardItem):
         self.module = module
 
 
-class AvailModulesView(QTreeView):
+class AvailModulesView(QTableView):
     """List available modules"""
 
     def __init__(self, load, unload, show_help, parent=None):
         super().__init__(parent)
 
+        # initial properties (table is empty)
+        self.mod_name_list = []
+        self.rows_per_col = 1
+        self.fixed_cols = 8
+
         self.model = QStandardItemModel()
         self.setModel(self.model)
-        self.setAnimated(True)
-        self.setHeaderHidden(True)
-        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+
+        # hide headers
+        horizontal_header = QHeaderView(Qt.Horizontal)
+        vertical_header = QHeaderView(Qt.Vertical)
+        horizontal_header.setVisible(False)
+        vertical_header.setVisible(False)
+        self.setHorizontalHeader(horizontal_header)
+        self.setVerticalHeader(vertical_header)
+
+        # multiple items can be individually selected in table
+        self.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.setSelectionMode(QAbstractItemView.MultiSelection)
 
         self.load = load
@@ -336,26 +351,43 @@ class AvailModulesView(QTreeView):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.on_right_clicked)
 
-    def refresh(self, avail_module_list: list[Module]):
+    def refresh(self, avail_module_list: Dict[str, Module]):
         """Clear then fill widget with currently available modules"""
         self.model.clear()
 
         # module keys are already sorted
-        mod_name_list = list(avail_module_list.keys())
-        for mod_name in mod_name_list:
+        self.mod_name_list = list(avail_module_list.keys())
+
+        # fill table with available modules
+        self.rows_per_col = math.ceil(len(self.mod_name_list) / self.fixed_cols)
+        col = 0
+        row = 0
+        for mod_name in self.mod_name_list:
             item = ModuleGui(avail_module_list[mod_name])
-            self.model.appendRow(item)
+            self.model.setItem(row, col, item)
+            row += 1
+            if row == self.rows_per_col:
+                col += 1
+                row = 0
+
+    def get_module_row_and_col(self, module: str):
+        """Return list of row and column indexes in table for specified module"""
+        module_list_index = self.mod_name_list.index(module)
+        col = math.floor(module_list_index / self.rows_per_col)
+        row = module_list_index % self.rows_per_col
+        return [row, col]
 
     def select(self, module_list: list[Module]):
         """Select given modules in the list"""
         selection = self.selectionModel()
         for module in module_list:
-            for item in self.model.findItems(module.name):
-                selection.select(item.index(), QItemSelectionModel.Select)
+            row, col = self.get_module_row_and_col(module.name)
+            item_index = self.model.item(row, col).index()
+            selection.select(item_index, QItemSelectionModel.Select)
 
     def on_clicked(self, index):
         """Load or unload selected or deselected item module"""
-        module = self.model.item(index.row()).module
+        module = self.model.item(index.row(), index.column()).module
         if self.selectionModel().isSelected(index):
             self.load(module)
         else:
@@ -364,7 +396,7 @@ class AvailModulesView(QTreeView):
     def on_right_clicked(self, position: QPoint):
         """Show help message of selected module item"""
         index = self.indexAt(position)
-        module = self.model.item(index.row()).module
+        module = self.model.item(index.row(), index.column()).module
         self.show_help(position, module)
 
 
