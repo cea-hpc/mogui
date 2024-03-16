@@ -316,10 +316,10 @@ class ModuleGui(QStandardItem):
         self.module = module
 
 
-class AvailModulesView(QTableView):
-    """List available modules"""
+class ModulesView(QTableView):
+    """List modules in a table"""
 
-    def __init__(self, load, unload, show_help, parent=None):
+    def __init__(self, show_info, selectable_item, parent=None):
         super().__init__(parent)
 
         # initial properties (table is empty)
@@ -338,6 +338,52 @@ class AvailModulesView(QTableView):
         self.setHorizontalHeader(horizontal_header)
         self.setVerticalHeader(vertical_header)
 
+        self.selectable_item = selectable_item
+
+        self.show_info = show_info
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.on_right_clicked)
+
+    def refresh(self, module_list: list[Module]):
+        """Clear then fill widget with provided modules"""
+        self.model.clear()
+
+        self.module_list = module_list
+
+        # fill table with provided modules
+        self.rows_per_col = math.ceil(len(module_list) / self.fixed_cols)
+        col = 0
+        row = 0
+        for module in module_list:
+            item = ModuleGui(module)
+            item.setSelectable(self.selectable_item)
+            self.model.setItem(row, col, item)
+            row += 1
+            if row == self.rows_per_col:
+                col += 1
+                row = 0
+
+    def get_module_row_and_col(self, module: Module):
+        """Return list of row and column indexes in table for specified module"""
+        module_index = self.module_list.index(module)
+        col = math.floor(module_index / self.rows_per_col)
+        row = module_index % self.rows_per_col
+        return [row, col]
+
+    def on_right_clicked(self, position: QPoint):
+        """Show info message of selected module item"""
+        index = self.indexAt(position)
+        module = self.model.item(index.row(), index.column()).module
+        absolute_position = self.pos() + position
+        self.show_info(absolute_position, module)
+
+
+class AvailModulesView(ModulesView):
+    """List available modules"""
+
+    def __init__(self, load, unload, show_info, parent=None):
+        super().__init__(show_info, True, parent)
+
         # multiple items can be individually selected in table
         self.setSelectionBehavior(QAbstractItemView.SelectItems)
         self.setSelectionMode(QAbstractItemView.MultiSelection)
@@ -345,36 +391,6 @@ class AvailModulesView(QTableView):
         self.load = load
         self.unload = unload
         self.clicked.connect(self.on_clicked)
-
-        self.show_help = show_help
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.on_right_clicked)
-
-    def refresh(self, avail_module_list: list[Module]):
-        """Clear then fill widget with currently available modules"""
-        self.model.clear()
-
-        # module keys are already sorted
-        self.module_list = avail_module_list
-
-        # fill table with available modules
-        self.rows_per_col = math.ceil(len(self.module_list) / self.fixed_cols)
-        col = 0
-        row = 0
-        for module in self.module_list:
-            item = ModuleGui(module)
-            self.model.setItem(row, col, item)
-            row += 1
-            if row == self.rows_per_col:
-                col += 1
-                row = 0
-
-    def get_module_row_and_col(self, module: str):
-        """Return list of row and column indexes in table for specified module"""
-        module_list_index = self.module_list.index(module)
-        col = math.floor(module_list_index / self.rows_per_col)
-        row = module_list_index % self.rows_per_col
-        return [row, col]
 
     def select(self, module_list: list[Module]):
         """Select given modules in the list"""
@@ -392,68 +408,17 @@ class AvailModulesView(QTableView):
         else:
             self.unload(module)
 
-    def on_right_clicked(self, position: QPoint):
-        """Show help message of selected module item"""
-        index = self.indexAt(position)
-        module = self.model.item(index.row(), index.column()).module
-        absolute_position = self.pos() + position
-        self.show_help(absolute_position, module)
 
-
-class LoadedModulesView(QTableView):
+class LoadedModulesView(ModulesView):
     """List loaded modules"""
 
-    def __init__(self, unload, show_display, parent=None):
-        super().__init__(parent)
-
-        # initial properties (table is empty)
-        self.mod_name_list = []
-        self.rows_per_col = 1
-        self.fixed_cols = 8
-
-        self.model = QStandardItemModel()
-        self.setModel(self.model)
-
-        # hide headers
-        horizontal_header = QHeaderView(Qt.Horizontal)
-        vertical_header = QHeaderView(Qt.Vertical)
-        horizontal_header.setVisible(False)
-        vertical_header.setVisible(False)
-        self.setHorizontalHeader(horizontal_header)
-        self.setVerticalHeader(vertical_header)
+    def __init__(self, unload, show_info, parent=None):
+        super().__init__(show_info, False, parent)
 
         self.unload = unload
         self.doubleClicked.connect(self.on_double_clicked)
-
-        self.show_display = show_display
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.on_right_clicked)
-
-    def refresh(self, loaded_module_list: list[Module]):
-        """Clear then fill widget with currently loaded modules"""
-        self.model.clear()
-
-        # fill table with loaded modules
-        self.rows_per_col = math.ceil(len(loaded_module_list) / self.fixed_cols)
-        col = 0
-        row = 0
-        for loaded_mod in loaded_module_list:
-            mod_item = ModuleGui(loaded_mod)
-            mod_item.setSelectable(False)
-            self.model.setItem(row, col, mod_item)
-            row += 1
-            if row == self.rows_per_col:
-                col += 1
-                row = 0
 
     def on_double_clicked(self, index):
         """Unload double clicked item module"""
         module = self.model.item(index.row(), index.column()).module
         self.unload(module)
-
-    def on_right_clicked(self, position: QPoint):
-        """Show display message of selected module item"""
-        index = self.indexAt(position)
-        module = self.model.item(index.row(), index.column()).module
-        absolute_position = self.pos() + position
-        self.show_display(absolute_position, module)
