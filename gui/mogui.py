@@ -70,6 +70,7 @@ class MoGui(QMainWindow):
         self.setWindowIcon(QIcon.fromTheme("environment-modules"))
 
         self.create_objects()
+        self.refresh_widgets()
         self.readSettings()
 
     def create_button(self, text: str, icon: str, shortcut: str, call):
@@ -137,7 +138,8 @@ class MoGui(QMainWindow):
         if event.type() == QEvent.PaletteChange:
             self.set_icon_theme_based_on_palette()
 
-    def setModules(self):
+    def refresh_widgets(self):
+        """Fetch current module state and refresh widgets"""
         avail_dict = self.modulecmd.avail(refresh=True)
 
         # Refresh the available modules widget
@@ -193,8 +195,7 @@ class MoGui(QMainWindow):
         self.modulecmd.eval(*arguments)
         loaded_after = self.modulecmd.loaded()
 
-        # refresh widgets
-        self.setModules()
+        self.refresh_widgets()
 
         # report module changes
         loaded_before.reverse()

@@ -64,7 +64,6 @@ if __name__ == "__main__":
     app.setApplicationName("MoGui")
 
     gui = MoGui(modules, shell_out=args.shell_out, debug=args.debug)
-    gui.setModules()
     gui.show()
 
     sys.exit(app.exec_())
