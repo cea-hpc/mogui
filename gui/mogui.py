@@ -141,7 +141,7 @@ class MoGui(QMainWindow):
         avail_dict = self.modulecmd.avail(refresh=True)
 
         # Refresh the available modules widget
-        self.avail_modules.refresh(avail_dict)
+        self.avail_modules.refresh(list(avail_dict.values()))
 
         loaded_list = []
         for loaded_mod in self.modulecmd.loaded():
@@ -323,7 +323,7 @@ class AvailModulesView(QTableView):
         super().__init__(parent)
 
         # initial properties (table is empty)
-        self.mod_name_list = []
+        self.module_list = []
         self.rows_per_col = 1
         self.fixed_cols = 8
 
@@ -350,19 +350,19 @@ class AvailModulesView(QTableView):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.on_right_clicked)
 
-    def refresh(self, avail_module_list: Dict[str, Module]):
+    def refresh(self, avail_module_list: list[Module]):
         """Clear then fill widget with currently available modules"""
         self.model.clear()
 
         # module keys are already sorted
-        self.mod_name_list = list(avail_module_list.keys())
+        self.module_list = avail_module_list
 
         # fill table with available modules
-        self.rows_per_col = math.ceil(len(self.mod_name_list) / self.fixed_cols)
+        self.rows_per_col = math.ceil(len(self.module_list) / self.fixed_cols)
         col = 0
         row = 0
-        for mod_name in self.mod_name_list:
-            item = ModuleGui(avail_module_list[mod_name])
+        for module in self.module_list:
+            item = ModuleGui(module)
             self.model.setItem(row, col, item)
             row += 1
             if row == self.rows_per_col:
@@ -371,7 +371,7 @@ class AvailModulesView(QTableView):
 
     def get_module_row_and_col(self, module: str):
         """Return list of row and column indexes in table for specified module"""
-        module_list_index = self.mod_name_list.index(module)
+        module_list_index = self.module_list.index(module)
         col = math.floor(module_list_index / self.rows_per_col)
         row = module_list_index % self.rows_per_col
         return [row, col]
@@ -380,7 +380,7 @@ class AvailModulesView(QTableView):
         """Select given modules in the list"""
         selection = self.selectionModel()
         for module in module_list:
-            row, col = self.get_module_row_and_col(module.name)
+            row, col = self.get_module_row_and_col(module)
             item_index = self.model.item(row, col).index()
             selection.select(item_index, QItemSelectionModel.Select)
 
