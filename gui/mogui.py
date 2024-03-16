@@ -44,7 +44,6 @@ from PyQt5.QtWidgets import (
     QFrame,
     QHeaderView,
     QLabel,
-    QListView,
     QMainWindow,
     QTableView,
     QTabWidget,
@@ -400,17 +399,27 @@ class AvailModulesView(QTableView):
         self.show_help(position, module)
 
 
-class LoadedModulesView(QListView):
+class LoadedModulesView(QTableView):
     """List loaded modules"""
 
     def __init__(self, unload, show_display, parent=None):
         super().__init__(parent)
 
+        # initial properties (table is empty)
+        self.mod_name_list = []
+        self.rows_per_col = 1
+        self.fixed_cols = 8
+
         self.model = QStandardItemModel()
         self.setModel(self.model)
 
-        self.setUniformItemSizes(True)
-        self.setAcceptDrops(True)
+        # hide headers
+        horizontal_header = QHeaderView(Qt.Horizontal)
+        vertical_header = QHeaderView(Qt.Vertical)
+        horizontal_header.setVisible(False)
+        vertical_header.setVisible(False)
+        self.setHorizontalHeader(horizontal_header)
+        self.setVerticalHeader(vertical_header)
 
         self.unload = unload
         self.doubleClicked.connect(self.on_double_clicked)
@@ -423,18 +432,26 @@ class LoadedModulesView(QListView):
         """Clear then fill widget with currently loaded modules"""
         self.model.clear()
 
+        # fill table with loaded modules
+        self.rows_per_col = math.ceil(len(loaded_module_list) / self.fixed_cols)
+        col = 0
+        row = 0
         for loaded_mod in loaded_module_list:
             mod_item = ModuleGui(loaded_mod)
             mod_item.setSelectable(False)
-            self.model.appendRow(mod_item)
+            self.model.setItem(row, col, mod_item)
+            row += 1
+            if row == self.rows_per_col:
+                col += 1
+                row = 0
 
     def on_double_clicked(self, index):
         """Unload double clicked item module"""
-        module = self.model.item(index.row()).module
+        module = self.model.item(index.row(), index.column()).module
         self.unload(module)
 
     def on_right_clicked(self, position: QPoint):
         """Show display message of selected module item"""
         index = self.indexAt(position)
-        module = self.model.item(index.row()).module
+        module = self.model.item(index.row(), index.column()).module
         self.show_display(position, module)
