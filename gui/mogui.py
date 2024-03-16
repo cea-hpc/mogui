@@ -120,9 +120,9 @@ class MoGui(QMainWindow):
 
         # Main layout
         self.layout = QVBoxLayout(self.main_frame)
-        self.layout.addWidget(self.tab)
+        self.layout.addWidget(self.tab, stretch=6)
         self.layout.addWidget(self.loaded_label)
-        self.layout.addWidget(self.loaded_modules)
+        self.layout.addWidget(self.loaded_modules, stretch=1)
 
     def is_palette_dark(self):
         """Return if GUI's color palette is currently in dark mode"""
@@ -295,7 +295,7 @@ class MoGui(QMainWindow):
     def readSettings(self):
         """Load GUI properties from application configuration file"""
         settings = QSettings("environment-modules", "mogui")
-        size = settings.value("size", QSize(400, 400))
+        size = settings.value("size", QSize(950, 600))
         self.resize(size)
 
     def close(self):
@@ -326,7 +326,7 @@ class ModulesView(QTableView):
         # initial properties (table is empty)
         self.module_list = []
         self.rows_per_col = 1
-        self.fixed_cols = 8
+        self.fixed_cols = 6
 
         self.model = QStandardItemModel()
         self.setModel(self.model)
@@ -335,6 +335,7 @@ class ModulesView(QTableView):
         horizontal_header = QHeaderView(Qt.Horizontal)
         vertical_header = QHeaderView(Qt.Vertical)
         horizontal_header.setVisible(False)
+        horizontal_header.setDefaultSectionSize(150)
         vertical_header.setVisible(False)
         self.setHorizontalHeader(horizontal_header)
         self.setVerticalHeader(vertical_header)
