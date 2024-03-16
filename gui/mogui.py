@@ -339,6 +339,9 @@ class ModulesView(QTableView):
         self.setHorizontalHeader(horizontal_header)
         self.setVerticalHeader(vertical_header)
 
+        # no table grid displayed
+        self.setGridStyle(Qt.NoPen)
+
         self.selectable_item = selectable_item
 
         self.show_info = show_info
