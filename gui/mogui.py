@@ -396,7 +396,8 @@ class AvailModulesView(QTableView):
         """Show help message of selected module item"""
         index = self.indexAt(position)
         module = self.model.item(index.row(), index.column()).module
-        self.show_help(position, module)
+        absolute_position = self.pos() + position
+        self.show_help(absolute_position, module)
 
 
 class LoadedModulesView(QTableView):
@@ -454,4 +455,5 @@ class LoadedModulesView(QTableView):
         """Show display message of selected module item"""
         index = self.indexAt(position)
         module = self.model.item(index.row(), index.column()).module
-        self.show_display(position, module)
+        absolute_position = self.pos() + position
+        self.show_display(absolute_position, module)
