@@ -345,28 +345,48 @@ class ModulesView(QTableView):
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.on_right_clicked)
 
+    def changed_module_list(self, new_module_list: list[Module]):
+        """Test whether provided module list is different than one currently recorded"""
+        changed = len(self.module_list) != len(new_module_list)
+        if not changed:
+            for index, new_module in enumerate(new_module_list):
+                if self.module_list[index].name != new_module.name:
+                    changed = True
+                    break
+        return changed
+
+    def get_module_index(self, searched_module: Module):
+        """Return index of matching module in recorded list"""
+        for index, module in enumerate(self.module_list):
+            if module.name == searched_module.name:
+                return index
+        return None
+
     def refresh(self, module_list: list[Module]):
-        """Clear then fill widget with provided modules"""
-        self.model.clear()
+        """Clear then fill widget with provided modules. Only clear selection if provided modules
+        are not the same than those currently set"""
+        if self.changed_module_list(module_list):
+            self.model.clear()
+            self.module_list = module_list
 
-        self.module_list = module_list
-
-        # fill table with provided modules
-        self.rows_per_col = math.ceil(len(module_list) / self.fixed_cols)
-        col = 0
-        row = 0
-        for module in module_list:
-            item = ModuleGui(module)
-            item.setSelectable(self.selectable_item)
-            self.model.setItem(row, col, item)
-            row += 1
-            if row == self.rows_per_col:
-                col += 1
-                row = 0
+            # fill table with provided modules
+            self.rows_per_col = math.ceil(len(module_list) / self.fixed_cols)
+            col = 0
+            row = 0
+            for module in module_list:
+                item = ModuleGui(module)
+                item.setSelectable(self.selectable_item)
+                self.model.setItem(row, col, item)
+                row += 1
+                if row == self.rows_per_col:
+                    col += 1
+                    row = 0
+        else:
+            self.selectionModel().clear()
 
     def get_module_row_and_col(self, module: Module):
         """Return list of row and column indexes in table for specified module"""
-        module_index = self.module_list.index(module)
+        module_index = self.get_module_index(module)
         col = math.floor(module_index / self.rows_per_col)
         row = module_index % self.rows_per_col
         return [row, col]
