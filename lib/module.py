@@ -55,6 +55,11 @@ def get_path_envvar_value_list(envvar, sep=":"):
     return value_list
 
 
+def version_tuple(version: str):
+    """Convert version string into tuple"""
+    return tuple(map(int, (version.split("."))))
+
+
 class Modulecmd:
     def __init__(self, shell="python"):
         self.shell = shell
@@ -64,6 +69,12 @@ class Modulecmd:
         self.saved_fetched = False
         self.modulecmd = get_modulecmd_path()
         self.cmd_version = None
+
+        # check Modules is at required version
+        min_modules_version = "5.2.0"
+        if version_tuple(self.version()) < version_tuple(min_modules_version):
+            raise RuntimeError(f"Environment Modules version {min_modules_version} or higher "
+                               + f"is required. Found version {self.version()}")
 
     def run(
         self, *arguments, out_shell="python", return_content="err", silent_err=False
