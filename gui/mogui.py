@@ -108,24 +108,22 @@ class MoGui(QMainWindow):
         self.main_frame = QFrame(self)
         self.setCentralWidget(self.main_frame)
 
-        # Available modules list
+        # Module/modulepath/collection widgets
         self.avail_modules = AvailModulesView(self.load, self.unload, self.show_help)
-
-        # Used modulepaths
         self.used_modulepaths = UsedModulepathsView(self.unuse)
-
-        # Loaded modules frame
-        self.loaded_label = QLabel("Currently loaded modules")
+        self.saved_collections = SavedCollectionsView(self.restore, self.show_saveshow)
         self.loaded_modules = LoadedModulesView(self.unload, self.show_display)
 
         # Tab
         self.tab = QTabWidget(self)
         self.tab.addTab(self.avail_modules, "Available modules")
         self.tab.addTab(self.used_modulepaths, "Used modulepaths")
+        self.tab.addTab(self.saved_collections, "Saved collections")
 
         # Main layout
         self.layout = QVBoxLayout(self.main_frame)
         self.layout.addWidget(self.tab, stretch=6)
+        self.loaded_label = QLabel("Currently loaded modules")
         self.layout.addWidget(self.loaded_label)
         self.layout.addWidget(self.loaded_modules, stretch=1)
 
@@ -147,20 +145,20 @@ class MoGui(QMainWindow):
         """Fetch current module state and refresh widgets"""
         avail_dict = self.modulecmd.avail(refresh=True)
         used_list = self.modulecmd.used()
-
-        # Refresh the used modulepaths widget
-        self.used_modulepaths.refresh(used_list)
-
-        # Refresh the available modules widget
-        self.avail_modules.refresh(list(avail_dict.values()))
+        saved_list = self.modulecmd.saved()
 
         loaded_list = []
         for loaded_mod in self.modulecmd.loaded():
             loaded_list.append(avail_dict[loaded_mod])
+
+        # Refresh widgets
+        self.used_modulepaths.refresh(used_list)
+        self.saved_collections.refresh(saved_list)
+        self.avail_modules.refresh(list(avail_dict.values()))
+        self.loaded_modules.refresh(loaded_list)
+
         # Select loaded modules in the available modules list
         self.avail_modules.select(loaded_list)
-        # Refresh the loaded modules widget
-        self.loaded_modules.refresh(loaded_list)
 
     def report_event(self, message, sub=False):
         """Report an event message"""
@@ -245,22 +243,32 @@ class MoGui(QMainWindow):
             ]
             QWhatsThis.showText(position, "\n".join(text))
 
+    def show_saveshow(self, position: QPoint, collection: str):
+        """Report display info of selected collection in WhatsThis window"""
+        display_message = self.modulecmd.saveshow(collection)
+        if len(display_message):
+            text = [
+                f"<u>Collection Display for <b>{collection}</b></u><br/>",
+                display_message.replace("\n", "<br/>"),
+            ]
+            QWhatsThis.showText(position, "\n".join(text))
+
     def unuse(self, modulepath: str):
         """Unuse specified modulepath"""
         self.report_event(f"Modulepath '{modulepath}' unused")
         self.modulecmd_eval("unuse", modulepath)
 
     def save(self):
-        self.report_event("Default collection saved")
+        self.report_event("Collection 'default' saved")
         self.modulecmd.eval("save")
 
     def reset(self):
         self.report_event("Initial environment restored")
         self.modulecmd_eval("reset")
 
-    def restore(self):
-        self.report_event("Default collection restored")
-        self.modulecmd_eval("restore")
+    def restore(self, collection="default"):
+        self.report_event(f"Collection '{collection}' restored")
+        self.modulecmd_eval("restore", collection)
 
     def purge(self):
         self.report_event("Loaded modules purged")
@@ -302,6 +310,13 @@ class MoGui(QMainWindow):
             "<p>This section of the application lists the modulepaths currently enabled.</p>",
             "<ul>",
             "<li><b>Double click</b>: unuse selected modulepath</li>"
+            "</ul>",
+            "<h3>Saved collections</h3>",
+            "<p>This section of the application lists the module collections currently\
+            saved.</p>",
+            "<ul>",
+            "<li><b>Double click</b>: restore selected collection</li>"
+            "<li><b>Right click</b>: display content of selected collection</li>",
             "</ul>",
         ]
         QWhatsThis.showText(self.pos(), "\n".join(text))
@@ -497,3 +512,45 @@ class UsedModulepathsView(QListView):
         """Unuse double clicked item modulepath"""
         modulepath = self.model.item(index.row()).text()
         self.unuse(modulepath)
+
+
+class SavedCollectionsView(QListView):
+    """List saved module collections"""
+
+    def __init__(self, restore, show_info, parent=None):
+        super().__init__(parent)
+
+        self.collection_list = []
+
+        self.model = QStandardItemModel()
+        self.setModel(self.model)
+
+        self.restore = restore
+        self.doubleClicked.connect(self.on_double_clicked)
+
+        self.show_info = show_info
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.on_right_clicked)
+
+    def refresh(self, collection_list: list[str]):
+        """Clear then fill widget with provided collections. Only update widget if provided
+        collections are not the same than those currently set"""
+        if self.collection_list != collection_list:
+            self.model.clear()
+            self.collection_list = collection_list
+            for collection in collection_list:
+                item = QStandardItem(collection)
+                item.setSelectable(False)
+                self.model.appendRow(item)
+
+    def on_double_clicked(self, index):
+        """Restore double clicked item collection"""
+        collection = self.model.item(index.row()).text()
+        self.restore(collection)
+
+    def on_right_clicked(self, position: QPoint):
+        """Show info message of selected collection item"""
+        index = self.indexAt(position)
+        collection = self.model.item(index.row()).text()
+        absolute_position = self.pos() + position
+        self.show_info(absolute_position, collection)

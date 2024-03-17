@@ -59,7 +59,9 @@ class Modulecmd:
     def __init__(self, shell="python"):
         self.shell = shell
         self.avail_mods = {}
+        self.saved_colls = []
         self.avail_fetched = False
+        self.saved_fetched = False
         self.modulecmd = get_modulecmd_path()
         self.cmd_version = None
 
@@ -146,6 +148,23 @@ class Modulecmd:
     def used(self):
         """Return list of enabled modulepaths"""
         return get_path_envvar_value_list("MODULEPATH")
+
+    def saved(self, refresh=False):
+        """Return list of saved collections"""
+        if not self.saved_fetched or refresh:
+            lines = self.run("savelist", "--terse").strip().split("\n")
+            # skip result header text
+            self.saved_colls = lines[1:]
+            self.avail_fetched = True
+        return self.saved_colls
+
+    def saveshow(self, collection: str):
+        """Return display message defined for collection"""
+        display_out = self.run("saveshow", collection)
+        # extract display message from module command output
+        display_out_list = display_out.split("\n")[2:-3]
+        display_message = "\n".join(display_out_list)
+        return display_message
 
     def version(self):
         """Return version of module command"""
