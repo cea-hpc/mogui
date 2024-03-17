@@ -110,8 +110,8 @@ class MoGui(QMainWindow):
 
         # Module/modulepath/collection widgets
         self.avail_modules = AvailModulesView(self.load, self.unload, self.show_help)
-        self.used_modulepaths = UsedModulepathsView(self.unuse)
-        self.saved_collections = SavedCollectionsView(self.restore, self.show_saveshow)
+        self.used_modulepaths = StringsView(self.unuse)
+        self.saved_collections = StringsView(self.restore, self.show_saveshow)
         self.loaded_modules = LoadedModulesView(self.unload, self.show_display)
 
         # Tab
@@ -483,74 +483,44 @@ class LoadedModulesView(ModulesView):
         self.unload(module)
 
 
-class UsedModulepathsView(QListView):
-    """List enabled modulepaths"""
+class StringsView(QListView):
+    """List strings"""
 
-    def __init__(self, unuse, parent=None):
+    def __init__(self, double_clicked_action, right_clicked_action=None, parent=None):
         super().__init__(parent)
 
-        self.modulepath_list = []
+        self.string_list = []
 
         self.model = QStandardItemModel()
         self.setModel(self.model)
 
-        self.unuse = unuse
+        self.double_clicked_action = double_clicked_action
         self.doubleClicked.connect(self.on_double_clicked)
 
-    def refresh(self, modulepath_list: list[str]):
-        """Clear then fill widget with provided modulepaths. Only update widget if provided
-        modulepaths are not the same than those currently set"""
-        if self.modulepath_list != modulepath_list:
+        self.right_clicked_action = right_clicked_action
+        if right_clicked_action:
+            self.setContextMenuPolicy(Qt.CustomContextMenu)
+            self.customContextMenuRequested.connect(self.on_right_clicked)
+
+    def refresh(self, string_list: list[str]):
+        """Clear then fill widget with provided strings. Only update widget if provided
+        strings are not the same than those currently set"""
+        if self.string_list != string_list:
             self.model.clear()
-            self.modulepath_list = modulepath_list
-            for modulepath in modulepath_list:
-                item = QStandardItem(modulepath)
+            self.string_list = string_list
+            for string in string_list:
+                item = QStandardItem(string)
                 item.setSelectable(False)
                 self.model.appendRow(item)
 
     def on_double_clicked(self, index):
-        """Unuse double clicked item modulepath"""
-        modulepath = self.model.item(index.row()).text()
-        self.unuse(modulepath)
-
-
-class SavedCollectionsView(QListView):
-    """List saved module collections"""
-
-    def __init__(self, restore, show_info, parent=None):
-        super().__init__(parent)
-
-        self.collection_list = []
-
-        self.model = QStandardItemModel()
-        self.setModel(self.model)
-
-        self.restore = restore
-        self.doubleClicked.connect(self.on_double_clicked)
-
-        self.show_info = show_info
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.on_right_clicked)
-
-    def refresh(self, collection_list: list[str]):
-        """Clear then fill widget with provided collections. Only update widget if provided
-        collections are not the same than those currently set"""
-        if self.collection_list != collection_list:
-            self.model.clear()
-            self.collection_list = collection_list
-            for collection in collection_list:
-                item = QStandardItem(collection)
-                item.setSelectable(False)
-                self.model.appendRow(item)
-
-    def on_double_clicked(self, index):
-        """Restore double clicked item collection"""
-        collection = self.model.item(index.row()).text()
-        self.restore(collection)
+        """Apply defined action on double clicked item string"""
+        string = self.model.item(index.row()).text()
+        self.double_clicked_action(string)
 
     def on_right_clicked(self, position: QPoint):
-        """Show info message of selected collection item"""
+        """Apply defined action on selected item string"""
         index = self.indexAt(position)
-        collection = self.model.item(index.row()).text()
+        string = self.model.item(index.row()).text()
         absolute_position = self.pos() + position
-        self.show_info(absolute_position, collection)
+        self.right_clicked_action(absolute_position, string)
