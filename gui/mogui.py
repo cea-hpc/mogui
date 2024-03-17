@@ -44,6 +44,7 @@ from PyQt5.QtWidgets import (
     QFrame,
     QHeaderView,
     QLabel,
+    QListView,
     QMainWindow,
     QTableView,
     QTabWidget,
@@ -110,6 +111,9 @@ class MoGui(QMainWindow):
         # Available modules list
         self.avail_modules = AvailModulesView(self.load, self.unload, self.show_help)
 
+        # Used modulepaths
+        self.used_modulepaths = UsedModulepathsView(self.unuse)
+
         # Loaded modules frame
         self.loaded_label = QLabel("Currently loaded modules")
         self.loaded_modules = LoadedModulesView(self.unload, self.show_display)
@@ -117,6 +121,7 @@ class MoGui(QMainWindow):
         # Tab
         self.tab = QTabWidget(self)
         self.tab.addTab(self.avail_modules, "Available modules")
+        self.tab.addTab(self.used_modulepaths, "Used modulepaths")
 
         # Main layout
         self.layout = QVBoxLayout(self.main_frame)
@@ -141,6 +146,10 @@ class MoGui(QMainWindow):
     def refresh_widgets(self):
         """Fetch current module state and refresh widgets"""
         avail_dict = self.modulecmd.avail(refresh=True)
+        used_list = self.modulecmd.used()
+
+        # Refresh the used modulepaths widget
+        self.used_modulepaths.refresh(used_list)
 
         # Refresh the available modules widget
         self.avail_modules.refresh(list(avail_dict.values()))
@@ -236,6 +245,11 @@ class MoGui(QMainWindow):
             ]
             QWhatsThis.showText(position, "\n".join(text))
 
+    def unuse(self, modulepath: str):
+        """Unuse specified modulepath"""
+        self.report_event(f"Modulepath '{modulepath}' unused")
+        self.modulecmd_eval("unuse", modulepath)
+
     def save(self):
         self.report_event("Default collection saved")
         self.modulecmd.eval("save")
@@ -283,6 +297,11 @@ class MoGui(QMainWindow):
             "<ul>",
             "<li><b>Double click</b>: unload selected module</li>"
             "<li><b>Right click</b>: display content of selected module</li>",
+            "</ul>",
+            "<h3>Used modulepaths</h3>",
+            "<p>This section of the application lists the modulepaths currently enabled.</p>",
+            "<ul>",
+            "<li><b>Double click</b>: unuse selected modulepath</li>"
             "</ul>",
         ]
         QWhatsThis.showText(self.pos(), "\n".join(text))
@@ -447,3 +466,34 @@ class LoadedModulesView(ModulesView):
         """Unload double clicked item module"""
         module = self.model.item(index.row(), index.column()).module
         self.unload(module)
+
+
+class UsedModulepathsView(QListView):
+    """List enabled modulepaths"""
+
+    def __init__(self, unuse, parent=None):
+        super().__init__(parent)
+
+        self.modulepath_list = []
+
+        self.model = QStandardItemModel()
+        self.setModel(self.model)
+
+        self.unuse = unuse
+        self.doubleClicked.connect(self.on_double_clicked)
+
+    def refresh(self, modulepath_list: list[str]):
+        """Clear then fill widget with provided modulepaths. Only update widget if provided
+        modulepaths are not the same than those currently set"""
+        if self.modulepath_list != modulepath_list:
+            self.model.clear()
+            self.modulepath_list = modulepath_list
+            for modulepath in modulepath_list:
+                item = QStandardItem(modulepath)
+                item.setSelectable(False)
+                self.model.appendRow(item)
+
+    def on_double_clicked(self, index):
+        """Unuse double clicked item modulepath"""
+        modulepath = self.model.item(index.row()).text()
+        self.unuse(modulepath)
