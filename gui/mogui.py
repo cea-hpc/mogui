@@ -149,7 +149,12 @@ class MoGui(QMainWindow):
 
         loaded_list = []
         for loaded_mod in self.modulecmd.loaded():
-            loaded_list.append(avail_dict[loaded_mod])
+            # loaded module may not be part of available modules
+            if loaded_mod in avail_dict:
+                mod = avail_dict[loaded_mod]
+            else:
+                mod = Module(loaded_mod)
+            loaded_list.append(mod)
 
         # Refresh widgets
         self.used_modulepaths.refresh(used_list)
@@ -425,8 +430,12 @@ class ModulesView(QTableView):
     def get_module_row_and_col(self, module: Module):
         """Return list of row and column indexes in table for specified module"""
         module_index = self.get_module_index(module)
-        col = math.floor(module_index / self.rows_per_col)
-        row = module_index % self.rows_per_col
+        if module_index is None:
+            col = None
+            row = None
+        else:
+            col = math.floor(module_index / self.rows_per_col)
+            row = module_index % self.rows_per_col
         return [row, col]
 
     def on_right_clicked(self, position: QPoint):
@@ -456,8 +465,9 @@ class AvailModulesView(ModulesView):
         selection = self.selectionModel()
         for module in module_list:
             row, col = self.get_module_row_and_col(module)
-            item_index = self.model.item(row, col).index()
-            selection.select(item_index, QItemSelectionModel.Select)
+            if row is not None and col is not None:
+                item_index = self.model.item(row, col).index()
+                selection.select(item_index, QItemSelectionModel.Select)
 
     def on_clicked(self, index):
         """Load or unload selected or deselected item module"""
