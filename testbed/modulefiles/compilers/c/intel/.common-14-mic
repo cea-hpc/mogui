@@ -1,6 +1,0 @@
-#%Module1.0
-
-#mic specific
-prepend-path    MIC_LD_LIBRARY_PATH         "$intel/compiler/lib/mic"
-prepend-path    MIC_LD_LIBRARY_PATH         "$mictbblib"
-

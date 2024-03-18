@@ -1,6 +1,0 @@
-export MODULESHOME=${PWD}/testbed
-export MODULEPATH=${MODULESHOME}/modulefiles
-
-module() {
-    eval tclsh ${MODULESHOME}/bin/modulecmd.tcl sh ${*//://}
-}

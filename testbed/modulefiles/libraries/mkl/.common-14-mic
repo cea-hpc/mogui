@@ -1,6 +1,0 @@
-#%Module1.0
-
-# Loads software's environment
-prepend-path   MIC_LD_LIBRARY_PATH      "$mklroot/lib/mic"
-
-
