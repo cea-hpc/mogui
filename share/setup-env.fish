@@ -19,5 +19,5 @@
 ##########################################################################
 
 function mogui
-   eval python3 'mogui.py' fish (string escape -- $argv) | source -
+   eval python3 -m mogui fish (string escape -- $argv) | source -
 end

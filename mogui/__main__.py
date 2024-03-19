@@ -27,9 +27,9 @@ import warnings
 
 from PyQt5.QtWidgets import QApplication
 
-from lib.module import Modulecmd
-from lib.utils import print_debug
-from gui.mogui import MoGui
+from mogui.modules import Modulecmd
+from mogui.utils import print_debug
+from mogui.qtgui import MoGui
 
 
 if not os.environ.get("MODULEPATH"):

@@ -52,8 +52,8 @@ from PyQt5.QtWidgets import (
     QWhatsThis,
 )
 
-from lib.module import Modulecmd, Module
-from lib.utils import print_debug
+from mogui.modules import Modulecmd, Module
+from mogui.utils import print_debug
 
 
 class MoGui(QMainWindow):

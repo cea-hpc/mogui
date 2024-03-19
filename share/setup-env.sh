@@ -32,6 +32,6 @@ else
    _mg_shell=$(basename "$(ps -p $$ -ocomm=)")
 fi
 
-eval "mogui() { eval \"\$(python3 'mogui.py' ${_mg_shell} \"\$@\")\"; }"
+eval "mogui() { eval \"\$(python3 -m mogui ${_mg_shell} \"\$@\")\"; }"
 
 unset _mg_shell

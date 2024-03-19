@@ -19,7 +19,7 @@
 ##########################################################################
 
 if ($?tcsh) then
-    alias mogui 'eval "`python3 '"'"'mogui.py'"'"' tcsh \!*:q`"' ;
+    alias mogui 'eval "`python3 -m mogui tcsh \!*:q`"' ;
 else
-    alias mogui 'eval "`python3 '"'"'mogui.py'"'"' csh \!*:q`"' ;
+    alias mogui 'eval "`python3 -m mogui csh \!*:q`"' ;
 endif
