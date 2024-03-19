@@ -32,11 +32,10 @@ from mogui.utils import print_debug
 from mogui.qtgui import MoGui
 
 
-if not os.environ.get("MODULEPATH"):
-    warnings.warn("Module search path empty")
+def main():
+    if not os.environ.get("MODULEPATH"):
+        warnings.warn("Module search path empty")
 
-
-if __name__ == "__main__":
     modules = Modulecmd()
 
     # parse command line arguments
@@ -67,3 +66,7 @@ if __name__ == "__main__":
     gui.show()
 
     sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    main()
