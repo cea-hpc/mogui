@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mogui"
+description = "MoGui, Graphical User Interface for Modules"
+authors = [
+    {name = "Xavier Delaruelle", email = "xavier.delaruelle@cea.fr"},
+    {name = "Aurélien Cedeyn", email = "aurelien.cedeyn@cea.fr"},
+]
+requires-python = ">=3.6"
+dependencies = [
+    "PyQt5",
+]
+readme = "README.md"
+license = {file = "COPYING.GPLv2"}
+dynamic = ["version"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: X11 Applications :: Qt",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development",
+]
+
+[tool.setuptools]
+packages = ["mogui"]
+
+[tool.setuptools_scm]
+
+[project.gui-scripts]
+mogui = "mogui.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/cea-hpc/mogui/"
+Repository = "https://github.com/cea-hpc/mogui.git"
+Issues = "https://github.com/cea-hpc/mogui/issues"

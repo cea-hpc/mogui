@@ -1,0 +1,7 @@
+recursive-include mogui *py
+recursive-include share *
+include COPYING.GPLv2
+include README.md
+include TODO.md
+exclude .*
+prune script
