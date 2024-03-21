@@ -7,9 +7,12 @@ build:
 install:
 	pip install .
 
+lint:
+	pylint mogui
+
 distclean:
 	rm -rf dist
 	rm -rf build
 	rm -rf mogui.egg-info
 
-.PHONY: init build install distclean
+.PHONY: init build install lint distclean

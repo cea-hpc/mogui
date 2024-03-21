@@ -57,7 +57,9 @@ from mogui.modules import Modulecmd, Module
 from mogui.utils import print_debug
 
 
-class MoGui(QMainWindow):
+class MoGui(
+    QMainWindow
+):  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     def __init__(self, modulecmd: Modulecmd, shell_out=None, debug=False):
         super().__init__()
         self.modulecmd = modulecmd
@@ -140,7 +142,7 @@ class MoGui(QMainWindow):
         theme_name = "mogui-dark" if self.is_palette_dark() else "mogui-light"
         QIcon.setThemeName(theme_name)
 
-    def changeEvent(self, event: QEvent):
+    def changeEvent(self, event: QEvent):  # pylint: disable=invalid-name
         """Trap GUI's color palette change to refresh icons"""
         if event.type() == QEvent.PaletteChange:
             self.set_icon_theme_based_on_palette()
@@ -330,12 +332,12 @@ class MoGui(QMainWindow):
         ]
         QWhatsThis.showText(self.pos(), "\n".join(text))
 
-    def writeSettings(self):
+    def writeSettings(self):  # pylint: disable=invalid-name
         """Save GUI properties in application configuration file"""
         settings = QSettings("environment-modules", "mogui")
         settings.setValue("size", self.size())
 
-    def readSettings(self):
+    def readSettings(self):  # pylint: disable=invalid-name
         """Load GUI properties from application configuration file"""
         settings = QSettings("environment-modules", "mogui")
         size = settings.value("size", QSize(950, 600))
@@ -346,12 +348,12 @@ class MoGui(QMainWindow):
         self.writeSettings()
         super().close()
 
-    def closeEvent(self, event: QEvent):
+    def closeEvent(self, event: QEvent):  # pylint: disable=invalid-name
         """Properly close application when clicking window manager exit button"""
         self.close()
 
 
-class ModuleGui(QStandardItem):
+class ModuleGui(QStandardItem):  # pylint: disable=too-few-public-methods
     """Represents a module: a name and a version"""
 
     def __init__(self, module):

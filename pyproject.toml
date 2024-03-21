@@ -47,3 +47,6 @@ mogui = "mogui.__main__:main"
 Homepage = "https://github.com/cea-hpc/mogui/"
 Repository = "https://github.com/cea-hpc/mogui.git"
 Issues = "https://github.com/cea-hpc/mogui/issues"
+
+[tool.pylint.main]
+extension-pkg-whitelist = "PyQt5"

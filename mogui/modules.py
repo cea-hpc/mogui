@@ -122,7 +122,7 @@ class Modulecmd:
         """
         content = self.run(*arguments, return_content="out")
         global_ns = {}
-        exec(content, global_ns)
+        exec(content, global_ns)  # pylint: disable=exec-used
         _mlstatus = global_ns.get("_mlstatus", True)
         return _mlstatus
 
