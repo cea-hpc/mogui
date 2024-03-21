@@ -7,7 +7,8 @@ build:
 install:
 	pip install .
 
-lint:
+style:
+	black mogui
 	pylint mogui
 
 distclean:
@@ -15,4 +16,4 @@ distclean:
 	rm -rf build
 	rm -rf mogui.egg-info
 
-.PHONY: init build install lint distclean
+.PHONY: init build install style distclean
