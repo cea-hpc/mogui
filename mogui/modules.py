@@ -73,8 +73,10 @@ class Modulecmd:
         # check Modules is at required version
         min_modules_version = "5.2.0"
         if version_tuple(self.version()) < version_tuple(min_modules_version):
-            raise RuntimeError(f"Environment Modules version {min_modules_version} or higher "
-                               + f"is required. Found version {self.version()}")
+            raise RuntimeError(
+                f"Environment Modules version {min_modules_version} or higher "
+                + f"is required. Found version {self.version()}"
+            )
 
     def run(
         self, *arguments, out_shell="python", return_content="err", silent_err=False
