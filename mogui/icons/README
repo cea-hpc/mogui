@@ -1,7 +1,7 @@
-MoGui's icons found in the "light/symbolic/actions" directory are imported
-from the "Adwaita" icon theme of the "GNOME Project" (http://www.gnome.org).
-Icons from the "dark/symbolic/actions" directory are modified version of
-"Adwaita" icons (color switch).
+MoGui's icons found in the "mogui-light/symbolic/actions" directory are
+imported from the "Adwaita" icon theme of the "GNOME Project"
+(http://www.gnome.org). Icons from the "mogui-dark/symbolic/actions"
+directory are modified version of "Adwaita" icons (color switch).
 
 This work is licenced under the terms of either the GNU LGPL v3 or
 Creative Commons Attribution-Share Alike 3.0 United States License.

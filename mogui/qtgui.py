@@ -20,6 +20,7 @@
 ##########################################################################
 
 import math
+import os
 from typing import Dict
 
 # Gui PyQt
@@ -64,7 +65,10 @@ class MoGui(QMainWindow):
         self.debug = debug
         self.buttons: Dict[str, QAction] = {}
 
-        QIcon.setThemeSearchPaths(QIcon.themeSearchPaths() + ["share/icons"])
+        icon_theme_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "icons")
+        )
+        QIcon.setThemeSearchPaths(QIcon.themeSearchPaths() + [icon_theme_path])
         self.set_icon_theme_based_on_palette()
 
         self.setWindowTitle("MoGui")
@@ -133,7 +137,7 @@ class MoGui(QMainWindow):
 
     def set_icon_theme_based_on_palette(self):
         """Set widget icons depending on palette lightness"""
-        theme_name = "dark" if self.is_palette_dark() else "light"
+        theme_name = "mogui-dark" if self.is_palette_dark() else "mogui-light"
         QIcon.setThemeName(theme_name)
 
     def changeEvent(self, event: QEvent):
