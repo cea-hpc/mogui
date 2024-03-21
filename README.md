@@ -30,8 +30,7 @@ Requirements
 ------------
 
  * Python >= 3.6
- * PyQt >= 5
- * Qt >= 5
+ * PyQt5
  * Modules >= 5.2
 
 License
