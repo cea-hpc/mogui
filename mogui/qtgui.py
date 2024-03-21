@@ -320,7 +320,7 @@ class MoGui(
             "<h3>Used modulepaths</h3>",
             "<p>This section of the application lists the modulepaths currently enabled.</p>",
             "<ul>",
-            "<li><b>Double click</b>: unuse selected modulepath</li>"
+            "<li><b>Double click</b>: unuse selected modulepath</li>",
             "</ul>",
             "<h3>Saved collections</h3>",
             "<p>This section of the application lists the module collections currently\
