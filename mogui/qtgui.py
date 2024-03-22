@@ -336,12 +336,15 @@ class MoGui(
         """Save GUI properties in application configuration file"""
         settings = QSettings("environment-modules", "mogui")
         settings.setValue("size", self.size())
+        settings.setValue("pos", self.pos())
 
     def readSettings(self):  # pylint: disable=invalid-name
         """Load GUI properties from application configuration file"""
         settings = QSettings("environment-modules", "mogui")
         size = settings.value("size", QSize(950, 600))
+        pos = settings.value("pos", QPoint(100, 100))
         self.resize(size)
+        self.move(pos)
 
     def close(self):
         """Save application properties and quit"""
