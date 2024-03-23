@@ -23,3 +23,8 @@ import sys
 def print_debug(message):
     """Print message with debug prefix on stderr"""
     print(f"[DEBUG] {message}", file=sys.stderr)
+
+
+def print_error(message):
+    """Print message with error prefix on stderr"""
+    print(f"ERROR: {message}", file=sys.stderr)

@@ -26,7 +26,7 @@ import warnings
 from PyQt5.QtWidgets import QApplication
 
 from mogui.modules import Modulecmd
-from mogui.utils import print_debug
+from mogui.utils import print_debug, print_error
 from mogui.qtgui import MoGui
 
 
@@ -35,7 +35,16 @@ def main():
     if not os.environ.get("MODULEPATH"):
         warnings.warn("Module search path empty")
 
-    modules = Modulecmd()
+    try:
+        modules = Modulecmd()
+    except (
+        EnvironmentError,
+        FileNotFoundError,
+        PermissionError,
+        RuntimeError,
+    ) as error:
+        print_error(error)
+        sys.exit(1)
 
     # parse command line arguments
     arg_parser = argparse.ArgumentParser(description="MoGui, GUI frontend for Modules")
