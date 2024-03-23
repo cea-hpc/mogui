@@ -40,6 +40,10 @@ packages = ["mogui"]
 
 [tool.setuptools_scm]
 
+[project.scripts]
+mogui-setup-env = "mogui.setup_env:setup_env"
+mogui-cmd = "mogui.__main__:main"
+
 [project.gui-scripts]
 mogui = "mogui.__main__:main"
 
