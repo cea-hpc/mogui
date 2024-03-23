@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-# LIB/MODULE, Python object interface to module
+"""MOGUI.MODULES, Python object interfaces to Modules"""
 # Copyright (C) 2011-2024 Aurelien Cedeyn
 # Copyright (C)      2024 Xavier Delaruelle
 #
@@ -61,6 +60,8 @@ def version_tuple(version: str):
 
 
 class Modulecmd:
+    """Interact with module command"""
+
     def __init__(self, shell="python"):
         self.shell = shell
         self.avail_mods = {}
@@ -218,6 +219,7 @@ class Module:
         return self.name
 
     def desc(self, modulecmd: Modulecmd):
+        """Return whatis message defined for module"""
         if self.whatis is None:
             self.whatis = modulecmd.run("whatis", self.name).split(":")[1].strip()
             if not self.whatis:

@@ -1,7 +1,5 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-
-# MOGUI, GUI frontend for module
+"""MOGUI, GUI frontend for Modules"""
 # Copyright (C) 2011-2024 Aurelien Cedeyn
 # Copyright (C)      2024 Xavier Delaruelle
 #
@@ -33,6 +31,7 @@ from mogui.qtgui import MoGui
 
 
 def main():
+    """MoGui application main entry point"""
     if not os.environ.get("MODULEPATH"):
         warnings.warn("Module search path empty")
 

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-# MOGUI, GUI frontend for module
+"""MOGUI.QTGUI, QT GUI frontend for Modules"""
 # Copyright (C) 2011-2024 Aurelien Cedeyn
 # Copyright (C)      2024 Xavier Delaruelle
 #
@@ -60,6 +59,8 @@ from mogui.utils import print_debug
 class MoGui(
     QMainWindow
 ):  # pylint: disable=too-many-instance-attributes,too-many-public-methods
+    """MoGui's application main window"""
+
     def __init__(self, modulecmd: Modulecmd, shell_out=None, debug=False):
         super().__init__()
         self.modulecmd = modulecmd
@@ -270,18 +271,22 @@ class MoGui(
         self.modulecmd_eval("unuse", modulepath)
 
     def save(self):
+        """Save default collection"""
         self.report_event("Collection 'default' saved")
         self.modulecmd.eval("save")
 
     def reset(self):
+        """Reset to initial environment"""
         self.report_event("Initial environment restored")
         self.modulecmd_eval("reset")
 
     def restore(self, collection="default"):
+        """Restore specified collection"""
         self.report_event(f"Collection '{collection}' restored")
         self.modulecmd_eval("restore", collection)
 
     def purge(self):
+        """Purge loaded environment"""
         self.report_event("Loaded modules purged")
         self.modulecmd_eval("purge")
 
@@ -351,7 +356,7 @@ class MoGui(
         self.writeSettings()
         super().close()
 
-    def closeEvent(self, event: QEvent):  # pylint: disable=invalid-name
+    def closeEvent(self, event: QEvent):  # pylint: disable=invalid-name,unused-argument
         """Properly close application when clicking window manager exit button"""
         self.close()
 
