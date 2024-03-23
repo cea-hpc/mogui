@@ -414,6 +414,15 @@ class ModulesView(QTableView):
                 return index
         return None
 
+    def get_module_from_index(self, index):
+        """Return Module object found at given index"""
+        item = self.model.item(index.row(), index.column())
+        if item is None:
+            module = None
+        else:
+            module = item.module
+        return module
+
     def refresh(self, module_list: list[Module]):
         """Clear then fill widget with provided modules. Only clear selection if provided modules
         are not the same than those currently set"""
@@ -450,9 +459,10 @@ class ModulesView(QTableView):
     def on_right_clicked(self, position: QPoint):
         """Show info message of selected module item"""
         index = self.indexAt(position)
-        module = self.model.item(index.row(), index.column()).module
-        absolute_position = self.pos() + position
-        self.show_info(absolute_position, module)
+        module = self.get_module_from_index(index)
+        if module is not None:
+            absolute_position = self.pos() + position
+            self.show_info(absolute_position, module)
 
 
 class AvailModulesView(ModulesView):
@@ -480,11 +490,12 @@ class AvailModulesView(ModulesView):
 
     def on_clicked(self, index):
         """Load or unload selected or deselected item module"""
-        module = self.model.item(index.row(), index.column()).module
-        if self.selectionModel().isSelected(index):
-            self.load(module)
-        else:
-            self.unload(module)
+        module = self.get_module_from_index(index)
+        if module is not None:
+            if self.selectionModel().isSelected(index):
+                self.load(module)
+            else:
+                self.unload(module)
 
 
 class LoadedModulesView(ModulesView):
@@ -521,6 +532,15 @@ class StringsView(QListView):
             self.setContextMenuPolicy(Qt.CustomContextMenu)
             self.customContextMenuRequested.connect(self.on_right_clicked)
 
+    def get_string_from_index(self, index):
+        """Return text string found at given index"""
+        item = self.model.item(index.row())
+        if item is None:
+            string = None
+        else:
+            string = item.text()
+        return string
+
     def refresh(self, string_list: list[str]):
         """Clear then fill widget with provided strings. Only update widget if provided
         strings are not the same than those currently set"""
@@ -534,12 +554,14 @@ class StringsView(QListView):
 
     def on_double_clicked(self, index):
         """Apply defined action on double clicked item string"""
-        string = self.model.item(index.row()).text()
-        self.double_clicked_action(string)
+        string = self.get_string_from_index(index)
+        if string is not None:
+            self.double_clicked_action(string)
 
     def on_right_clicked(self, position: QPoint):
         """Apply defined action on selected item string"""
         index = self.indexAt(position)
-        string = self.model.item(index.row()).text()
-        absolute_position = self.pos() + position
-        self.right_clicked_action(absolute_position, string)
+        string = self.get_string_from_index(index)
+        if string is not None:
+            absolute_position = self.pos() + position
+            self.right_clicked_action(absolute_position, string)
