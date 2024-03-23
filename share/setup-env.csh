@@ -19,7 +19,11 @@
 ##########################################################################
 
 if ($?tcsh) then
-    alias mogui 'eval "`python3 -m mogui tcsh \!*:q`"' ;
+    set _mg_shell='tcsh'
 else
-    alias mogui 'eval "`python3 -m mogui csh \!*:q`"' ;
+    set _mg_shell='csh'
 endif
+
+eval "`mogui-setup-env $_mg_shell`"
+
+unset _mg_shell

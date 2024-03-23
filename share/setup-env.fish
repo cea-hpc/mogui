@@ -18,6 +18,4 @@
 
 ##########################################################################
 
-function mogui
-   eval python3 -m mogui fish (string escape -- $argv) | source -
-end
+eval mogui-setup-env fish | source -
