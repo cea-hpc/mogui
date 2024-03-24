@@ -4,4 +4,5 @@ include README.md
 include TODO.md
 exclude .*
 exclude Makefile
+exclude doc/sneak_peek.gif
 prune script

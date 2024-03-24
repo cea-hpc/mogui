@@ -4,6 +4,8 @@ MoGui, Graphical User Interface for Modules
 MoGui is a Graphical User Interface (GUI) for Environment Modules. It helps
 users selecting modules to load and save module collections.
 
+![A sneak peek of MoGui](https://raw.githubusercontent.com/cea-hpc/mogui/main/doc/sneak_peek.gif)
+
 Features
 --------
 
