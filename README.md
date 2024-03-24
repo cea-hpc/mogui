@@ -4,6 +4,22 @@ MoGui, Graphical User Interface for Modules
 MoGui is a Graphical User Interface (GUI) for Environment Modules. It helps
 users selecting modules to load and save module collections.
 
+Features
+--------
+
+* View available modules, loaded modules, enabled modulepaths and available
+  collections
+* Load module when selecting it from the available modules list
+* Unload module when deselecting it from the available modules list or double
+  clicking it from the loaded modules list
+* Purge loaded environment, reset to initial environment and restore *default*
+  collection
+* Save currently loaded environment into the *default* collection
+* When right clicking element, show `help` information of available modules,
+  `display` information of loaded modules and content of collections
+* Apply any environment change made from MoGui onto the shell session that
+  launched the GUI application
+
 Installing MoGui
 ----------------
 
