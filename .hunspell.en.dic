@@ -74,3 +74,4 @@ PyQt5
 pylint
 Makefile
 msg
+cd
