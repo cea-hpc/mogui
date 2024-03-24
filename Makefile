@@ -14,6 +14,6 @@ style:
 distclean:
 	rm -rf dist
 	rm -rf build
-	rm -rf mogui.egg-info
+	rm -rf modules_gui.egg-info
 
 .PHONY: init build install style distclean
