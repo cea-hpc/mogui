@@ -4,27 +4,49 @@ MoGui, Graphical User Interface for Modules
 MoGui is a Graphical User Interface (GUI) for Environment Modules. It helps
 users selecting modules to load and save module collections.
 
-Testing MoGui
--------------
+Using MoGui
+-----------
 
-To test `mogui` please source the `setup-env` file corresponding to your
-shell kind.
+Once installed, a `mogui-setup-env` command is available to initialize `mogui`
+in your current shell session. Run the following command depending on your
+current shell:
 
-For `sh`, `bash`, `ksh` or `zsh`  shells:
+`sh`:
 
-    $ source share/setup-env.sh
+    $ eval "$(mogui-setup-env sh)"
 
-For `csh` or `tcsh` shells:
+`bash`:
 
-    $ source share/setup-env.csh
+    $ eval "$(mogui-setup-env bash)"
 
-For `fish` shell:
+`ksh`:
 
-    $ source share/setup-env.fish
+    $ eval "$(mogui-setup-env ksh)"
 
-Then run created `mogui` shell function/alias:
+`zsh`:
+
+    $ eval "$(mogui-setup-env zsh)"
+
+`csh`:
+
+    $ eval "`mogui-setup-env csh`"
+
+`tcsh`:
+
+    $ eval "`mogui-setup-env tcsh`"
+
+`fish`:
+
+    $ eval mogui-setup-env fish | source -
+
+After this initialization step, a `mogui` shell function will be defined in
+your shell session (or a shell alias on `csh`/`tcsh` shells).
 
     $ mogui
+
+By running this shell function/alias, the GUI will appear. Any environment
+change made from the GUI (like loading a module or restoring a collection)
+will be applied back into the parent shell session that has invoked the GUI.
 
 Requirements
 ------------
