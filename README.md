@@ -31,6 +31,10 @@ Install from git repository:
     $ cd mogui
     $ pip install .
 
+Install from PyPi:
+
+    $ pip install modules-gui
+
 Using MoGui
 -----------
 
