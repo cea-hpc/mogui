@@ -1,4 +1,5 @@
 recursive-include mogui *py *svg *theme
+include ChangeLog
 include COPYING.GPLv2
 include README.md
 include TODO.md

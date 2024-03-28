@@ -43,7 +43,7 @@ install -p -m 0644 share/setup-env.fish %{buildroot}%{_datadir}/fish/vendor_conf
 
 %files
 %license COPYING.GPLv2
-%doc README.md TODO.md
+%doc ChangeLog README.md TODO.md
 %{python3_sitelib}/%{name}/
 %{python3_sitelib}/modules_gui-%{version}.dist-info/
 %{_bindir}/%{name}

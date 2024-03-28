@@ -4,6 +4,9 @@ init:
 build:
 	python3 -m build
 
+ChangeLog:
+	script/gitlog2changelog.py
+
 install:
 	pip install .
 
