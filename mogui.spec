@@ -1,6 +1,6 @@
 %global srcname modules-gui
 Name:           mogui
-Version:        0.2
+Version:        0.2.1
 Release:        1%{?dist}
 Summary:        Graphical User Interface for Environment Modules
 
@@ -65,5 +65,8 @@ rm %{buildroot}%{_bindir}/%{name}
 %{_datadir}/pixmaps/%{name}.svg
 
 %changelog
+* Thu Mar 28 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2.1-1
+- Update to 0.2.1
+
 * Wed Mar 27 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2-1
 - Initial package

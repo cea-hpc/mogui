@@ -1,0 +1,857 @@
+2024-03-28  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * mogui.spec: Release of version 0.2.1
+  * ChangeLog: Add ChangeLog file
+  * mogui.spec, share/mogui.desktop: rpm: add desktop file and associated app
+  icon
+  * mogui.spec: rpm: use %global instead of %define
+  * mogui.spec: rpm: do not install useless mogui bin  As mogui shell function
+  is defined at shell session start.
+  * .hunspell.en.dic, MANIFEST.in, Makefile, mogui.spec,
+  script/gitlog2changelog.py: script: add gitlog2changelog.py to generate
+  ChangeLog  Generate ChangeLog file from git repository and include this file
+  in the generated RPM/SRPM packages.
+  * mogui.spec: rpm: clarify package summary
+
+2024-03-27  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * mogui.spec: Add initial RPM spec file
+
+2024-03-25  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * .hunspell.en.dic, README.md: Add install from PyPi directives in README
+
+2024-03-24  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * .hunspell.en.dic, Makefile, pyproject.toml: Update Python project name to
+  find a free spot on PyPi
+  * MANIFEST.in, README.md, doc/sneak_peek.gif: Add short sneak peek of MoGui
+  in README
+  * README.md: Add "Features" section in README
+  * .hunspell.en.dic, README.md: Add "Installing MoGui" guidelines in README
+  * README.md: Update "Using MoGui" guidelines in README
+
+2024-03-23  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * share/setup-env.csh, share/setup-env.fish, share/setup-env.sh: Adapt
+  setup-env shell scripts to rely on mogui-setup-env
+  * mogui/setup_env.py, pyproject.toml: Add setup_env to initialize MoGui in
+  shell environment  Create mogui-setup-env script that relies on
+  mogui.setup_env:setup_env entry point. Takes shell name as argument and
+  outputs shell code for that shell to define mogui function/alias.  This
+  mogui shell function/alias calls mogui-cmd script, that relies on
+  mogui.__main__:main like mogui script. Duplicating mogui script into
+  mogui-cmd is needed as mogui shell function cannot call mogui (same name
+  than function).
+  * .hunspell.en.dic, mogui/__main__.py, mogui/utils.py: Print proper error
+  msg if Modulecmd fails to initialize
+  * mogui/__main__.py, mogui/modules.py, mogui/qtgui.py, mogui/utils.py: Add
+  missing doc string information
+  * mogui/qtgui.py: Fix click action on None items  Correct left and right
+  click actions on ModulesView or StringsView classes, not to trigger
+  information display on None item if click was made over and empty zone of
+  the widget.
+
+2024-03-22  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * mogui/qtgui.py: Save and restore app's window position in settings
+
+2024-03-21  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * .hunspell.en.dic, Makefile: Change lint Makefile target into style  Run
+  pylint and black when style Makefile target is invoked.
+  * mogui/qtgui.py: Fix Used modulepaths help info
+  * mogui/modules.py: Reformat Modules minimum version runtime error
+  * .hunspell.en.dic, README.md: Clarify requirements in README
+  * Makefile, mogui/modules.py, mogui/qtgui.py, pyproject.toml: Add
+  configuration for pylint  Add lint Makefile target and ignore some
+  non-relevant warnings from code.
+  * MANIFEST.in, {share => mogui}/icons/README, {share/icons/dark =>
+  mogui/icons/mogui-dark}/index.theme,
+  .../mogui-dark}/symbolic/actions/application-exit-symbolic.svg,
+  .../mogui-dark}/symbolic/actions/document-revert-symbolic.svg,
+  .../icons/mogui-dark}/symbolic/actions/document-save-symbolic.svg,
+  .../icons/mogui-dark}/symbolic/actions/edit-clear-symbolic.svg,
+  .../icons/mogui-dark}/symbolic/actions/edit-undo-symbolic.svg,
+  .../icons/mogui-dark}/symbolic/actions/help-contents-symbolic.svg,
+  .../icons/mogui-dark}/symbolic/apps/environment-modules.svg,
+  {share/icons/light => mogui/icons/mogui-light}/index.theme,
+  .../mogui-light}/symbolic/actions/application-exit-symbolic.svg,
+  .../mogui-light}/symbolic/actions/document-revert-symbolic.svg,
+  .../mogui-light}/symbolic/actions/document-save-symbolic.svg,
+  .../icons/mogui-light}/symbolic/actions/edit-clear-symbolic.svg,
+  .../icons/mogui-light}/symbolic/actions/edit-undo-symbolic.svg,
+  .../mogui-light}/symbolic/actions/help-contents-symbolic.svg,
+  .../icons/mogui-light}/symbolic/apps/environment-modules.svg,
+  mogui/qtgui.py: Change location of icon set  Set icons as a directory next
+  to Python code to better fit packaging structure. Rename icon themes
+  "mogui-dark" and "mogui-light" to clarify.
+
+2024-03-20  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * Makefile: Add Makefile to automate some basic dev tasks
+  * .gitignore, MANIFEST.in, pyproject.toml, requirements.txt: Add build
+  directive files
+
+2024-03-19  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * mogui/__main__.py: Add a main entry point  Create a main function in
+  __main__.py script file in order to get a proper entry point to build an
+  executable script on.
+  * lib/__init__.py, {gui => mogui}/__init__.py, mogui.py =>
+  mogui/__main__.py, lib/module.py => mogui/modules.py, gui/mogui.py =>
+  mogui/qtgui.py, {lib => mogui}/utils.py, share/setup-env.csh,
+  share/setup-env.fish, share/setup-env.sh: Re-organize Python code as a
+  "mogui" module
+
+2024-03-18  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * share/icons/README: Add README file to explain origin of icons
+  * gui/mocurses.py: Remove MoCurses prototype
+  * testbed/bin/modulecmd.tcl, testbed/env, testbed/modulefiles/.common,
+  testbed/modulefiles/.compilerwrappers, testbed/modulefiles/.nounload,
+  testbed/modulefiles/.sameversion,
+  testbed/modulefiles/applications/ghostscript/9.04,
+  testbed/modulefiles/applications/imagemagick/6.7.4,
+  testbed/modulefiles/applications/kcachegrind/0.7.1,
+  testbed/modulefiles/applications/r/2.14.1,
+  testbed/modulefiles/compilers/c++/gnu/4.5.1,
+  testbed/modulefiles/compilers/c++/gnu/4.8.1,
+  testbed/modulefiles/compilers/c++/intel/.common-11,
+  testbed/modulefiles/compilers/c++/intel/.common-12,
+  testbed/modulefiles/compilers/c++/intel/.common-13,
+  testbed/modulefiles/compilers/c++/intel/.common-14,
+  testbed/modulefiles/compilers/c++/intel/.version,
+  testbed/modulefiles/compilers/c++/intel/11.1.038,
+  testbed/modulefiles/compilers/c++/intel/12.1.7.256,
+  testbed/modulefiles/compilers/c++/intel/13.0.0.079,
+  testbed/modulefiles/compilers/c++/intel/13.1.2.146,
+  testbed/modulefiles/compilers/c++/intel/14.0.0.080,
+  testbed/modulefiles/compilers/c/gnu/4.5.1,
+  testbed/modulefiles/compilers/c/gnu/4.8.1,
+  testbed/modulefiles/compilers/c/intel/.common-11,
+  .../modulefiles/compilers/c/intel/.common-11-ccpp,
+  testbed/modulefiles/compilers/c/intel/.common-12,
+  .../modulefiles/compilers/c/intel/.common-12-ccpp,
+  testbed/modulefiles/compilers/c/intel/.common-13,
+  .../modulefiles/compilers/c/intel/.common-13-ccpp,
+  .../modulefiles/compilers/c/intel/.common-13-mic,
+  testbed/modulefiles/compilers/c/intel/.common-14,
+  .../modulefiles/compilers/c/intel/.common-14-ccpp,
+  .../modulefiles/compilers/c/intel/.common-14-mic,
+  testbed/modulefiles/compilers/c/intel/.version,
+  testbed/modulefiles/compilers/c/intel/11.1.038,
+  testbed/modulefiles/compilers/c/intel/12.1.7.256,
+  testbed/modulefiles/compilers/c/intel/13.0.0.079,
+  testbed/modulefiles/compilers/c/intel/13.1.2.146,
+  testbed/modulefiles/compilers/c/intel/14.0.0.080,
+  testbed/modulefiles/compilers/cuda/.version,
+  testbed/modulefiles/compilers/cuda/4.0,
+  testbed/modulefiles/compilers/cuda/4.1,
+  testbed/modulefiles/compilers/cuda/5.0,
+  testbed/modulefiles/compilers/fortran/gnu/4.5.1,
+  testbed/modulefiles/compilers/fortran/gnu/4.8.1,
+  .../modulefiles/compilers/fortran/intel/.common-11,
+  .../modulefiles/compilers/fortran/intel/.common-12,
+  .../modulefiles/compilers/fortran/intel/.common-13,
+  .../compilers/fortran/intel/.common-13-mic,
+  .../modulefiles/compilers/fortran/intel/.common-14,
+  .../compilers/fortran/intel/.common-14-mic,
+  .../modulefiles/compilers/fortran/intel/.version,
+  .../modulefiles/compilers/fortran/intel/11.1.038,
+  .../modulefiles/compilers/fortran/intel/12.1.7.256,
+  .../modulefiles/compilers/fortran/intel/13.0.0.079,
+  .../modulefiles/compilers/fortran/intel/13.1.2.146,
+  .../modulefiles/compilers/fortran/intel/14.0.0.080,
+  testbed/modulefiles/compilers/gnu/.common,
+  testbed/modulefiles/compilers/gnu/4.5.1,
+  testbed/modulefiles/compilers/gnu/4.8.1,
+  testbed/modulefiles/compilers/hmpp/.version,
+  testbed/modulefiles/compilers/hmpp/2.5.2,
+  testbed/modulefiles/compilers/hmpp/3.0.0,
+  testbed/modulefiles/compilers/hmpp/3.1.0,
+  testbed/modulefiles/compilers/hmpp/3.2.0,
+  testbed/modulefiles/compilers/hmpp/3.2.3,
+  testbed/modulefiles/compilers/hmpp/3.3.0,
+  testbed/modulefiles/compilers/hmpp/3.3.3,
+  testbed/modulefiles/compilers/intel/.common,
+  testbed/modulefiles/compilers/intel/.version,
+  testbed/modulefiles/compilers/intel/11.1.038,
+  testbed/modulefiles/compilers/intel/12.1.7.256,
+  testbed/modulefiles/compilers/intel/13.0.0.079,
+  testbed/modulefiles/compilers/intel/13.1.2.146,
+  testbed/modulefiles/compilers/intel/14.0.0.080,
+  testbed/modulefiles/environment/ccc, testbed/modulefiles/environment/knc,
+  testbed/modulefiles/environment/mic,
+  testbed/modulefiles/environment/mic-hybrid,
+  testbed/modulefiles/environment/prace,
+  testbed/modulefiles/libraries/boost/.common,
+  testbed/modulefiles/libraries/boost/1.45.0,
+  testbed/modulefiles/libraries/boost/1.47.0,
+  testbed/modulefiles/libraries/fftw2/2.1.5,
+  testbed/modulefiles/libraries/fftw3/.common,
+  testbed/modulefiles/libraries/fftw3/3.2.2,
+  testbed/modulefiles/libraries/fftw3/3.3.1,
+  testbed/modulefiles/libraries/hdf5/.common,
+  testbed/modulefiles/libraries/hdf5/1.8.5,
+  testbed/modulefiles/libraries/hdf5/1.8.8,
+  testbed/modulefiles/libraries/mkl/.common-11,
+  testbed/modulefiles/libraries/mkl/.common-12,
+  testbed/modulefiles/libraries/mkl/.common-13,
+  testbed/modulefiles/libraries/mkl/.common-13-mic,
+  testbed/modulefiles/libraries/mkl/.common-14,
+  testbed/modulefiles/libraries/mkl/.common-14-mic,
+  testbed/modulefiles/libraries/mkl/.version,
+  testbed/modulefiles/libraries/mkl/11.1.038,
+  testbed/modulefiles/libraries/mkl/12.1.7.256,
+  testbed/modulefiles/libraries/mkl/13.0.0.079,
+  testbed/modulefiles/libraries/mkl/13.1.2.146,
+  testbed/modulefiles/libraries/mkl/14.0.0.080,
+  testbed/modulefiles/libraries/netcdf/.common,
+  testbed/modulefiles/libraries/netcdf/3.6.3,
+  testbed/modulefiles/libraries/netcdf/4.1.1,
+  testbed/modulefiles/libraries/netcdf/4.1.3,
+  testbed/modulefiles/libraries/netcdf/4.2,
+  testbed/modulefiles/libraries/netcdf/4.2_hdf5,
+  testbed/modulefiles/libraries/qt/.common,
+  testbed/modulefiles/libraries/qt/4.7.1,
+  testbed/modulefiles/mpi/bullxmpi/.common,
+  testbed/modulefiles/mpi/bullxmpi/.version,
+  testbed/modulefiles/mpi/bullxmpi/1.0.1,
+  testbed/modulefiles/mpi/bullxmpi/1.1.10.1,
+  testbed/modulefiles/mpi/bullxmpi/1.1.14.1,
+  testbed/modulefiles/mpi/bullxmpi/1.1.14.3,
+  testbed/modulefiles/mpi/bullxmpi/1.1.16.5,
+  testbed/modulefiles/mpi/bullxmpi/1.1.8.1,
+  testbed/modulefiles/mpi/impi/.common-mic,
+  testbed/modulefiles/mpi/impi/.version,
+  testbed/modulefiles/mpi/impi/4.1.1.036,
+  testbed/modulefiles/tools/cmake/2.8.3, testbed/modulefiles/tools/ddd/3.3.12,
+  testbed/modulefiles/tools/ddt/.version, testbed/modulefiles/tools/ddt/3.0,
+  testbed/modulefiles/tools/ddt/4.0, testbed/modulefiles/tools/idb/.common-11,
+  testbed/modulefiles/tools/idb/.common-12,
+  testbed/modulefiles/tools/idb/.common-13,
+  testbed/modulefiles/tools/idb/.version,
+  testbed/modulefiles/tools/idb/11.1.038,
+  testbed/modulefiles/tools/idb/12.1.7.256,
+  testbed/modulefiles/tools/idb/13.0.0.079,
+  testbed/modulefiles/tools/idb/13.1.2.146,
+  testbed/modulefiles/tools/pcocc/0.0.1,
+  testbed/modulefiles/tools/simubull/0.0.1,
+  testbed/modulefiles/tools/valgrind/3.6.0: Remove initial testbed
+  * gui/mogui.py: Loaded modules may not be part of an enabled modulepath
+  When disabling a modulepath, some loaded modules may be part of this and
+  will still be loaded after the modulepath unuse.
+
+2024-03-17  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * lib/module.py: Test Modules tool has required version
+  * .hunspell.en.dic, gui/mogui.py: Merge
+  {UsedModulepaths,SavedCollections}View into StringsView  Merge definitions
+  of UsedModulepathsView and SavedCollectionsView classes in a generic
+  StringsView class.
+  * .hunspell.en.dic, TODO.md: Add TODO description file
+  * gui/mogui.py, lib/module.py: Add tab to display saved collections  Add a
+  "Saved collections" tab that lists currently saved collections. Double
+  clicking an entry will restore this collection. Right clicking an entry will
+  display content of this collection.
+  * .hunspell.en.dic, gui/mogui.py: Add tab to display used modulepaths  Add a
+  "Used modulepaths" tab that lists currently enabled modulepaths. Double
+  clicking an entry will unuse this modulepath.
+
+2024-03-16  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py: Adapt widget size  Make Available Modules widget bigger than
+  Loaded Modules widget. Also adapt default application size to correctly
+  display a Modules table.  Update Modules table to use 6 columns instead of 8
+  and set default width for these columns to 150 pixels.
+  * gui/mogui.py: No table grid displayed on ModulesView objects
+  * gui/mogui.py: No ModulesView widget refresh if module_list is unchanged
+  Do not clear model of ModulesView widget if new list of Modules provided is
+  the same than the one currently recorded. In this case, just clear the
+  current selection.
+  * gui/mogui.py, mogui.py: Rename Mogui setModules method into
+  refresh_widgets
+  * .hunspell.en.dic, gui/mogui.py: Add ModulesView widget  Share common
+  definitions of AvailModulesView and LoadedModulesView classes in ModulesView
+  class.
+  * gui/mogui.py: Record and use list of Module objects in AvailModulesView
+  Update AvailModulesView class to record and use a list of Module objects
+  rather a list of module name strings. This Module list is directly passed to
+  refresh method and recorded in module_list member (which replaces
+  mod_name_list member).
+  * gui/mogui.py: Display context menu info at correct position  Transmit
+  absolute position (table widget position + position of selected item) to
+  display WhatsThis information.
+  * gui/mogui.py: Transform LoadedModulesView into a QTableView  Update
+  LoadedModulesView widget to make it a QTableView instead of a QListView.
+  Loaded module elements are now displayed in a multi-column table.
+
+2024-03-15  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * .hunspell.en.dic, gui/mogui.py: Transform AvailModulesView into a
+  QTableView  Update AvailModulesView widget to make it a QTableView instead
+  of a QTreeView. Module elements are now displayed in a multi-column table.
+
+2024-03-14  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py: Display available modules in a tab widget
+
+2024-03-13  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py: Rework frame layout  Put avail and loaded widgets in a
+  vertical layout.
+  * gui/mogui.py: Show application help in WhatsThis window
+  * gui/mogui.py, images/accessories-dictionary.png,
+  share/icons/dark/index.theme,
+  .../dark/symbolic/apps/environment-modules.svg,
+  share/icons/light/index.theme,
+  .../light/symbolic/apps/environment-modules.svg: Use environment modules
+  logo as application icon
+  * .hunspell.en.dic, mogui.py, mogui.qss: Remove unused QSS
+  * mogui.py: Do not set a specific org for app
+
+2024-03-12  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py: Report events on window's status bar
+  * .hunspell.en.dic, gui/mogui.py, images/gtk-quit.png, images/gtk-save.png,
+  images/help.png, images/reload.png, share/icons/dark/index.theme,
+  .../symbolic/actions/application-exit-symbolic.svg,
+  .../symbolic/actions/document-revert-symbolic.svg,
+  .../symbolic/actions/document-save-symbolic.svg,
+  .../dark/symbolic/actions/edit-clear-symbolic.svg,
+  .../dark/symbolic/actions/edit-undo-symbolic.svg,
+  .../symbolic/actions/help-contents-symbolic.svg,
+  share/icons/light/index.theme,
+  .../symbolic/actions/application-exit-symbolic.svg,
+  .../symbolic/actions/document-revert-symbolic.svg,
+  .../symbolic/actions/document-save-symbolic.svg,
+  .../light/symbolic/actions/edit-clear-symbolic.svg,
+  .../light/symbolic/actions/edit-undo-symbolic.svg,
+  .../symbolic/actions/help-contents-symbolic.svg: Adapt toolbar icons to dark
+  mode  Change toolbar icons for symbolic icons from Adwaita theme. Add a
+  light and dark version of each icon. Update icon theme when window's palette
+  color is changed (and goes dark or light).
+  * gui/mogui.py: Add MoGui create_button method  Initialize toolbar button
+  with create_button method.  Take this opportunity to remove "&" prefix on
+  QAction label as they are not used anymore in a menu. Also rename
+  createObjects into create_objects to better cope with snake_case naming
+  style.
+
+2024-03-10  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py: Properly close app when clicking window manager exit button
+  * gui/mogui.py: Translate labels into English
+  * .hunspell.en.dic, gui/mogui.py: Update GUI settings save and restore
+  Application's settings are now saved in a mogui.conf file under and
+  environment-modules direction within ~/.config. Modules-related
+  configuration data are thus gathered in a single directory.  Change saved
+  settings to record main window size rather toolbar geometry (as toolbar
+  geometry is not expected to be changed by user).  As settings are reloaded
+  when application starts, previous window size is now restored.
+  * gui/mogui.py: Unload double clicked module item in LoadedModulesView
+  * gui/mogui.py: Set module items in LoadedModulesView not selectable
+
+2024-03-09  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py: Fix shortcut keys for buttons
+  * gui/mogui.py: Transform AvailModulesView set method into refresh
+  Transform set() method of AvailModulesView class into refresh(). It now
+  clears object module and fill it with passed available modules.  load,
+  unload and show_help arguments are removed from refresh method. Instead,
+  load, unload and show_help members are defined when objects are initialized.
+  * gui/mogui.py: Remove unused menu bar
+  * gui/mogui.py, images/terminal.png: Remove Terminal action  As MoGui is now
+  more intended to be run from a shell session if one wants to update its
+  current environment, the Terminal action is now useless.
+  * gui/mogui.py: Remove unused pyqtSignal import
+  * gui/mogui.py: Pass list of Modules to AvailModulesView select method
+  * .hunspell.en.dic, gui/mogui.py, lib/module.py: Report display info when
+  right clicking  loaded modules view  Add show_display member to
+  LoadedModulesView class. It defines the function to call to show display
+  info. This member is set to a method of MoGui class that calls module help
+  command for selected module item (new method display() added to Module
+  class).  LoadedModulesView widget is updated to create its items as
+  ModuleGui items (as done on AvailModulesView widget). It helps to proceed
+  with the report of display information like done with the report of help
+  information on avail modules.
+
+2024-03-08  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py, images/module.png: Remove icon on items of avail modules
+  widget
+  * .hunspell.en.dic, gui/mogui.py: Add LoadedModulesView class  Create new
+  class to hold loaded modules widget definition: LoadedModulesView.
+  * .hunspell.en.dic, gui/mogui.py: Rename ModuleChoice class into
+  AvailModulesView  Clarify available modules widget by renaming class into
+  AvailModulesView, and object into avail_modules.
+  * gui/mogui.py: Remove action history widget  Remove action history widget
+  to simplify UI.
+  * .hunspell.en.dic, gui/mogui.py: Remove module info widget  As module help
+  is now reported when right clicking avail modules, remove the module info
+  widget to simplify the UI.
+  * .hunspell.en.dic, gui/mogui.py, lib/module.py: Display module help when
+  right clicking avail items  Use WhatsThis help system to display module help
+  message (if any) when right clicking a Module item in the ModuleChoice
+  widget.
+
+2024-03-06  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * README.md, share/setup-env.csh, share/setup-env.fish, share/setup-env.sh:
+  share: add initialization scripts for sh/csh/fish
+  * .hunspell.en.dic, gui/mogui.py, lib/module.py, mogui.py: Print env change
+  shell code on stdout  If a shell name is given as argument (among sh, bash,
+  ksh, zsh, csh, tcsh and fish), print shell code for this shell kind on
+  stdout.  Printed code corresponds to the environment changes induced by the
+  module actions performed on the GUI.  With this new option, if a mogui()
+  shell function is defined and evaluates output produced by mogui.py script,
+  the environment changes are reflected in calling shell session. This is the
+  same mechanism as used by module() shell function to apply environment
+  changes produced by modulecmd.tcl.
+  * README.md, gui/mogui.py, lib/module.py: Use provided sorted order to
+  create module GUI items  As module avail command returns modules in the
+  expected natural sorted order, use this order to add module GUI items to
+  ModuleChoice widget.  Since Python 3.6, dictionary keys are returned in the
+  insertion order [1], which permit us to preserve the natural sort order
+  provided by module command.  [1]
+  https://docs.python.org/3/tutorial/datastructures.html#dictionaries
+
+2024-03-05  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py: Remove unused QMessageBox import
+  * .hunspell.en.dic, gui/mogui.py: Use self.model.findItems in ModuleChoice
+  select()  Update ModuleChoice select() method to use QStandardItemModel
+  findItems() method to get items in list that matches string passed as
+  argument.
+  * gui/mogui.py, lib/module.py: Refresh available module list when refreshing
+  ModuleChoice  Ask for a refreshed available modules list when refreshing
+  ModuleChoice widget. When collection is restored or module is loaded, the
+  enabled modulepath list may change. Thus available module list should be
+  refreshed when modulepath list is updated.
+  * gui/mogui.py: Add sub boolean argument to MoGui report_event method
+  * README.md, gui/mogui.py, lib/module.py, mogui.py: Add Xavier Delaruelle to
+  the author lists
+  * gui/mogui.py, lib/module.py: Remove ModuleChoice select_module method
+  ModuleChoice select_module method is not needed anymore as ModuleGui items
+  are now all flat (no sub element).
+
+2024-03-04  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * lib/module.py: Remove Modulecmd load/unload/purge/restore/reset/save
+  methods
+  * gui/mogui.py: Rename add/remove methods and members  Rename MoGui
+  add_module and remove_module methods into load and remove. Rename
+  ModuleChoice add and remove members into load and remove.
+  * gui/mogui.py: Use clicked trigger rather selectionChanged on ModuleChoice
+  Trigger load or unload via clicked trigger of ModuleChoice class rather
+  selectionChanged. This change is needed as automatically loaded/unload
+  modules are now correctly selected/deselected on ModuleChoice widget but it
+  should not trigger a module command evaluation.
+  * .hunspell.en.dic, gui/mogui.py: Add MoGui modulecmd_eval method  Introduce
+  modulecmd_eval method on MoGui class. It runs a module command evaluation,
+  call for widgets refresh and report loaded/unloaded module changes.  Update
+  add_module, remove_module, purge, reset and restore methods to rely on
+  modulecmd_eval to change environment and refresh widgets.  Improvement
+  obtained: * loaded and unloaded modules during a purge, restore and restore
+  are reported * all loaded and unloaded modules during a selection or a
+  deselection are reported and selected/deselected on widgets
+
+2024-03-03  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py: Remove unused MoGui dropModule/add/_addToChoice methods
+  * gui/mogui.py: Load/unload module from MoGui {add,remove}_module methods
+  Move module load and unload from ModuleChoice selectionChanged method to
+  Mogui add_module and remove_module methods. Modulecmd member is not needed
+  anymore in ModuleChoice class.
+  * gui/mogui.py: Simplify ModuleChoice class now ModuleGui items are flat
+  * gui/mogui.py, lib/module.py, mogui.py: Change Module class to represent a
+  single module file  Simplify Module class to represent a single module name
+  version instead of all the different versions available.  Available module
+  GUI widget is also simplified as no sub item need to be managed now every
+  module is independent.
+  * gui/mogui.py: Clear avail modules widget when setting its content  Add
+  call to ModuleChoice clear() method directly inside MoGui setModules()
+  method, rather relying on actions calling clear prior calling setModules.
+  * gui/mogui.py: Remove useless ops from MoGui reset/restore/purge methods
+  No need to fetch available modules prior reset and restore actions. Fetch is
+  already performed when application starts.  No need to clear loaded modules
+  widget in reset, restore and purge methods. Widget is already cleared by
+  setModules method that is called by reset, restore and purge.
+
+2024-03-02  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py: Add MoGui report_event() method  Record event message in
+  history widget and print debug message if enabled.  Add event message when
+  doing purge, reset, save and restore actions.
+  * gui/mogui.py: Remove MoGui expert() method and help trigger
+  * gui/mogui.py: Remove commented PyQt4 code
+  * gui/mogui.py, lib/utils.py, mogui.py: Add print_debug() helper function
+  * .hunspell.en.dic, gui/mogui.py, mogui.py: Print debug messages on
+  sys.stderr  Make sure nothing is printed on stdout (to later use this
+  channel to report environment change commands).  It requires to manually
+  handle the print of help usage message when --help option is set.
+  * gui/mogui.py, mogui.py: Add --debug/-d argument  Add --debug command line
+  argument to enable debug mode. Pass this information to MoGui and
+  ModuleChoice objects via a debug member.  When debug mode is set, it reports
+  information on module command state at startup. Information printed on
+  console by MoGui object is only done if debug mode is set.
+  * lib/module.py: Add get_path_envvar_value_list helper function
+  * .hunspell.en.dic, lib/module.py: Report version/paths/loaded when printing
+  Modulecmd  Update string representation of Modulecmd object to report module
+  command version, enabled modulepaths and loaded modules.  Add version() and
+  used() methods, cmd_version member.  Only define __repr__ method, not need
+  for a specific __str__.
+  * lib/module.py: Fetch available modules once  Update Modulecmd avail()
+  method to only fetch available modules the first time it is called. Add
+  avail_fetched member to know if fetch was already processed. Rename mods
+  member in avail_mods for clarity.
+  * gui/mogui.py, mogui.py: Use Modulecmd avail() method rather mods member
+  Do not use mods member of Modulecmd objects in MoGui class. Class avail()
+  method instead.
+  * gui/mogui.py, lib/module.py, mogui.py: Remove Modulecmd test() method
+
+2024-03-01  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * lib/module.py: Fix Module add_version() method for flat modules  Do not
+  add "None" element to self.versions member if module is flat.
+
+2024-02-29  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * mogui.py: No restore on launch  Do not restore default collection when
+  launching MoGui. Use loaded environment from session that launch the
+  application.
+  * gui/mogui.py: Add restore action
+  * README.md, gui/mogui.py, lib/module.py: Bind reset action on module reset
+  command  Execute a "module reset" when running the "reset" action. "module
+  reset" restore the initial environment. This initial environment is either:
+  purged environment, restore a collection, restore what was loaded when
+  session was initialized. User may configure reset's behavior with Modules
+  "reset_target_state" configuration option.
+  * gui/mogui.py, lib/module.py: Add purge action
+  * .flake8, .hunspell.en.dic: Add Flake8 config to define project's max line
+  length
+
+2024-02-28  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * .hunspell.en.dic, gui/mogui.py: Select flat loaded module at startup
+  Select in ModuleChoice TreeView the flat modules that are loaded at startup.
+  Flat modules are modulefiles located a the root of modulepath (no module
+  name directory and module version files).
+  * gui/mogui.py, lib/module.py: Pass Modulecmd as argument to Module
+  help()/desc() methods
+
+2024-02-27  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * .hunspell.en.dic, gui/mogui.py, mogui.py: Add modulecmd member to
+  MoGui/ModuleChoice classes  Rather spawning a Modulecmd object when needing,
+  add a modulecmd member on MoGui and ModuleChoice classes.
+  * gui/mogui.py, lib/module.py: Rework MoGui terminal() method  Simply launch
+  terminal command. As modules are now loaded in GUI's environment when
+  selected, terminal automatically inherits this environment when launched.
+  Modulecmd selected() method is removed as it is now unused.
+
+2024-02-26  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py, lib/module.py: Rework Modulecmd save() and restore() to rely
+  on collection
+  * gui/mogui.py, lib/module.py: Report loaded modules in choice list  Reflect
+  loaded module list in choice list widget. Refresh the whole widget content
+  every time a module is selected or deselected in available list. It helps to
+  find out when a loaded module automatically loads module dependencies.
+  * gui/mogui.py, lib/module.py: Unload deselected module  Unload module from
+  environment when selected from available list.
+  * gui/mogui.py, lib/module.py: Load selected module  Load module selected
+  from available list into environment.
+
+2024-02-25  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mogui.py, lib/module.py, mogui.py: Rename Modulecmd load() method
+  Rename Module load() method into restore() to get closer to corresponding
+  Modules mechanism.
+  * lib/module.py: Rename Module setVersion() method  Rename Module
+  setVersion() method into set_version() to conform with snake_case naming
+  style.
+  * lib/module.py: Rename Module addVersion() method  Rename Module
+  addVersion() method into add_version() to conform with snake_case naming
+  style.
+  * lib/module.py: Rework Modulecmd helpMessage member and help() method
+  Rename helpMessage member to help_message to conform with snake_case naming
+  style.
+  * .hunspell.en.dic, lib/module.py: Rework Modulecmd description member and
+  desc() method  Rename description member to whatis to get closer to Modules
+  concept.  Do not call to desc() method when initializing a Module object (as
+  it is costly). Fetch module whatis information only once.
+  * gui/mogui.py, lib/module.py: Use Python 3 style super() without arguments
+  * gui/mocurses.py, lib/module.py: Class inherits from object, no need to
+  precise
+  * lib/module.py: Add designation methods to get module name version
+  * gui/mogui.py, lib/module.py, mogui.py: Rework module command avail method
+  Update modules() method of Modulecmd class to correctly parse version
+  (especially in case of flat module) and transmit default information as
+  boolean. Change method name to avail() for clarity.
+  * .hunspell.en.dic, lib/module.py: Only get help message from module help
+  command  Remove ability to rely on specific files to get help on
+  modulefiles. Always use "module help" command to retrieve such information.
+  * .hunspell.en.dic, README.md, lib/module.py: Use module --output option to
+  only get module name and sym  Use --output option of Modules, introduced on
+  version 4.7, to filter avail command output and only get module name and its
+  symbolic versions.
+  * .hunspell.en.dic, gui/mogui.py, lib/module.py: Rework module command run
+  method  Replace "launch" method by "run" and execute module command as done
+  on Modules project (using communicate method to fetch stdout and stderr
+  contents).  Do not distinguish module command from its arguments to simplify
+  method call. Return either stdout or stderr content, use an argument
+  "return_content" to define what content to get. If stdout is returned, print
+  stderr on console. If stderr is returned, decode content.
+  * .hunspell.en.dic, mogui.py: Remove debugging ability to run module if args
+  are provided
+
+2024-02-24  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * .hunspell.en.dic, mogui.py: Rely on already initialized environment  Do
+  not try to initialize MODULEPATH if found undefined. Rely on environment
+  initialization for that.  Keep LOADEDMODULES environment variable as-is. Do
+  not set this variable to an empty string if found undefined.
+  * .hunspell.en.dic, README.md, gui/mogui.py, lib/module.py, mogui.py: Get
+  module command location from MODULES_CMD env var  Get location of module
+  command script (modulecmd.tcl) from environment variable MODULES_CMD rather
+  than defining this location as a global variable in lib.modulecmd.
+  MODULES_CMD has been introduced in Modules 4.1 to get the location of the
+  module command script currently used by the module command defined in shell
+  session.
+  * .gitignore, .hunspell.en.dic: gitignore: ignore vim swap files
+  * gui/mogui.py, lib/module.py: Remove shebang from non-main python scripts
+  * .hunspell.en.dic: Add local Hunspell dictionary  Add Hunspell dictionary
+  for MoGui project
+  * README.md, readme: Improve project's README  Add standard information
+  about MoGui project in its README file. Move to a MarkDown file syntax.
+  * script/commit-msg, script/pre-commit: script: add commit-msg/pre-commit
+  helper scripts
+
+2024-02-23  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * gui/mocurses.py, gui/mogui.py, lib/module.py, mogui.py: Reformat Python
+  code with Black
+  * gui/mogui.py, lib/module.py, mogui.py: Cleanup and sort import statements
+  * COPYING.GPLv2, gui/mocurses.py, gui/mogui.py, lib/module.py, mogui.py: Set
+  this project under GPLv2+ terms  Use GPL-v2-or-later licence for MoGui
+  project. Add licence file and add short licence header in code source files.
+
+2024-02-20  Aurélien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * lib/module.py: Fix module load management
+  * readme, testbed/bin/modulecmd.tcl, testbed/env,
+  testbed/modulefiles/.common, testbed/modulefiles/.compilerwrappers,
+  testbed/modulefiles/.nounload, testbed/modulefiles/.sameversion,
+  testbed/modulefiles/applications/ghostscript/9.04,
+  testbed/modulefiles/applications/imagemagick/6.7.4,
+  testbed/modulefiles/applications/kcachegrind/0.7.1,
+  testbed/modulefiles/applications/r/2.14.1,
+  testbed/modulefiles/compilers/c++/gnu/4.5.1,
+  testbed/modulefiles/compilers/c++/gnu/4.8.1,
+  testbed/modulefiles/compilers/c++/intel/.common-11,
+  testbed/modulefiles/compilers/c++/intel/.common-12,
+  testbed/modulefiles/compilers/c++/intel/.common-13,
+  testbed/modulefiles/compilers/c++/intel/.common-14,
+  testbed/modulefiles/compilers/c++/intel/.version,
+  testbed/modulefiles/compilers/c++/intel/11.1.038,
+  testbed/modulefiles/compilers/c++/intel/12.1.7.256,
+  testbed/modulefiles/compilers/c++/intel/13.0.0.079,
+  testbed/modulefiles/compilers/c++/intel/13.1.2.146,
+  testbed/modulefiles/compilers/c++/intel/14.0.0.080,
+  testbed/modulefiles/compilers/c/gnu/4.5.1,
+  testbed/modulefiles/compilers/c/gnu/4.8.1,
+  testbed/modulefiles/compilers/c/intel/.common-11,
+  .../modulefiles/compilers/c/intel/.common-11-ccpp,
+  testbed/modulefiles/compilers/c/intel/.common-12,
+  .../modulefiles/compilers/c/intel/.common-12-ccpp,
+  testbed/modulefiles/compilers/c/intel/.common-13,
+  .../modulefiles/compilers/c/intel/.common-13-ccpp,
+  .../modulefiles/compilers/c/intel/.common-13-mic,
+  testbed/modulefiles/compilers/c/intel/.common-14,
+  .../modulefiles/compilers/c/intel/.common-14-ccpp,
+  .../modulefiles/compilers/c/intel/.common-14-mic,
+  testbed/modulefiles/compilers/c/intel/.version,
+  testbed/modulefiles/compilers/c/intel/11.1.038,
+  testbed/modulefiles/compilers/c/intel/12.1.7.256,
+  testbed/modulefiles/compilers/c/intel/13.0.0.079,
+  testbed/modulefiles/compilers/c/intel/13.1.2.146,
+  testbed/modulefiles/compilers/c/intel/14.0.0.080,
+  testbed/modulefiles/compilers/cuda/.version,
+  testbed/modulefiles/compilers/cuda/4.0,
+  testbed/modulefiles/compilers/cuda/4.1,
+  testbed/modulefiles/compilers/cuda/5.0,
+  testbed/modulefiles/compilers/fortran/gnu/4.5.1,
+  testbed/modulefiles/compilers/fortran/gnu/4.8.1,
+  .../modulefiles/compilers/fortran/intel/.common-11,
+  .../modulefiles/compilers/fortran/intel/.common-12,
+  .../modulefiles/compilers/fortran/intel/.common-13,
+  .../compilers/fortran/intel/.common-13-mic,
+  .../modulefiles/compilers/fortran/intel/.common-14,
+  .../compilers/fortran/intel/.common-14-mic,
+  .../modulefiles/compilers/fortran/intel/.version,
+  .../modulefiles/compilers/fortran/intel/11.1.038,
+  .../modulefiles/compilers/fortran/intel/12.1.7.256,
+  .../modulefiles/compilers/fortran/intel/13.0.0.079,
+  .../modulefiles/compilers/fortran/intel/13.1.2.146,
+  .../modulefiles/compilers/fortran/intel/14.0.0.080,
+  testbed/modulefiles/compilers/gnu/.common,
+  testbed/modulefiles/compilers/gnu/4.5.1,
+  testbed/modulefiles/compilers/gnu/4.8.1,
+  testbed/modulefiles/compilers/hmpp/.version,
+  testbed/modulefiles/compilers/hmpp/2.5.2,
+  testbed/modulefiles/compilers/hmpp/3.0.0,
+  testbed/modulefiles/compilers/hmpp/3.1.0,
+  testbed/modulefiles/compilers/hmpp/3.2.0,
+  testbed/modulefiles/compilers/hmpp/3.2.3,
+  testbed/modulefiles/compilers/hmpp/3.3.0,
+  testbed/modulefiles/compilers/hmpp/3.3.3,
+  testbed/modulefiles/compilers/intel/.common,
+  testbed/modulefiles/compilers/intel/.version,
+  testbed/modulefiles/compilers/intel/11.1.038,
+  testbed/modulefiles/compilers/intel/12.1.7.256,
+  testbed/modulefiles/compilers/intel/13.0.0.079,
+  testbed/modulefiles/compilers/intel/13.1.2.146,
+  testbed/modulefiles/compilers/intel/14.0.0.080,
+  testbed/modulefiles/environment/ccc, testbed/modulefiles/environment/knc,
+  testbed/modulefiles/environment/mic,
+  testbed/modulefiles/environment/mic-hybrid,
+  testbed/modulefiles/environment/prace,
+  testbed/modulefiles/libraries/boost/.common,
+  testbed/modulefiles/libraries/boost/1.45.0,
+  testbed/modulefiles/libraries/boost/1.47.0,
+  testbed/modulefiles/libraries/fftw2/2.1.5,
+  testbed/modulefiles/libraries/fftw3/.common,
+  testbed/modulefiles/libraries/fftw3/3.2.2,
+  testbed/modulefiles/libraries/fftw3/3.3.1,
+  testbed/modulefiles/libraries/hdf5/.common,
+  testbed/modulefiles/libraries/hdf5/1.8.5,
+  testbed/modulefiles/libraries/hdf5/1.8.8,
+  testbed/modulefiles/libraries/mkl/.common-11,
+  testbed/modulefiles/libraries/mkl/.common-12,
+  testbed/modulefiles/libraries/mkl/.common-13,
+  testbed/modulefiles/libraries/mkl/.common-13-mic,
+  testbed/modulefiles/libraries/mkl/.common-14,
+  testbed/modulefiles/libraries/mkl/.common-14-mic,
+  testbed/modulefiles/libraries/mkl/.version,
+  testbed/modulefiles/libraries/mkl/11.1.038,
+  testbed/modulefiles/libraries/mkl/12.1.7.256,
+  testbed/modulefiles/libraries/mkl/13.0.0.079,
+  testbed/modulefiles/libraries/mkl/13.1.2.146,
+  testbed/modulefiles/libraries/mkl/14.0.0.080,
+  testbed/modulefiles/libraries/netcdf/.common,
+  testbed/modulefiles/libraries/netcdf/3.6.3,
+  testbed/modulefiles/libraries/netcdf/4.1.1,
+  testbed/modulefiles/libraries/netcdf/4.1.3,
+  testbed/modulefiles/libraries/netcdf/4.2,
+  testbed/modulefiles/libraries/netcdf/4.2_hdf5,
+  testbed/modulefiles/libraries/qt/.common,
+  testbed/modulefiles/libraries/qt/4.7.1,
+  testbed/modulefiles/mpi/bullxmpi/.common,
+  testbed/modulefiles/mpi/bullxmpi/.version,
+  testbed/modulefiles/mpi/bullxmpi/1.0.1,
+  testbed/modulefiles/mpi/bullxmpi/1.1.10.1,
+  testbed/modulefiles/mpi/bullxmpi/1.1.14.1,
+  testbed/modulefiles/mpi/bullxmpi/1.1.14.3,
+  testbed/modulefiles/mpi/bullxmpi/1.1.16.5,
+  testbed/modulefiles/mpi/bullxmpi/1.1.8.1,
+  testbed/modulefiles/mpi/impi/.common-mic,
+  testbed/modulefiles/mpi/impi/.version,
+  testbed/modulefiles/mpi/impi/4.1.1.036,
+  testbed/modulefiles/tools/cmake/2.8.3, testbed/modulefiles/tools/ddd/3.3.12,
+  testbed/modulefiles/tools/ddt/.version, testbed/modulefiles/tools/ddt/3.0,
+  testbed/modulefiles/tools/ddt/4.0, testbed/modulefiles/tools/idb/.common-11,
+  testbed/modulefiles/tools/idb/.common-12,
+  testbed/modulefiles/tools/idb/.common-13,
+  testbed/modulefiles/tools/idb/.version,
+  testbed/modulefiles/tools/idb/11.1.038,
+  testbed/modulefiles/tools/idb/12.1.7.256,
+  testbed/modulefiles/tools/idb/13.0.0.079,
+  testbed/modulefiles/tools/idb/13.1.2.146,
+  testbed/modulefiles/tools/pcocc/0.0.1,
+  testbed/modulefiles/tools/simubull/0.0.1,
+  testbed/modulefiles/tools/valgrind/3.6.0: tests: add readme and a testbed
+  directory
+  * gui/mocurses.py, gui/mogui.py, lib/module.py, mogui.logs, mogui.py: 2024
+  reborn: Switch to PyQt5 and python3 !
+
+2013-11-21  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * gui/mocurses.py: Mocurses: First version of a curses GUI
+
+2013-11-19  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * mogui.py: MoGui: Replace the ugly sed to get the MODULEPATH
+  * gui/mogui.py: Gui: Implement clear() in the ModuleChoice list
+
+2013-11-18  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * gui/mogui.py: Gui: clear the module list on reset
+
+2013-11-06  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * gui/mogui.py, lib/module.py: Gui: manage terminal function  To manage the
+  launch of the terminal, a temporary file is generated to load the selected
+  module and then launch a terminal.
+  * mogui.py: cleanup classes name
+  * lib/module.py: Modulecmd: Fix selection issues
+
+2013-11-05  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * lib/module.py: Modulecmd: add a method to get all selected modules
+  * gui/mogui.py: Gui: cleanup selection behaviour
+
+2013-11-02  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * gui/mogui.py, lib/module.py: Gui: Manage remove and add when a Module is
+  selected
+
+2013-10-30  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * gui/mogui.py, mogui.py, mogui.qss: Gui: Add a custom stylesheet  If a user
+  need it, Mogui can be customized by a specific mogui.qss in his
+  configuration directory (aka ~/.config/Mogui/mogui.qss)
+
+2013-10-29  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * gui/mogui.py: Gui: use a QTreeView for the module choice
+
+2013-10-28  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * gui/mogui.py: Gui: load module after clearing the choiceModel
+  * gui/mogui.py: Gui: gui cleanup
+  * gui/mogui.py: Gui: Recode the load process and the add action
+  * gui/mogui.py: Gui: rename modulechoice to modulelist
+  * gui/mogui.py: Gui: use only one Icon to manage default icon
+  * lib/module.py: Module: select() add the version to select
+  * lib/module.py: Modulecmd: check the line content when loading saved
+  modules
+  * gui/mogui.py, lib/module.py: Module: now string representation of a module
+  is name/current_version
+  * lib/module.py: Modulecmd: Fix the modules savepath
+
+2013-10-21  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * gui/mogui.py, images/module.png, lib/module.py, mogui.py: Gui: add a list
+  for the user choice
+  * .gitignore: gitignore: ignore .pyc
+  * gui/mogui.py: cleanup: pylint - fix line length
+
+2013-10-16  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * gui/__init__.py, gui/mogui.py, lib/__init__.py, lib/module.py, mogui.py:
+  mogui: split gui and module management
+  * images/accessories-dictionary.png, images/gtk-quit.png,
+  images/gtk-save.png, images/help.png, images/reload.png,
+  images/terminal.png, mogui.py: Gui: add static definition for icon location
+  * mogui.py: cleanup: English error messages
+  * mogui.py: Gui: better versions management with combobox
+  * mogui.py: Modulecmd: fix 'module avail' output parsing
+  * mogui.py: module: add modulecmd path as a parameter
+  * mogui.py: tk: remove all tk references
+  * mogui.py: cleanup: Pychoix is now mogui
+  * mogui.logs: logs: add history of mogui
+
+2013-10-02  Aurelien Cedeyn <aurelien.cedeyn@cea.fr>
+
+  * mogui.py: mogui: Initial commit
