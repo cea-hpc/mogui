@@ -1,4 +1,4 @@
-%define srcname modules-gui
+%global srcname modules-gui
 Name:           mogui
 Version:        0.2
 Release:        1%{?dist}
