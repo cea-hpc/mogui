@@ -2,7 +2,7 @@
 Name:           mogui
 Version:        0.2
 Release:        1%{?dist}
-Summary:        Graphical User Interface for Modules
+Summary:        Graphical User Interface for Environment Modules
 
 License:        GPL-2.0-or-later
 URL:            https://github.com/cea-hpc/mogui
