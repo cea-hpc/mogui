@@ -38,6 +38,9 @@ install -p -m 0644 share/setup-env.sh %{buildroot}%{_sysconfdir}/profile.d/%{nam
 install -p -m 0644 share/setup-env.csh %{buildroot}%{_sysconfdir}/profile.d/%{name}.csh
 install -p -m 0644 share/setup-env.fish %{buildroot}%{_datadir}/fish/vendor_conf.d/%{name}.fish
 
+# "mogui" bin is not needed, as mogui shell function is defined at shell session start
+rm %{buildroot}%{_bindir}/%{name}
+
 %check
 %pyproject_check_import
 
@@ -46,7 +49,6 @@ install -p -m 0644 share/setup-env.fish %{buildroot}%{_datadir}/fish/vendor_conf
 %doc ChangeLog README.md TODO.md
 %{python3_sitelib}/%{name}/
 %{python3_sitelib}/modules_gui-%{version}.dist-info/
-%{_bindir}/%{name}
 %{_bindir}/%{name}-cmd
 %{_bindir}/%{name}-setup-env
 %{_sysconfdir}/profile.d/%{name}.csh
