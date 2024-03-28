@@ -32,6 +32,12 @@ users selecting modules to load and save module collections.
 %pyproject_install
 %pyproject_save_files %{name}
 
+install -d %{buildroot}%{_datadir}/pixmaps
+install -p -m 0644 mogui/icons/mogui-light/symbolic/apps/environment-modules.svg %{buildroot}%{_datadir}/pixmaps/%{name}.svg
+
+install -d %{buildroot}%{_datadir}/applications
+install -p -m 0644 share/%{name}.desktop %{buildroot}%{_datadir}/applications/
+
 install -d %{buildroot}%{_sysconfdir}/profile.d
 install -d %{buildroot}%{_datadir}/fish/vendor_conf.d
 install -p -m 0644 share/setup-env.sh %{buildroot}%{_sysconfdir}/profile.d/%{name}.sh
@@ -39,6 +45,7 @@ install -p -m 0644 share/setup-env.csh %{buildroot}%{_sysconfdir}/profile.d/%{na
 install -p -m 0644 share/setup-env.fish %{buildroot}%{_datadir}/fish/vendor_conf.d/%{name}.fish
 
 # "mogui" bin is not needed, as mogui shell function is defined at shell session start
+# and desktop file relies on the "mogui-cmd" bin
 rm %{buildroot}%{_bindir}/%{name}
 
 %check
@@ -54,6 +61,8 @@ rm %{buildroot}%{_bindir}/%{name}
 %{_sysconfdir}/profile.d/%{name}.csh
 %{_sysconfdir}/profile.d/%{name}.sh
 %{_datadir}/fish/vendor_conf.d/%{name}.fish
+%{_datadir}/applications/%{name}.desktop
+%{_datadir}/pixmaps/%{name}.svg
 
 %changelog
 * Wed Mar 27 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2-1

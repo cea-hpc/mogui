@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=MoGui
+Comment=Graphical User Interface for Environment Modules
+Icon=/usr/share/pixmaps/mogui.svg
+Exec=mogui-cmd
+Terminal=false
+Categories=System;
