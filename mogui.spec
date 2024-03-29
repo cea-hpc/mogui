@@ -67,6 +67,12 @@ rm %{buildroot}%{_bindir}/%{name}
 %changelog
 * Thu Mar 28 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2.1-1
 - Update to 0.2.1
+- Clarify package summary
+- Add ChangeLog file to documentation
+- Add mogui desktop file
+- Remove "mogui" bin (as "mogui" shell function is defined in environment
+  and desktop file relies on "mogui-cmd")
+- Use "global" directive instead of "define"
 
 * Wed Mar 27 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2-1
 - Initial package
