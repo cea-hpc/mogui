@@ -80,3 +80,5 @@ gui
 gitlog2changelog
 SRPM
 ChangeLog
+rpmbuild
+txt

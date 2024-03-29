@@ -1,7 +1,7 @@
 %global srcname modules-gui
 Name:           mogui
 Version:        0.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Graphical User Interface for Environment Modules
 
 License:        GPL-2.0-or-later
@@ -10,8 +10,6 @@ Source:         %{pypi_source}
 
 BuildArch:      noarch
 BuildRequires:  python3-devel
-Requires:       python3
-Requires:       python3-qt5
 Requires:       environment-modules
 Provides:       environment-modules-gui = %{version}
 
@@ -65,6 +63,9 @@ rm %{buildroot}%{_bindir}/%{name}
 %{_datadir}/pixmaps/%{name}.svg
 
 %changelog
+* Fri Mar 29 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2.1-2
+- Fix python-leftover-require issue
+
 * Thu Mar 28 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2.1-1
 - Update to 0.2.1
 - Clarify package summary
