@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> -->
+<component type="desktop">
+  <id>mogui.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0-or-later</project_license>
+  <name>MoGui</name>
+  <summary>Graphical User Interface for Environment Modules</summary>
+  <description>
+    <p>
+      MoGui is a Graphical User Interface (GUI) for Environment Modules. It
+      helps users selecting modules to load and save module collections.
+    </p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/cea-hpc/mogui/main/doc/sneak_peek.gif</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://github.com/cea-hpc/mogui</url>
+  <url type="bugtracker">https://github.com/cea-hpc/mogui/issues</url>
+  <update_contact>xavier.delaruelle@cea.fr</update_contact>
+  <releases>
+    <release version="0.2.1" date="2024-03-28"/>
+    <release version="0.2" date="2024-03-27"/>
+  </releases>
+</component>

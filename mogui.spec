@@ -11,6 +11,7 @@ Source:         %{pypi_source}
 BuildArch:      noarch
 BuildRequires:  python3-devel
 BuildRequires:  desktop-file-utils
+BuildRequires:  libappstream-glib
 Requires:       environment-modules
 Provides:       environment-modules-gui = %{version}
 
@@ -37,6 +38,9 @@ install -p -m 0644 mogui/icons/mogui-light/symbolic/apps/environment-modules.svg
 install -d %{buildroot}%{_datadir}/applications
 install -p -m 0644 share/%{name}.desktop %{buildroot}%{_datadir}/applications/
 
+install -d %{buildroot}%{_metainfodir}
+install -p -m 0644 share/%{name}.metainfo.xml %{buildroot}%{_metainfodir}/
+
 install -d %{buildroot}%{_sysconfdir}/profile.d
 install -d %{buildroot}%{_datadir}/fish/vendor_conf.d
 install -p -m 0644 share/setup-env.sh %{buildroot}%{_sysconfdir}/profile.d/%{name}.sh
@@ -50,6 +54,7 @@ rm %{buildroot}%{_bindir}/%{name}
 %check
 %pyproject_check_import
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.metainfo.xml
 
 %files
 %license COPYING.GPLv2
@@ -63,6 +68,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 %{_datadir}/fish/vendor_conf.d/%{name}.fish
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/pixmaps/%{name}.svg
+%{_metainfodir}/%{name}.metainfo.xml
 
 %changelog
 * Fri Mar 29 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2.1-2
