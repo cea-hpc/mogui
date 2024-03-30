@@ -10,6 +10,7 @@ Source:         %{pypi_source}
 
 BuildArch:      noarch
 BuildRequires:  python3-devel
+BuildRequires:  desktop-file-utils
 Requires:       environment-modules
 Provides:       environment-modules-gui = %{version}
 
@@ -48,6 +49,7 @@ rm %{buildroot}%{_bindir}/%{name}
 
 %check
 %pyproject_check_import
+desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 
 %files
 %license COPYING.GPLv2
