@@ -13,7 +13,6 @@ BuildRequires:  python3-devel
 BuildRequires:  desktop-file-utils
 BuildRequires:  libappstream-glib
 Requires:       environment-modules
-Provides:       environment-modules-gui = %{version}
 
 %description
 MoGui is a Graphical User Interface (GUI) for Environment Modules. It helps
