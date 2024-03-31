@@ -19,4 +19,4 @@ distclean:
 	rm -rf build
 	rm -rf modules_gui.egg-info
 
-.PHONY: init build install style distclean
+.PHONY: init build ChangeLog install style distclean
