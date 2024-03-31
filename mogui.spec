@@ -4,7 +4,8 @@ Version:        0.2.1
 Release:        2%{?dist}
 Summary:        Graphical User Interface for Environment Modules
 
-License:        GPL-2.0-or-later
+# icon files are licensed under CC-BY-SA-3.0 terms
+License:        GPL-2.0-or-later AND CC-BY-SA-3.0
 URL:            https://github.com/cea-hpc/mogui
 Source:         %{pypi_source}
 
@@ -56,7 +57,7 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.metainfo.xml
 
 %files
-%license COPYING.GPLv2
+%license COPYING.GPLv2 COPYING-ICONS.CCBYSA3
 %doc ChangeLog README.md TODO.md
 %{python3_sitelib}/%{name}/
 %{python3_sitelib}/modules_gui-%{version}.dist-info/

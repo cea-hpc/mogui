@@ -86,12 +86,19 @@ Requirements
  * PyQt5
  * Modules >= 5.2
 
-License
--------
+Licenses
+--------
 
 MoGui is distributed under the GNU General Public License, either version 2 or
 (at your option) any later version (GPL v2+). Read the file `COPYING.GPLv2`
 for details.
+
+MoGui's icons found in the `mogui/icons/mogui-light/symbolic/actions`
+directory are imported from the *Adwaita* icon theme of the *GNOME Project*
+(http://www.gnome.org). Icons from the `mogui/icons/mogui-dark/symbolic/actions`
+directory are modified version of *Adwaita* icons (color switch). This work is
+licenced under the Creative Commons Attribution-Share Alike 3.0 United States
+License. Read the file `COPYING-ICONS.CCBYSA3` for details.
 
 Authors
 -------
