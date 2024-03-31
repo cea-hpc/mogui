@@ -1,7 +1,7 @@
 %global srcname modules-gui
 Name:           mogui
-Version:        0.2.1
-Release:        2%{?dist}
+Version:        0.2.2
+Release:        1%{?dist}
 Summary:        Graphical User Interface for Environment Modules
 
 # icon files are licensed under CC-BY-SA-3.0 terms
@@ -71,6 +71,13 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.metain
 %{_metainfodir}/%{name}.metainfo.xml
 
 %changelog
+* Sun Mar 31 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2.2-1
+- Update to 0.2.2
+- Test desktop file
+- Add AppData file and test it
+- Remove environment-modules-gui provides
+- Clarify license used for icon files (CC-BY-SA-3.0)
+
 * Fri Mar 29 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2.1-2
 - Fix python-leftover-require issue
 

@@ -1,7 +1,29 @@
+2024-03-31  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * ChangeLog, mogui.spec, share/mogui.metainfo.xml: Release of version 0.2.2
+  * Makefile: make: add ChangeLog target to .PHONY
+  * COPYING-ICONS.CCBYSA3, MANIFEST.in, README.md, mogui.spec,
+  mogui/icons/README, share/mogui.metainfo.xml: Clarify license used for icon
+  files (CC-BY-SA-3.0)
+
+2024-03-30  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * mogui.spec: rpm: remove environment-modules-gui provides
+  * .hunspell.en.dic, mogui.spec, share/mogui.metainfo.xml: rpm: add AppData
+  file
+  * mogui.spec: rpm: check desktop file
+
+2024-03-29  Xavier Delaruelle <xavier.delaruelle@cea.fr>
+
+  * .hunspell.en.dic, mogui.spec: rpm: fix python-leftover-require issue  RPM
+  requirements do not need to be specified directly through *Requires*
+  directive as rpmbuild automatically defines these dependencies based on the
+  requirements.txt file.
+  * mogui.spec: rpm: describe spec file changes in 0.2.1
+
 2024-03-28  Xavier Delaruelle <xavier.delaruelle@cea.fr>
 
-  * mogui.spec: Release of version 0.2.1
-  * ChangeLog: Add ChangeLog file
+  * ChangeLog, mogui.spec: Release of version 0.2.1
   * mogui.spec, share/mogui.desktop: rpm: add desktop file and associated app
   icon
   * mogui.spec: rpm: use %global instead of %define

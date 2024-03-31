@@ -21,6 +21,7 @@
   <url type="bugtracker">https://github.com/cea-hpc/mogui/issues</url>
   <update_contact>xavier.delaruelle@cea.fr</update_contact>
   <releases>
+    <release version="0.2.2" date="2024-03-31"/>
     <release version="0.2.1" date="2024-03-28"/>
     <release version="0.2" date="2024-03-27"/>
   </releases>
