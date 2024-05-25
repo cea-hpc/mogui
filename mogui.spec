@@ -1,7 +1,7 @@
 %global srcname modules-gui
 Name:           mogui
 Version:        0.2.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Graphical User Interface for Environment Modules
 
 # icon files are licensed under CC-BY-SA-3.0 terms
@@ -56,11 +56,8 @@ rm %{buildroot}%{_bindir}/%{name}
 desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.metainfo.xml
 
-%files
-%license COPYING.GPLv2 COPYING-ICONS.CCBYSA3
+%files -f %{pyproject_files}
 %doc ChangeLog README.md TODO.md
-%{python3_sitelib}/%{name}/
-%{python3_sitelib}/modules_gui-%{version}.dist-info/
 %{_bindir}/%{name}-cmd
 %{_bindir}/%{name}-setup-env
 %{_sysconfdir}/profile.d/%{name}.csh
@@ -71,6 +68,9 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.metain
 %{_metainfodir}/%{name}.metainfo.xml
 
 %changelog
+* Sat May 25 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2.2-2
+- Fix duplicated license files
+
 * Sun Mar 31 2024 Xavier Delaruelle <xavier.delaruelle@cea.fr> - 0.2.2-1
 - Update to 0.2.2
 - Test desktop file
